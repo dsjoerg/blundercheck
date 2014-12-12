@@ -14,9 +14,8 @@ RUN cd /usr/src && git clone git://github.com/official-stockfish/Stockfish.git &
 # python-chess
 RUN pip install python-chess
 
-# pystockfish
-# RUN cd /usr/src && git clone git://github.com/llimllib/pystockfish
-RUN pip install -e git+git://github.com/llimllib/pystockfish#egg=pystockfish
+# these directories are in active development, being edited on the host system
+ENV PYTHONPATH /usr/local/src/pystockfish:/usr/local/src/blundercheck
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

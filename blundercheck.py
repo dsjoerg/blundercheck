@@ -23,7 +23,7 @@ def score_node(engine, node):
     engine.setfen(node.board().fen())
     bestmove = engine.bestmove()
     score_cp = bestmove['score_cp']
-    if score_cp:
+    if score_cp is not None:
         score_cp_for_white = score_cp
     else:
         score_cp_for_white = float("inf")
@@ -58,6 +58,9 @@ def do_it(pgn_url="http://en.lichess.org/game/export/tKEOqmC3.pgn", depth=15):
         next_node = node.variation(0)
         (next_score_white, next_best_move) = score_node(engine, next_node)
         score_loss = score_sign * (current_score_white - next_score_white)
+
+        # TODO only show (best move: foo) when the player didn't make that move
+        # TODO count loss as zero when the player makes the best move?
 
         print('%2d%-3s %6s loss:%5.0f (equity: %+5.0f) (best move: %s)' %
               (node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, next_score_white, node.board().san(best_move)))

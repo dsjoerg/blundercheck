@@ -1,0 +1,2 @@
+* install docker
+* `scripts/start`

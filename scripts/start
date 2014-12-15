@@ -1,9 +1,11 @@
 #!/bin/bash
 
 MY_PATH="`dirname \"$0\"`"
+PGN_URL=$1
 
 docker build -t 'dsjoerg/blundercheck' $MY_PATH/.. 2>&1 | grep "Success"
 
-docker run -ti -v /Users/david/Dropbox/Programming/pystockfish:/usr/local/src/pystockfish \
-               -v /Users/david/Dropbox/Programming/blundercheck:/usr/local/src/blundercheck \
-       dsjoerg/blundercheck python
+docker run -ti -v /Users/david/Dropbox/Programming/pystockfish:/root/src/pystockfish \
+               -v /Users/david/Dropbox/Programming/blundercheck:/root/src/blundercheck \
+               -e PGN_URL=http://en.lichess.org/game/export/tKEOqmC3.pgn \
+       dsjoerg/blundercheck

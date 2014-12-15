@@ -17,7 +17,6 @@ RUN pip install python-chess
 # pystockfish
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 
-
 # SSH git fun from http://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile/25977750#25977750
 ADD repo-key /
 RUN \
@@ -25,13 +24,12 @@ RUN \
   echo "IdentityFile /repo-key" >> /etc/ssh/ssh_config && \  
   echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
-# blundercheck
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
-# these directories are in active development, being edited on the host system
-#ENV PYTHONPATH /usr/local/src/pystockfish:/usr/local/src/blundercheck
+# DEVELOPMENT
+#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
 
-CMD stockfish
+CMD python /root/src/blundercheck/blundercheck.py
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

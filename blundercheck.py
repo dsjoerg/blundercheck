@@ -4,6 +4,7 @@ import chess
 import urllib
 import pystockfish
 import sys
+import os
 
 class DSJURLopener(urllib.FancyURLopener):
     version = "dsjoerg"
@@ -69,5 +70,6 @@ def do_it(pgn_url="http://en.lichess.org/game/export/tKEOqmC3.pgn", depth=15):
         current_score_white = next_score_white
         best_move = next_best_move
 
-
-do_it(sys.argv[1])
+pgn_url = os.environ['PGN_URL']
+print("Hi! Analyzing %s"%pgn_url)
+do_it(pgn_url)

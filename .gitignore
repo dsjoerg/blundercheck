@@ -1,2 +1,5 @@
 *~
 *.pyc
+repo-key
+boto.cfg
+*.pgn

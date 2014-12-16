@@ -5,6 +5,10 @@ import urllib
 import pystockfish
 import sys
 import os
+import boto
+import json
+import StringIO
+import time
 
 class DSJURLopener(urllib.FancyURLopener):
     version = "dsjoerg"
@@ -42,9 +46,12 @@ def score_node(engine, node):
 
     
 
-def do_it(pgn_url="http://en.lichess.org/game/export/tKEOqmC3.pgn", depth=15):
-    engine = pystockfish.Engine(depth=depth, param={'Threads': 8})
-    game = chess.pgn.read_game(urllib.urlopen(pgn_url))
+def do_it(outfile, game=None, depth=15):
+
+    outfile.write(game.headers['BCID'])
+    outfile.write(' ')
+
+    engine = pystockfish.Engine(depth=depth)
     node = game
 
     (current_score_white, best_move) = score_node(engine, node)
@@ -64,12 +71,49 @@ def do_it(pgn_url="http://en.lichess.org/game/export/tKEOqmC3.pgn", depth=15):
         # TODO only show (best move: foo) when the player didn't make that move
         # TODO count loss as zero when the player makes the best move?
 
-        print('%2d%-3s %6s loss:%5.0f (equity: %+5.0f) (best move: %s)' %
-              (node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, next_score_white, node.board().san(best_move)))
+        if False:
+            thismove_analysis = '%2d%-3s %6s loss:%5.0f (equity: %+5.0f) (best move: %s)' % (node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, next_score_white, node.board().san(best_move))
+            print thismove_analysis
+            #        print >>outfile, thismove_analysis
+
+        outfile.write(score_loss)
+        outfile.write(' ')
+        outfile.write(next_score_white)
+        outfile.write(' ')
+
         node = next_node
         current_score_white = next_score_white
         best_move = next_best_move
 
-pgn_url = os.environ['PGN_URL']
-print("Hi! Analyzing %s"%pgn_url)
-do_it(pgn_url)
+    outfile.write('\n')
+
+
+config_bucket = os.environ['CONFIG_BUCKET']
+config_key = os.environ['CONFIG_KEY']
+
+conn = boto.connect_s3()
+config_bucket = conn.get_bucket(config_bucket)
+key = config_bucket.get_key(config_key)
+runconfig = json.loads(key.get_contents_as_string())
+
+pgn_key = runconfig['pgn_key']
+depth = runconfig['depth']
+
+print("Hi! Analyzing %s to depth %d" % (pgn_key,depth) )
+
+inputs_bucket = conn.get_bucket('bc-runinputs')
+games_key = inputs_bucket.get_key(pgn_key)
+games_fd = StringIO.StringIO(games_key.get_contents_as_string())
+
+analysis_string = StringIO.StringIO()
+
+game = chess.pgn.read_game(games_fd)
+while game is not None:
+    do_it(analysis_string, game=game, depth=depth)
+    game = chess.pgn.read_game(games_fd)
+
+output_bucket = conn.get_bucket('bc-runoutputs')
+new_key = runconfig['result_key']
+key = output_bucket.new_key(new_key)
+key.set_contents_from_string(analysis_string.getvalue())
+analysis_string.close()

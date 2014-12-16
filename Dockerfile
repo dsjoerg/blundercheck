@@ -17,8 +17,12 @@ RUN pip install python-chess
 # pystockfish
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 
+# boto
+RUN pip install boto
+ADD config/boto.cfg /etc/boto.cfg
+
 # SSH git fun from http://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile/25977750#25977750
-ADD repo-key /
+ADD config/repo-key /
 RUN \
   chmod 600 /repo-key && \  
   echo "IdentityFile /repo-key" >> /etc/ssh/ssh_config && \  

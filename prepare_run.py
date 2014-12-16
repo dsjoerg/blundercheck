@@ -10,13 +10,14 @@ def write_batch(pgn_string, inputs_bucket, batch_name, batch_num):
     key.close()
 
     config = {'pgn_key': games_key,
-              'depth': 5,
+              'depth': 15,
               'result_key': results_key}
 
     config_key = '%s/%d.json' % (batch_name, batch_num)
     key = config_bucket.new_key(config_key)
     key.set_contents_from_string(json.dumps(config))
     key.close()
+    print "Wrote batch #%d" % batch_num
     
 
 conn = boto.connect_s3()
@@ -27,6 +28,9 @@ batch_size = 2
 game_num = 0
 
 batch_name = time.strftime('%Y%m%d-%H%M%S')
+
+print "Batch is named %s" % batch_name
+
 urlfd = urllib.urlopen("http://bc-games.s3.amazonaws.com/first/games.pgn")
 exporter = chess.pgn.StringExporter()
 game = chess.pgn.read_game(urlfd)

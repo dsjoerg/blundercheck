@@ -117,3 +117,5 @@ new_key = runconfig['result_key']
 key = output_bucket.new_key(new_key)
 key.set_contents_from_string(analysis_string.getvalue())
 analysis_string.close()
+
+print("All done.")

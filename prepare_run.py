@@ -1,6 +1,7 @@
 #!env python
 
 import chess.pgn, urllib, boto, time, json
+import sys
 
 def write_batch(pgn_string, inputs_bucket, batch_name, batch_num):
     games_key = '%s/%d.pgn' % (batch_name, batch_num)
@@ -31,7 +32,7 @@ batch_name = time.strftime('%Y%m%d-%H%M%S')
 
 print "Batch is named %s" % batch_name
 
-urlfd = urllib.urlopen("http://bc-games.s3.amazonaws.com/first/games.pgn")
+urlfd = urllib.urlopen(sys.argv[1])
 exporter = chess.pgn.StringExporter()
 game = chess.pgn.read_game(urlfd)
 

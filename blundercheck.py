@@ -99,7 +99,8 @@ runconfig = json.loads(key.get_contents_as_string())
 pgn_key = runconfig['pgn_key']
 depth = runconfig['depth']
 
-print("Hi! Analyzing %s to depth %d" % (pgn_key,depth) )
+
+print("%s Hi! Analyzing %s to depth %d" % (time.strftime('%Y%m%d-%H%M%S'), pgn_key,depth) )
 
 inputs_bucket = conn.get_bucket('bc-runinputs')
 games_key = inputs_bucket.get_key(pgn_key)
@@ -118,4 +119,4 @@ key = output_bucket.new_key(new_key)
 key.set_contents_from_string(analysis_string.getvalue())
 analysis_string.close()
 
-print("All done.")
+print("%s All done." % time.strftime('%Y%m%d-%H%M%S'))

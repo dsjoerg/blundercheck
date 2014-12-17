@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# make sure your latest code has been pushed to git
+
+docker build -t dsjoerg/fun .
+docker tag dsjoerg/fun tutum.co/dsjoerg/fun
+docker push tutum.co/dsjoerg/fun

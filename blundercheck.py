@@ -15,6 +15,7 @@ class DSJURLopener(urllib.FancyURLopener):
 
 urllib._urlopener = DSJURLopener()
 
+DEBUG = ('BLUNDER_DEBUG' in os.environ)
 
 def score_node(engine, node):
     """
@@ -70,8 +71,9 @@ def do_it(outfile, game=None, depth=15):
 
         # TODO only show (best move: foo) when the player didn't make that move
         # TODO count loss as zero when the player makes the best move?
+        # TODO count loss as zero when player preserves mate count (rather than a loss of -1)
 
-        if False:
+        if DEBUG:
             thismove_analysis = '%2d%-3s %6s loss:%5.0f (equity: %+5.0f) (best move: %s)' % (node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, next_score_white, node.board().san(best_move))
             print thismove_analysis
             #        print >>outfile, thismove_analysis

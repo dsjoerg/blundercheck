@@ -1,11 +1,13 @@
 #!/bin/bash
 
 MY_PATH="`dirname \"$0\"`"
-PGN_URL=$1
+
+/usr/local/bin/boot2docker ssh sudo ntpclient -s -h pool.ntp.org
 
 docker build -t 'dsjoerg/blundercheck' $MY_PATH/.. 2>&1 | grep "Success"
 
 docker run -ti -v /Users/david/Dropbox/Programming/pystockfish:/root/src/pystockfish \
                -v /Users/david/Dropbox/Programming/blundercheck:/root/src/blundercheck \
-               -e PGN_URL=http://en.lichess.org/game/export/tKEOqmC3.pgn \
+	       -e CONFIG_BUCKET=bc-runconfigs -e CONFIG_KEY=20141216-192244/2.json \
+	       -e BLUNDER_DEBUG=1 \
        dsjoerg/blundercheck

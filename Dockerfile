@@ -29,13 +29,13 @@ RUN \
   echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
 # DEVELOPMENT
-#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
 
 CMD python /root/src/blundercheck/blundercheck.py
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN echo '1234567'
+RUN echo '12345678'
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck

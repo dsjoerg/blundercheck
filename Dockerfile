@@ -6,7 +6,8 @@ RUN apt-get -y update && apt-get -y upgrade && apt-get -y install \
     make \
     gcc \
     python-dev \
-    python-pip
+    python-pip \
+    libmysqlclient-dev
 
 # Stockfish
 RUN cd /usr/src && git clone git://github.com/official-stockfish/Stockfish.git && cd Stockfish/src && make build ARCH=x86-64 && ln -sr stockfish /usr/local/bin
@@ -21,6 +22,10 @@ RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 RUN pip install boto
 ADD config/boto.cfg /etc/boto.cfg
 
+# sqlalchemy
+RUN pip install sqlalchemy
+RUN pip install MySQL-python
+
 # SSH git fun from http://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile/25977750#25977750
 ADD config/repo-key /
 RUN \
@@ -29,13 +34,18 @@ RUN \
   echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
 # DEVELOPMENT
-ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
 
 CMD python /root/src/blundercheck/blundercheck.py
 
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-RUN echo '12345678'
+RUN echo '123456789'
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
+
+# to do various networking tests
+RUN apt-get install telnet
+
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

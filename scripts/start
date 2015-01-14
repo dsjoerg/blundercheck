@@ -10,4 +10,7 @@ docker run -ti -v /Users/david/Dropbox/Programming/pystockfish:/root/src/pystock
                -v /Users/david/Dropbox/Programming/blundercheck:/root/src/blundercheck \
 	       -e CONFIG_BUCKET=bc-runconfigs -e CONFIG_KEY=20141216-192244/2.json \
 	       -e BLUNDER_DEBUG=1 \
-       dsjoerg/blundercheck
+	       -e DB_HOST=10.0.2.2 \
+	       --net="host" \
+       dsjoerg/blundercheck $1
+

@@ -46,11 +46,22 @@ def score_node(engine, node):
     return (score_cp_for_white, move_object)
 
     
+# returns a dict with:
+# bcid: our 'blundercheck id' for the game
+# position_scores: a list with one integer per ply, containing the score for that ply
+# best_moves: a list with what the best move was at each ply
+# runtime: how long in seconds it took to run do_it()
 
-def do_it(outfile, game=None, depth=15):
+def do_it(game=None, depth=15):
 
-    outfile.write(game.headers['BCID'])
-    outfile.write(' ')
+    print("%s Hi! Analyzing %s" % (time.strftime('%Y%m%d-%H%M%S'), game.headers['BCID']) )
+
+    begin_time = time.clock()
+
+    outstruct = {}
+    outstruct['bcid'] = game.headers['BCID']
+    outstruct['position_scores'] = []
+    outstruct['best_moves'] = []
 
     engine = pystockfish.Engine(depth=depth)
     node = game
@@ -78,16 +89,15 @@ def do_it(outfile, game=None, depth=15):
             print thismove_analysis
             #        print >>outfile, thismove_analysis
 
-        outfile.write(score_loss)
-        outfile.write(' ')
-        outfile.write(next_score_white)
-        outfile.write(' ')
+        outstruct['position_scores'].append(next_score_white)
+        outstruct['best_moves'].append(node.board().san(best_move))
 
         node = next_node
         current_score_white = next_score_white
         best_move = next_best_move
 
-    outfile.write('\n')
+    outstruct['runtime'] = time.clock() - begin_time
+    return outstruct
 
 
 config_bucket = os.environ['CONFIG_BUCKET']
@@ -108,17 +118,16 @@ inputs_bucket = conn.get_bucket('bc-runinputs')
 games_key = inputs_bucket.get_key(pgn_key)
 games_fd = StringIO.StringIO(games_key.get_contents_as_string())
 
-analysis_string = StringIO.StringIO()
+result_list = []
 
 game = chess.pgn.read_game(games_fd)
 while game is not None:
-    do_it(analysis_string, game=game, depth=depth)
+    result_list.append(do_it(game=game, depth=depth))
     game = chess.pgn.read_game(games_fd)
 
 output_bucket = conn.get_bucket('bc-runoutputs')
 new_key = runconfig['result_key']
 key = output_bucket.new_key(new_key)
-key.set_contents_from_string(analysis_string.getvalue())
-analysis_string.close()
+key.set_contents_from_string(json.dumps(result_list))
 
 print("%s All done." % time.strftime('%Y%m%d-%H%M%S'))

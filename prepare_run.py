@@ -24,7 +24,7 @@ def write_batch(pgn_string, inputs_bucket, batch_name, batch_num):
 conn = boto.connect_s3()
 inputs_bucket = conn.get_bucket('bc-runinputs')
 config_bucket = conn.get_bucket('bc-runconfigs')
-batch_size = 2
+batch_size = 60
 
 game_num = 0
 
@@ -37,7 +37,10 @@ exporter = chess.pgn.StringExporter()
 game = chess.pgn.read_game(urlfd)
 
 while game is not None:
-    game.headers['BCID'] = 'FICS.%s' % game.headers['FICSGamesDBGameNo']
+    if 'FICSGamesDBGameNo' in game.headers:
+        game.headers['BCID'] = 'FICS.%s' % game.headers['FICSGamesDBGameNo']
+    else:
+        game.headers['BCID'] = 'Kaggle.%s' % game.headers['Event']
     game.export(exporter, headers=True, variations=False, comments=False)
     game_num = game_num + 1
     if game_num % batch_size == 0:

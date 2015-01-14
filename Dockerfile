@@ -33,6 +33,13 @@ RUN \
   echo "IdentityFile /repo-key" >> /etc/ssh/ssh_config && \  
   echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
+# to do various networking tests
+RUN apt-get install telnet
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
 # DEVELOPMENT
 #ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
 
@@ -43,9 +50,4 @@ RUN echo '123456789'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 
-# to do various networking tests
-RUN apt-get install telnet
 
-
-# Clean up APT when done.
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

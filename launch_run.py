@@ -34,7 +34,7 @@ for job_num in range(0, num_nodes):
     envvars.append({"key": "CONFIG_BUCKET", "value": "bc-runconfigs"})
     config_key = '%s/%d.json' % (job_name, job_num)
     envvars.append({"key": "CONFIG_KEY", "value": config_key})
-    service = tutum.Service.create(image="tutum.co/dsjoerg/fun", name="thing%d" % job_num, target_num_containers=1, container_envvars=envvars)
+    service = tutum.Service.create(image="tutum.co/dsjoerg/fun", target_num_containers=1, container_envvars=envvars)
     service.save()
     service.start()
     services.append(service)

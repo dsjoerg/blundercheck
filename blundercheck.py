@@ -10,6 +10,10 @@ import json
 import StringIO
 import time
 
+def msg(str):
+    print "%s %s" % (time.strftime('%Y%m%d-%H%M%S'), str)
+    sys.stdout.flush()
+
 class DSJURLopener(urllib.FancyURLopener):
     version = "dsjoerg"
 
@@ -54,7 +58,7 @@ def score_node(engine, node):
 
 def do_it(game=None, depth=15):
 
-    print("%s Hi! Analyzing %s" % (time.strftime('%Y%m%d-%H%M%S'), game.headers['BCID']) )
+    msg("Hi! Analyzing %s" % game.headers['BCID'])
 
     begin_time = time.clock()
 
@@ -112,7 +116,7 @@ pgn_key = runconfig['pgn_key']
 depth = runconfig['depth']
 
 
-print("%s Hi! Analyzing %s to depth %d" % (time.strftime('%Y%m%d-%H%M%S'), pgn_key,depth) )
+msg("Hi! Analyzing %s to depth %d" % (pgn_key,depth))
 
 inputs_bucket = conn.get_bucket('bc-runinputs')
 games_key = inputs_bucket.get_key(pgn_key)
@@ -130,4 +134,4 @@ new_key = runconfig['result_key']
 key = output_bucket.new_key(new_key)
 key.set_contents_from_string(json.dumps(result_list))
 
-print("%s All done." % time.strftime('%Y%m%d-%H%M%S'))
+msg("All done.")

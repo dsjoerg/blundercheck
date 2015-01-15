@@ -18,7 +18,7 @@ from djeval import *
 DEBUG = ('BLUNDER_DEBUG' in os.environ)
 
 conn = boto.sqs.connect_to_region("us-east-1")
-in_queuename = 'games'
+in_queuename = 'numbers'
 out_queuename = 'results'
 depth = 15
 
@@ -39,12 +39,20 @@ engine = pystockfish.Engine(depth=depth)
 
 inq = conn.get_queue(in_queuename)
 outq = conn.get_queue(out_queuename)
+
+s3conn = boto.connect_s3()
+bucket = s3conn.get_bucket('bc-games')
+
 while True:
     msg("There are %d games in queue." % inq.count())
     game_msg = queue_read(inq)
     if game_msg is None:
         continue
-    game_pgn_string = game_msg.get_body()
+    game_number = game_msg.get_body()
+    key_name = "kaggle/%s.pgn" % game_number
+    msg("Retrieving %s" % key_name)
+    k = bucket.get_key(key_name)
+    game_pgn_string = k.get_contents_as_string()
     game_fd = StringIO.StringIO(game_pgn_string)
     try:
         game = chess.pgn.read_game(game_fd)

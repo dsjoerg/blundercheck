@@ -41,7 +41,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
 # DEVELOPMENT
-ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
 
 CMD python /root/src/blundercheck/scoreserver.py
 

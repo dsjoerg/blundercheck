@@ -56,7 +56,7 @@ def score_node(engine, node):
 # best_moves: a list with what the best move was at each ply
 # runtime: how long in seconds it took to run do_it()
 
-def do_it(game=None, depth=15):
+def do_it(engine, game=None, depth=15):
 
     msg("Hi! Analyzing %s" % game.headers['BCID'])
 
@@ -67,7 +67,6 @@ def do_it(game=None, depth=15):
     outstruct['position_scores'] = []
     outstruct['best_moves'] = []
 
-    engine = pystockfish.Engine(depth=depth)
     node = game
 
     (current_score_white, best_move) = score_node(engine, node)
@@ -124,9 +123,11 @@ games_fd = StringIO.StringIO(games_key.get_contents_as_string())
 
 result_list = []
 
+engine = pystockfish.Engine(depth=depth)
+
 game = chess.pgn.read_game(games_fd)
 while game is not None:
-    result_list.append(do_it(game=game, depth=depth))
+    result_list.append(do_it(engine=engine, game=game, depth=depth))
     game = chess.pgn.read_game(games_fd)
 
 output_bucket = conn.get_bucket('bc-runoutputs')

@@ -41,11 +41,11 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
 # DEVELOPMENT
-#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
 
-CMD python /root/src/blundercheck/blundercheck.py
+CMD python /root/src/blundercheck/scoreserver.py
 
-RUN echo '123456789'
+RUN echo '1'
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 

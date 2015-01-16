@@ -36,6 +36,9 @@ RUN \
 # to do various networking tests
 RUN apt-get install telnet
 
+# TODO rebuild the docker image more fully, rather than just upgrading boto here
+RUN pip install --upgrade boto
+
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -45,7 +48,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD python /root/src/blundercheck/scoreserver.py
 
-RUN echo '1'
+RUN echo '12'
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 

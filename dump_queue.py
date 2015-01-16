@@ -22,6 +22,6 @@ if args.showmessages:
         print("MESSAGE: %s" % m.get_body())
         m = q.read()
 
-q.clear()
+q.purge()
 
 print "QUEUE EMPTY NOW"

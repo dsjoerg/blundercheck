@@ -1,6 +1,10 @@
-*~
 *.pyc
 repo-key
 boto.cfg
 *.pgn
 journal.txt
+
+# emacs poop
+*~
+.*
+\#*

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import tutum, sys, time
+import tutum, sys, time, subprocess
 
 CONTAINERS_PER_NODE = 32
 MAX_CONTAINERS_PER_SERVICE = 10
@@ -49,16 +49,19 @@ num_services = num_containers / MAX_CONTAINERS_PER_SERVICE
 services = []
 for service_num in range(0, num_services):
     msg("Launching service %d" % service_num)
-    service = tutum.Service.create(image="tutum.co/dsjoerg/fun", target_num_containers=MAX_CONTAINERS_PER_SERVICE)
-    service.save()
-    service.start()
-    services.append(service)
+    subprocess.Popen(["./launch_ten_scorecontainers.py"])
+    if False:
+        service = tutum.Service.create(image="tutum.co/dsjoerg/fun", target_num_containers=MAX_CONTAINERS_PER_SERVICE)
+        service.save()
+        service.start()
+        services.append(service)
 
-while True:
-    statuses = set([tutum.Service.fetch(service.uuid).state for service in services])
-    msg("Statuses are %s" % statuses)
-    time.sleep(5)
-    if 'Starting' not in statuses:
-        break
+if False:
+    while True:
+        statuses = set([tutum.Service.fetch(service.uuid).state for service in services])
+        msg("Statuses are %s" % statuses)
+        time.sleep(5)
+        if 'Starting' not in statuses:
+            break
 
-print "All containers and services are up!  Don't forget to kill them someday."
+print "Containers are up, services are launching.  Don't forget to kill someday."

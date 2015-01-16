@@ -44,17 +44,17 @@ s3conn = boto.connect_s3()
 bucket = s3conn.get_bucket('bc-games')
 
 while True:
-    msg("There are %d games in queue." % inq.count())
-    game_msg = queue_read(inq)
-    if game_msg is None:
-        continue
-    game_number = game_msg.get_body()
-    key_name = "kaggle/%s.pgn" % game_number
-    msg("Retrieving %s" % key_name)
-    k = bucket.get_key(key_name)
-    game_pgn_string = k.get_contents_as_string()
-    game_fd = StringIO.StringIO(game_pgn_string)
     try:
+        msg("There are %d games in queue." % inq.count())
+        game_msg = queue_read(inq)
+        if game_msg is None:
+            continue
+        game_number = game_msg.get_body()
+        key_name = "kaggle/%s.pgn" % game_number
+        msg("Retrieving %s" % key_name)
+        k = bucket.get_key(key_name)
+        game_pgn_string = k.get_contents_as_string()
+        game_fd = StringIO.StringIO(game_pgn_string)
         game = chess.pgn.read_game(game_fd)
         result_struct = do_it(engine=engine, game=game, depth=depth, debug=DEBUG)
         result_msg = Message()
@@ -65,6 +65,7 @@ while True:
         msg("Unexpected error: %s" % sys.exc_info()[0])
         traceback.print_tb(sys.exc_info()[2])
         msg("Game string: %s" % game_pgn_string)
+        time.sleep(10)
         
 
 msg("Broke out of loop somehow!")

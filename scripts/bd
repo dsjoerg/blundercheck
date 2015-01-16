@@ -5,3 +5,5 @@
 docker build -t dsjoerg/fun .
 docker tag dsjoerg/fun tutum.co/dsjoerg/fun
 docker push tutum.co/dsjoerg/fun
+
+/usr/local/bin/boot2docker ssh sudo ntpclient -s -h pool.ntp.org

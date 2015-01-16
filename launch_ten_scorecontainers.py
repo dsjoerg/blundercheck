@@ -3,6 +3,7 @@
 import tutum
 import time, sys
 
+servicenum = sys.argv[1]
 MAX_CONTAINERS_PER_SERVICE = 10
 
 def msg(str):
@@ -10,7 +11,8 @@ def msg(str):
     sys.stdout.flush()
 
 msg("Launching 10 scorecontainers")
-service = tutum.Service.create(image="tutum.co/dsjoerg/fun", target_num_containers=MAX_CONTAINERS_PER_SERVICE)
+servicename = "scorecontainer%s" % servicenum
+service = tutum.Service.create(image="tutum.co/dsjoerg/fun", name=servicename, target_num_containers=MAX_CONTAINERS_PER_SERVICE)
 service.save()
 service.start()
 msg("Done. Service uuid = %s" % service.uuid)

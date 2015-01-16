@@ -45,6 +45,7 @@ bucket = s3conn.get_bucket('bc-games')
 
 while True:
     try:
+        game_pgn_string = "not yet set"
         msg("There are %d games in queue." % inq.count())
         game_msg = queue_read(inq)
         if game_msg is None:

@@ -25,7 +25,7 @@ nodeclusters = tutum.NodeCluster.list()
 nodeclusters = [nc for nc in nodeclusters if nc.state not in ['Terminating', 'Terminated']]
 if len(nodeclusters) == 0:
     msg("Launching cluster")
-    nodecluster = tutum.NodeCluster.create(name="this", node_type='/api/v1/nodetype/aws/c3.8xlarge/', region='/api/v1/region/aws/us-east-1/', target_num_nodes=num_nodes)
+    nodecluster = tutum.NodeCluster.create(name="scoreservers", node_type='/api/v1/nodetype/aws/c3.8xlarge/', region='/api/v1/region/aws/us-east-1/', target_num_nodes=num_nodes)
     nodecluster.save()
 else:
     nodecluster = nodeclusters[0]
@@ -49,9 +49,9 @@ num_services = num_containers / MAX_CONTAINERS_PER_SERVICE
 services = []
 for service_num in range(0, num_services):
     msg("Launching service %d" % service_num)
-    subprocess.Popen(["./launch_ten_scorecontainers.py"])
+    subprocess.Popen(["./launch_ten_scorecontainers.py", str(service_num)])
     if False:
-        service = tutum.Service.create(image="tutum.co/dsjoerg/fun", target_num_containers=MAX_CONTAINERS_PER_SERVICE)
+        service = tutum.Service.create(image="tutum.co/dsjoerg/fun", name="scorecontainer", target_num_containers=MAX_CONTAINERS_PER_SERVICE)
         service.save()
         service.start()
         services.append(service)

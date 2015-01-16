@@ -48,7 +48,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD python /root/src/blundercheck/scoreserver.py
 
-RUN echo '12'
+RUN echo '1234'
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 

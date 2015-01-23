@@ -3,17 +3,33 @@ import chess.pgn
 import chess
 import pystockfish
 import os
+import numpy
 from pandas import *
 
 
 from djeval import *
 
+def describe_movescores(ms):
+# https://github.com/ornicar/lila/blob/master/modules/analyse/src/main/Advice.scala#L44-L47
+    print "Avg cp loss:  ", numpy.mean(ms)
+    print "Inaccuracies: ", numpy.sum((ms > -100) & (ms <= -50))
+    print "Mistakes:     ", numpy.sum((ms > -300) & (ms <= -100))
+    print "Blunders:     ", numpy.sum(              (ms <= -300))
+    print ms.describe()
+
 def describe_position_scores(ps):
     ds = []
-    ds.append(Series(ps).describe())
-    ds.append((Series(ps).diff())[1::2].describe())
-    ds.append((-1 * Series(ps).diff())[2::2].describe())
-    print DataFrame(ds, index=['position scores', 'white gain', 'black gain'])
+    print "POSITION SCORES"
+    sps = Series(ps)
+    print sps.describe()
+
+    clipped_sps = sps.clip(-999,999)
+
+    print "WHITE"
+    describe_movescores((clipped_sps.diff())[1::2])
+
+    print "BLACK"
+    describe_movescores((-1 * clipped_sps.diff())[2::2])
 
 
 DEBUG = ('DEBUG' in os.environ)
@@ -54,4 +70,3 @@ else:
 
 describe_position_scores(result_struct['position_scores'])
 describe_position_scores(result_struct['massaged_position_scores'])
-

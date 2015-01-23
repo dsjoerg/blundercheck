@@ -29,7 +29,7 @@ def score_node(engine, node):
     if score_cp is not None:
         score_cp_for_white = score_cp
     else:
-        score_cp_for_white = float("inf")
+        score_cp_for_white = 32768
 
     if node.board().turn == chess.BLACK:
         score_cp_for_white = -1 * score_cp_for_white
@@ -45,7 +45,7 @@ def score_node(engine, node):
 # Given a list of position scores, 
 def massage_position_scores(position_scores, was_bestmove):
 
-    print "YOOOOO", position_scores
+#    print "YOOOOO", position_scores
     massaged_scores = list(position_scores)
 
     bestmoves_plus = list(was_bestmove)
@@ -58,9 +58,10 @@ def massage_position_scores(position_scores, was_bestmove):
             player_score_gain = side * white_score_gain
             if bestmoves_plus[ix-1] or player_score_gain > 0:
                 massaged_scores[ix] = massaged_scores[ix-1]
-            print "%i: side %i score %i prev %i gain %i bestmove %s massaged %i" % (ix, side, score, massaged_scores[ix-1], player_score_gain, bestmoves_plus[ix-1], massaged_scores[ix])
-#        print ix, score, massaged_scores[ix]
+#            print ix, side, score, massaged_scores[ix-1], player_score_gain, bestmoves_plus[ix-1], massaged_scores[ix]
+#            print "%i: side %i score %i prev %i gain %i bestmove %s massaged %i" % (ix, side, score, massaged_scores[ix-1], player_score_gain, bestmoves_plus[ix-1], massaged_scores[ix])
         side = side * -1
+
 
     return massaged_scores
 
@@ -71,7 +72,7 @@ def massage_position_scores(position_scores, was_bestmove):
 # best_moves: a list with what the best move was at each ply
 # runtime: how long in seconds it took to run do_it()
 
-def do_it(engine, game=None, depth=15, debug=False):
+def do_it(engine, game=None, debug=False):
 
     msg("Hi! Analyzing %s" % game.headers['Event'])
 
@@ -121,7 +122,7 @@ def do_it(engine, game=None, depth=15, debug=False):
     return outstruct
 
 
-def do_it_backwards(engine, game=None, depth=15, debug=False):
+def do_it_backwards(engine, game=None, debug=False):
 
     msg("Hi! Analyzing %s BACKWARDS" % game.headers['Event'])
 
@@ -172,7 +173,7 @@ def do_it_backwards(engine, game=None, depth=15, debug=False):
 
     node = game
 
-    print "YO", len(mps)
+#    print "YO", len(mps)
     if debug:
         score_index = 0
         while node.variations:

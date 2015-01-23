@@ -46,10 +46,10 @@ ADD config/boto.cfg /etc/boto.cfg
 
 CMD python /root/src/blundercheck/scoreserver.py
 
-RUN echo '1'
+RUN echo '12'
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 
 # DEVELOPMENT
-ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck

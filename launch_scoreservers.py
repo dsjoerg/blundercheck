@@ -5,10 +5,12 @@ import tutum, sys, time, subprocess
 CONTAINERS_PER_NODE = 32
 MAX_CONTAINERS_PER_SERVICE = 10
 
+# Usage launch_scoreservers.py [num_nodes]
+#
+# Where num_nodes is how many c3.8xlarge machines you want launched.
+# Each will have 32 containers running on it
+#
 num_nodes = int(sys.argv[1])
-
-#tutum.user = "dsjoerg"
-#tutum.apikey = sys.argv[2]
 
 # waiting for https://github.com/tutumcloud/api-docs/issues/17
 #
@@ -50,18 +52,5 @@ services = []
 for service_num in range(0, num_services):
     msg("Launching service %d" % service_num)
     subprocess.Popen(["./launch_ten_scorecontainers.py", str(service_num)])
-    if False:
-        service = tutum.Service.create(image="tutum.co/dsjoerg/fun", name="scorecontainer", target_num_containers=MAX_CONTAINERS_PER_SERVICE)
-        service.save()
-        service.start()
-        services.append(service)
-
-if False:
-    while True:
-        statuses = set([tutum.Service.fetch(service.uuid).state for service in services])
-        msg("Statuses are %s" % statuses)
-        time.sleep(5)
-        if 'Starting' not in statuses:
-            break
 
 print "Containers are up, services are launching.  Don't forget to kill someday."

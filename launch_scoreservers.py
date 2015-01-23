@@ -1,16 +1,25 @@
 #!/usr/bin/env python
 
 import tutum, sys, time, subprocess
-
-CONTAINERS_PER_NODE = 32
-MAX_CONTAINERS_PER_SERVICE = 10
+import argparse
 
 # Usage launch_scoreservers.py [num_nodes]
 #
 # Where num_nodes is how many c3.8xlarge machines you want launched.
 # Each will have 32 containers running on it
 #
-num_nodes = int(sys.argv[1])
+
+parser = argparse.ArgumentParser(description='Launch a cluster if needed or requested, and some containers, to score games')
+parser.add_argument('num_nodes', metavar='num_nodes', type=int,
+                   help='number of actual machines to launch')
+parser.add_argument('-f', dest='force', action='store_true')
+parser.set_defaults(force=False)
+args = parser.parse_args()
+
+CONTAINERS_PER_NODE = 1
+MAX_CONTAINERS_PER_SERVICE = 10
+
+num_nodes = args.num_nodes
 
 # waiting for https://github.com/tutumcloud/api-docs/issues/17
 #
@@ -25,7 +34,7 @@ nodecluster = None
 
 nodeclusters = tutum.NodeCluster.list()
 nodeclusters = [nc for nc in nodeclusters if nc.state not in ['Terminating', 'Terminated']]
-if len(nodeclusters) == 0:
+if len(nodeclusters) == 0 or args.force:
     msg("Launching cluster")
     nodecluster = tutum.NodeCluster.create(name="scoreservers", node_type='/api/v1/nodetype/aws/c3.8xlarge/', region='/api/v1/region/aws/us-east-1/', target_num_nodes=num_nodes)
     nodecluster.save()

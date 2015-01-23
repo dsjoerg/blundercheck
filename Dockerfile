@@ -46,7 +46,7 @@ ADD config/boto.cfg /etc/boto.cfg
 
 CMD python /root/src/blundercheck/scoreserver_launcher.py
 
-RUN echo '123456'
+RUN echo '1234567'
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 

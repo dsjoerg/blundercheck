@@ -22,7 +22,10 @@ msg("%s ITEMS IN QUEUE." % q.count())
 ms = []
 msg("READING %i ITEMS." % int(args.num_items))
 for ix in range(0, int(args.num_items)):
-    ms.append(q.read())
+    nextmsg = q.read()
+    if nextmsg is None:
+        break
+    ms.append(nextmsg)
 
 msg("COMPOSING BIG BLOB.")
 blob = "["

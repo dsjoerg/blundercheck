@@ -196,5 +196,6 @@ def do_it_backwards(engine, game=None, debug=False):
 
 #    print outstruct['position_scores']
     outstruct['runtime'] = time.time() - begin_time
+    outstruct['movetime'] = time.time() - begin_time
     print '\n'
     return outstruct

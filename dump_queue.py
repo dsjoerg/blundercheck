@@ -17,10 +17,10 @@ q = conn.get_queue(args.queuename)
 print("%s ITEMS IN QUEUE." % q.count())
 
 if args.showmessages:
-    m = q.read()
+    m = q.read(300)
     while m is not None:
         print("MESSAGE: %s" % m.get_body())
-        m = q.read()
+        m = q.read(300)
 
 q.purge()
 

@@ -7,8 +7,8 @@ MAX_CONTAINERS_PER_SERVICE = 10
 
 num_nodes = int(sys.argv[1])
 
-tutum.user = "dsjoerg"
-tutum.apikey = sys.argv[2]
+#tutum.user = "dsjoerg"
+#tutum.apikey = sys.argv[2]
 
 # waiting for https://github.com/tutumcloud/api-docs/issues/17
 #

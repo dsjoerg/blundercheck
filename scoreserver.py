@@ -1,21 +1,21 @@
 
+import StringIO, traceback, random, string, zlib, time, json, os
+
 import chess.pgn
 import chess
 import pystockfish
-import os
+
 import boto
 import boto.sqs
 from boto.sqs.message import Message
-import time
-import json
-import StringIO
-import traceback
+from boto.s3.key import Key
 
 from djeval import *
 
 
 
 DEBUG = ('DEBUG' in os.environ)
+NUM_ITEMS_PER_KEY = 1000
 
 movetime = None
 if 'MOVETIME' in os.environ:
@@ -32,7 +32,10 @@ if 'THREADS' in os.environ:
 else:
     threads = 1
 
-
+if 'RESULTSFOLDER' in os.environ:
+    resultsfolder = os.environ['RESULTSFOLDER']
+else:
+    resultsfolder = time.strftime('%Y%m%d')
 
 
 conn = boto.sqs.connect_to_region("us-east-1")
@@ -59,35 +62,86 @@ inq = conn.get_queue(in_queuename)
 outq = conn.get_queue(out_queuename)
 
 s3conn = boto.connect_s3()
-bucket = s3conn.get_bucket('bc-games')
+gamesbucket = s3conn.get_bucket('bc-games')
 
-while True:
+# read outputs from outqueue in batches and stuff them into S3
+def consolidate_outputs():
+
+    if outq.count() == 0:
+        msg("No outputs to consolidate. Sleeping 10 seconds.")
+        time.sleep(10)
+        return
+
+    msg("There are %i outputs in queue. Consolidating." % outq.count())
+
+    # read a bunch of output from the outqueue
+    ms = []
+    for ix in range(0, NUM_ITEMS_PER_KEY):
+        nextmsg = outq.read()
+        if nextmsg is None:
+            break
+        ms.append(nextmsg)
+
+    # make a giant blobstring out of them
+    blob = "["
+    for m in ms:
+        blob = blob + m.get_body() + ", "
+    blob = blob + "]"
+
+    # create an S3 key to write them into 
+    random.seed()
+    fifty = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(50))
+    keyname = '%s/%s.json.zl' % (resultsfolder, fifty)
+    resultsbucket = s3conn.get_bucket('bc-runoutputs')
+    k = Key(resultsbucket)
+    k.key = keyname
+
+    # DO IT
+    k.set_contents_from_string(zlib.compress(blob))
+
+    # clear the messages from the outqueue
+    for m in ms:
+        m.delete()
+
+    msg("Consolidated. Hooray!")
+
+
+def do_game(game_number):
+    key_name = "kaggle/%s.pgn" % game_number
+    msg("Retrieving %s" % key_name)
+    k = gamesbucket.get_key(key_name)
+    game_pgn_string = k.get_contents_as_string()
+    game_fd = StringIO.StringIO(game_pgn_string)
+    game = chess.pgn.read_game(game_fd)
+
+    result_struct = do_it_backwards(engine=engine, game=game, debug=DEBUG)
+
+    result_struct['movetime'] = movetime
+    result_struct['hash'] = hash
+    result_msg = Message()
+    result_msg.set_body(json.dumps(result_struct))
+    outq.write(result_msg)
+
+
+def do_work():
+    game_number = 0
     try:
-        game_pgn_string = "not yet set"
         msg("There are %d games in queue." % inq.count())
-        game_msg = queue_read(inq)
-        if game_msg is None:
-            continue
-        game_number = game_msg.get_body()
-        key_name = "kaggle/%s.pgn" % game_number
-        msg("Retrieving %s" % key_name)
-        k = bucket.get_key(key_name)
-        game_pgn_string = k.get_contents_as_string()
-        game_fd = StringIO.StringIO(game_pgn_string)
-        game = chess.pgn.read_game(game_fd)
-        result_struct = do_it_backwards(engine=engine, game=game, debug=DEBUG)
-        result_struct['movetime'] = movetime
-        result_struct['hash'] = hash
-        result_msg = Message()
-
-        result_msg.set_body(json.dumps(result_struct))
-        outq.write(result_msg)
-        inq.delete_message(game_msg)
+        if inq.count() == 0:
+            consolidate_outputs()
+        else:
+            game_msg = queue_read(inq)
+            if game_msg is not None:
+                game_number = game_msg.get_body()
+                do_game(game_number)
+                inq.delete_message(game_msg)
     except:
         msg("Unexpected error: %s" % sys.exc_info()[0])
         traceback.print_tb(sys.exc_info()[2])
-        msg("Game string: %s" % game_pgn_string)
+        msg("Game number: %i" % game_number)
         time.sleep(10)
-        
+
+while True:
+    do_work()
 
 msg("Broke out of loop somehow!")

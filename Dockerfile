@@ -53,3 +53,16 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # DEVELOPMENT
 #ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+
+# PYPY.  why not run faster?
+# 20150130 BECAUSE ITS A PAIN IN THE ASS WORKING WITH PYPY!
+#
+# AFTER NEARLY AN HOUR DEALING WITH A SERIES OF "MINOR ISSUES"...
+#
+# IN PARTICULAR, THEY RECOMMEND USING VIRTUALENV AND YOU HAVE TO RE-INSTALL MODULES,
+# AND VIRTUALENV IS A ROYAL PAIN IN THE ASS AND I CANT TELL HOW MUCH FURTHER DOWN THIS
+# RATHOLE I HAVE TO GO BEFORE SOMETHING WORKS.
+#
+#RUN add-apt-repository -y ppa:pypy/ppa && apt-get update && apt-get -y install pypy
+#curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | pypy
+#pypy pip install python-chess

@@ -56,6 +56,10 @@ if 'MOVETIME' in os.environ:
     movetime = int(os.environ['MOVETIME'])
     depth = None
 
+movenum=None
+if 'MOVENUM' in os.environ:
+    movenum = int(os.environ['MOVENUM'])
+
 msg("Hi! Analyzing %s. Depth=%s, Movetime=%s" % (fname, str(depth), str(movetime)))
 
 engine = pystockfish.Engine(depth=depth, param={'Threads':threads, 'Hash':hash}, movetime=movetime)
@@ -64,9 +68,10 @@ game_fd = open(fname, 'r')
 game = chess.pgn.read_game(game_fd)
 
 if backwards:
-    result_struct = do_it_backwards(engine=engine, game=game, depth=depth, debug=DEBUG)
+    result_struct = do_it_backwards(engine=engine, game=game, debug=DEBUG, movenum=movenum)
 else:
     result_struct = do_it(engine=engine, game=game, depth=depth, debug=DEBUG)
 
-describe_position_scores(result_struct['position_scores'])
-describe_position_scores(result_struct['massaged_position_scores'])
+print result_struct
+#describe_position_scores(result_struct['position_scores'])
+#describe_position_scores(result_struct['massaged_position_scores'])

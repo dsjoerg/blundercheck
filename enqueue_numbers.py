@@ -4,10 +4,15 @@ import boto.sqs
 from boto.sqs.message import Message
 import sys
 
-
 conn = boto.sqs.connect_to_region("us-east-1")
 q = conn.get_queue('numbers')
 m = boto.sqs.message.Message()
+
+if sys.argv[1]:
+    game_num = int(sys.argv[1])
+    m.set_body(str(game_num))
+    q.write(m)
+    exit()
 
 batch = []
 for game_num in range(1,50001):

@@ -38,15 +38,15 @@ RUN cd /usr/src && git clone git://github.com/official-stockfish/Stockfish.git &
 # python-chess
 RUN pip install python-chess
 
-# pystockfish
-RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
-
 # boto config with our AWS keys
 ADD config/boto.cfg /etc/boto.cfg
 
 CMD python /root/src/blundercheck/scoreserver_launcher.py
 
-RUN echo '1234567'
+RUN echo '123456789'
+
+# pystockfish
+RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 

@@ -57,24 +57,25 @@ ADD submit_build_times.txt /root/src
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
+# CONFIGURE INPUT
 ENV CLUSTER_INPUT_FILE 20150203.json.zl
 
+# COPY DATA IN FROM THE OUTSIDE WORLD
 ADD $CLUSTER_INPUT_FILE /data/
 ADD data.pgn /data/
 
-#RUN echo 'hello world'
-#RUN 'wc -l /data/20150203.json.zl'
+ENV PATH /home/beaker/src/src/blundercheck/data_prep:$PATH
 
+RUN extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
+
+## PUT THIS BLOCK JUST BEFORE THE STEP YOU'RE WORKING ON
 ADD codechanged.txt /root/src
-# WILL THIS FAIL?
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+##
 
-WORKDIR /home/beaker/src/src/blundercheck
-
-RUN data_prep/extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
-RUN data_prep/make_eheaders.py < /data/data.pgn > /data/eheaders.p
-RUN data_prep/make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
-RUN data_prep/make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+RUN make_eheaders.py < /data/data.pgn > /data/eheaders.p
+RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
+RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 # DEVELOPMENT
 #ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck

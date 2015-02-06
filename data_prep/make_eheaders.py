@@ -15,7 +15,8 @@ def compute_maps():
   result = {}
   checkmate = {}
 
-  for offset, headers in chess.pgn.scan_headers(sys.stdin):
+  gamefile = open(sys.argv[1], 'r')
+  for offset, headers in chess.pgn.scan_headers(gamefile):
     if 'Event' not in headers:
       continue
     event_num = int(headers['Event'])

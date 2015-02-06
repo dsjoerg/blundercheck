@@ -35,7 +35,8 @@ features_to_use = [col for col in moves_df.columns if (col not in features_to_ex
 #print "Using features %s" % str(features_to_use)
 
 train = moves_df[moves_df['elo'].notnull()]
-X = train[0:NUM_TO_USE][features_to_use].values
+#X = train[0:NUM_TO_USE][features_to_use].values
+X = train[0:NUM_TO_USE][features_to_use]
 y = train[0:NUM_TO_USE]['elo']
 
 if False:

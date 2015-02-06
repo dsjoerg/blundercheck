@@ -96,7 +96,7 @@ RUN apt-get -y install python-pydot
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '1234'
+RUN echo '12345'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 

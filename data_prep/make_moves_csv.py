@@ -42,7 +42,7 @@ big_fd = open(sys.argv[1], 'r')
 big_str = big_fd.read()
 big_json = json.loads(zlib.decompress(big_str))
 
-eheaders_filename = '/Users/david/Dropbox/Programming/chess_kaggle_notebooks/kaggle_data/enhanced_headers.p'
+eheaders_filename = '/data/eheaders.p'
 eheaders_file = open(eheaders_filename, 'r')
 eheaders = pickle.load(eheaders_file)
 elos = eheaders['elos']

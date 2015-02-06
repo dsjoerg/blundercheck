@@ -49,8 +49,6 @@ ADD config/boto.cfg /etc/boto.cfg
 
 CMD python
 
-VOLUME /data
-
 # DO NOT REMOVE THIS STEP
 # IT ENSURES THAT WHEN WE MAKE A SUBMISSION CANDIDATE, WE'VE BUILT IT FROM SCRATCH
 ADD submit_build_times.txt /root/src
@@ -59,16 +57,26 @@ ADD submit_build_times.txt /root/src
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
+ENV CLUSTER_INPUT_FILE 20150203.json.zl
 
-ADD 20150203.json.zl /data/
-
-
-# DEVELOPMENT
-#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+ADD $CLUSTER_INPUT_FILE /data/
 
 WORKDIR /home/beaker/src/src/blundercheck
 
 #RUN echo 'hello world'
 #RUN 'wc -l /data/20150203.json.zl'
 
-RUN /home/beaker/src/src/blundercheck/data_prep/extract_movescores.py /data/*.json.zl > /data/movescores.csv
+RUN data_prep/extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
+
+# NEXT RERUN: MOVE THIS UP
+ADD data.pgn /data/
+# AND KILL THIS
+RUN pip install -U git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
+RUN data_prep/make_eheaders.py < /data/data.pgn > /data/eheaders.p
+RUN data_prep/make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
+RUN data_prep/make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+
+# DEVELOPMENT
+#ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
+

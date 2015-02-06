@@ -68,15 +68,29 @@ ENV PATH /home/beaker/src/src/blundercheck/data_prep:$PATH
 
 RUN extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
 
-## PUT THIS BLOCK JUST BEFORE THE STEP YOU'RE WORKING ON
+## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
+## DONT REMOVE IT OR STEPS WILL BE RERUN !
 ADD codechanged.txt /root/src
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
-RUN make_eheaders.py < /data/data.pgn > /data/eheaders.p
+RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
-# DEVELOPMENT
+
+## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
+## DONT REMOVE IT OR STEPS WILL BE RERUN !
+ADD codechanged.txt /root/src
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+##
+
+# prepare movedata for modeling
+RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.hdf
+
+# then play with the movemodel and make N versions for later cross-validation
+
+
+# DEVELOPMENT <-- is this useful?!
 #ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck
 

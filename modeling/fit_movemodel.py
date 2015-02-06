@@ -9,7 +9,7 @@ from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 
-NUM_TO_USE = 2000
+NUM_TO_USE = 200000
 n_estimators = 200
 cv_groups = 3
 

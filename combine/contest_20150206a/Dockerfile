@@ -97,20 +97,12 @@ RUN apt-get -y install python-pygraphviz
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '123'
+RUN echo '1234'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
 # then play with the movemodel and make N versions for later cross-validation
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
-
-
-## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
-## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '1'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-##
-
 RUN show_movemodel.py /data/movemodel.p
 
 # DEVELOPMENT <-- is this useful?!

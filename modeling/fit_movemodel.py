@@ -22,7 +22,7 @@ X = train[0:NUM_TO_USE][features_to_use].values
 y = train[0:NUM_TO_USE]['elo']
 
 if False:
-    some_filename = \"foobaby\"
+    some_filename = "foobaby"
     joblib.dump(X, some_filename)
     X = joblib.load(some_filename, mmap_mode='r+')
 

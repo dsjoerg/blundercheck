@@ -2,7 +2,6 @@
 
 import sys, time
 import numpy as np
-import pygraphviz as pgv
 from StringIO import StringIO
 from pandas import read_pickle
 from pandas import DataFrame
@@ -10,7 +9,6 @@ from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
-from sklearn import tree
 
 NUM_TO_USE = 2000
 n_estimators = 200

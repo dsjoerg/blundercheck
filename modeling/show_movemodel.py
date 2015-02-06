@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-import pydot
+import pygraphviz as pgv
 from StringIO import StringIO
 from sklearn.externals import joblib
 from sklearn import tree

@@ -93,7 +93,7 @@ ENV PATH /home/beaker/src/src/blundercheck/modeling:$PATH
 
 RUN apt-get -y update
 #RUN apt-get -y install python-pydot
-RUN apt-get install python-pygraphviz
+RUN apt-get -y install python-pygraphviz
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !

@@ -90,7 +90,7 @@ RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
 #TODO move this up
 ENV PATH /home/beaker/src/src/blundercheck/modeling:$PATH
-RUN pip install pydot
+RUN pip install pydot2
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !

@@ -52,3 +52,5 @@ for index, cf in enumerate(categorical_features):
   moves_df = moves_df.join(dummies)
 
 moves_df.to_pickle(sys.argv[1])
+#TODO pickle not just the df but the list of categorical features
+#then read them in fit_movemodel

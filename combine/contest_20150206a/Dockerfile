@@ -81,7 +81,7 @@ RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '1234'
+RUN echo '12345'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 

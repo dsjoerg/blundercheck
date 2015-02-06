@@ -62,19 +62,16 @@ ENV CLUSTER_INPUT_FILE 20150203.json.zl
 ADD $CLUSTER_INPUT_FILE /data/
 ADD data.pgn /data/
 
-WORKDIR /home/beaker/src/src/blundercheck
-
 #RUN echo 'hello world'
 #RUN 'wc -l /data/20150203.json.zl'
 
-RUN data_prep/extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
-
-# NEXT RERUN: MOVE THIS UP
-# AND KILL THIS
-
+ADD codechanged.txt /root/src
 # WILL THIS FAIL?
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
+WORKDIR /home/beaker/src/src/blundercheck
+
+RUN data_prep/extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
 RUN data_prep/make_eheaders.py < /data/data.pgn > /data/eheaders.p
 RUN data_prep/make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 RUN data_prep/make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv

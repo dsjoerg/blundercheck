@@ -4,6 +4,11 @@ import chess.pgn
 import cPickle as pickle
 import sys
 
+result_side = {}
+result_side['1/2-1/2'] = 0
+result_side['1-0'] = 1
+result_side['0-1'] = -1
+
 def compute_maps():
   # map from player-game to ELO
   elos = {}

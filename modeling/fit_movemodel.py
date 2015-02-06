@@ -41,11 +41,6 @@ train = moves_df[moves_df['elo'].notnull()]
 X = train[0:NUM_TO_USE][features_to_use]
 y = train[0:NUM_TO_USE]['elo']
 
-if False:
-    some_filename = "foobaby"
-    joblib.dump(X, some_filename)
-    X = joblib.load(some_filename, mmap_mode='r+')
-
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_leaf=100, min_samples_split=500, verbose=1)
 
 begin_time = time.time()
@@ -58,18 +53,8 @@ begin_time = time.time()
 rfr.fit(X, y)
 print "Model fit took %f seconds." % (time.time() - begin_time)
 
-print "Feature importances:"
-print DataFrame([rfr.feature_importances_, features_to_use]).transpose().sort([0], ascending=False)
+joblib.dump([rfr, features_to_use], sys.argv[2])
 
-joblib.dump(rfr, sys.argv[2])
-
-dot_data = StringIO()
-tree.export_graphviz(rfr.estimators_[0], out_file=dot_data, feature_names=features_to_use)
-print dot_data.getvalue()
-
-B=pgv.AGraph(dot_data.getvalue())
-B.layout('dot')
-B.draw('/data/rfr.png') # draw png
 
 if False:
     rfr.fit(X, y)

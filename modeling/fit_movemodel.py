@@ -60,12 +60,13 @@ print DataFrame([rfr.feature_importances_, features_to_use]).transpose().sort([0
 
 joblib.dump(rfr, sys.argv[2])
 
-tree.export_graphviz(rfr, out_file='/data/rfr.dot')
+if False:
+    tree.export_graphviz(rfr, out_file='/data/rfr.dot')
 
-dot_data = StringIO()
-tree.export_graphviz(dtreg, out_file=dot_data)
-print dot_data.getvalue()
-pydot.graph_from_dot_data(dot_data.getvalue()).write_pdf('/data/rfr.pdf') 
+    dot_data = StringIO()
+    tree.export_graphviz(dtreg, out_file=dot_data)
+    print dot_data.getvalue()
+    pydot.graph_from_dot_data(dot_data.getvalue()).write_pdf('/data/rfr.pdf') 
 
 
 if False:

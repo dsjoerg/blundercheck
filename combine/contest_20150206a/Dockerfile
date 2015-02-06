@@ -94,11 +94,11 @@ RUN pip install pydot2
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '12'
+RUN echo '123'
 ##
 
 # then play with the movemodel and make N versions for later cross-validation
-#RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
+RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 
 # DEVELOPMENT <-- is this useful?!
 

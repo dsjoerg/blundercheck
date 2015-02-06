@@ -101,6 +101,9 @@ RUN echo '1234'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
+#TODO move this up
+RUN pip install -e git+git@github.com:dsjoerg/scikit-learn#egg=scikit-learn
+
 # then play with the movemodel and make N versions for later cross-validation
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p

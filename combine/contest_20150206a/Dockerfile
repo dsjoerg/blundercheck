@@ -85,6 +85,9 @@ RUN echo '1234'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
+# TODO move this up
+RUN pip install -U pytables
+
 # prepare movedata for modeling
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.hdf
 

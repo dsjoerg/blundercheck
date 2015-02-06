@@ -85,16 +85,20 @@ RUN echo '12345'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
-# TODO move this up
-# python-tables seemed like a nice idea until the MemoryError
-#RUN apt-get update
-#RUN apt-get -y install python-tables
-
 # prepare movedata for modeling
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
-# then play with the movemodel and make N versions for later cross-validation
+#TODO move this up
+ENV PATH /home/beaker/src/src/blundercheck/modeling:$PATH
 
+## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
+## DONT REMOVE IT OR STEPS WILL BE RERUN !
+RUN echo '12345'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+##
+
+# then play with the movemodel and make N versions for later cross-validation
+RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 
 # DEVELOPMENT <-- is this useful?!
 #ENV PYTHONPATH /root/src/pystockfish:/root/src/blundercheck

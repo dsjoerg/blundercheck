@@ -3,6 +3,7 @@
 import sys
 import pygraphviz as pgv
 from StringIO import StringIO
+from pandas import DataFrame
 from sklearn.externals import joblib
 from sklearn import tree
 

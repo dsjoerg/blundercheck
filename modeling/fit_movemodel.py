@@ -4,7 +4,6 @@ import sys, time
 import numpy as np
 from StringIO import StringIO
 from pandas import read_pickle
-from pandas import DataFrame
 from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
@@ -68,8 +67,6 @@ if False:
                                            'min': lambda x: np.min(x),
                                            'max': lambda x: np.max(x),
                                        })
-
-    DataFrame([rfr.feature_importances_, features_to_use])
 
     train['rfr_error'] = (train['rfr_prediction'] - train['elo']).abs()
     train[train['rfr_error'] > 600][['gamenum', 'side', 'halfply', 'rfr_prediction', 'elo']].head(20)

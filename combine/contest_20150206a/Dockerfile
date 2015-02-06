@@ -94,7 +94,8 @@ RUN pip install pydot2
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '123'
+RUN echo '1234'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
 # then play with the movemodel and make N versions for later cross-validation

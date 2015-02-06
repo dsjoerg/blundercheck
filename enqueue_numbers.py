@@ -8,7 +8,7 @@ conn = boto.sqs.connect_to_region("us-east-1")
 q = conn.get_queue('numbers')
 m = boto.sqs.message.Message()
 
-if sys.argv[1]:
+if len(sys.argv) > 1 and sys.argv[1]:
     game_num = int(sys.argv[1])
     m.set_body(str(game_num))
     q.write(m)

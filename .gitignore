@@ -9,3 +9,6 @@ journal.txt
 .*
 \#*
 .elasticbeanstalk/
+
+cluster_outputs
+*.zl

@@ -56,10 +56,10 @@ if nodecluster.state == 'Deploying':
 num_containers = num_nodes * CONTAINERS_PER_NODE
 num_services = num_containers / MAX_CONTAINERS_PER_SERVICE
 
+if False:
+    services = []
+    for service_num in range(0, num_services):
+        msg("Launching service %d" % service_num)
+        subprocess.Popen(["./launch_ten_scorecontainers.py", str(service_num)])
 
-services = []
-for service_num in range(0, num_services):
-    msg("Launching service %d" % service_num)
-    subprocess.Popen(["./launch_ten_scorecontainers.py", str(service_num)])
-
-print "Containers are up, services are launching.  Don't forget to kill someday."
+print "Containers are up.  Now launch services.  Don't forget to kill someday."

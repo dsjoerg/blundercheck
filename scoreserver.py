@@ -82,6 +82,11 @@ def consolidate_outputs():
             break
         ms.append(nextmsg)
 
+    if len(ms) == 0:
+        msg("No messages read. Sleeping 10 seconds.")
+        time.sleep(10)
+        return
+
     # make a giant blobstring out of them
     blob = "["
     for m in ms:
@@ -138,7 +143,7 @@ def do_work():
     except:
         msg("Unexpected error: %s" % sys.exc_info()[0])
         traceback.print_tb(sys.exc_info()[2])
-        msg("Game number: %i" % game_number)
+        msg("Game number: %s" % game_number)
         time.sleep(10)
 
 while True:

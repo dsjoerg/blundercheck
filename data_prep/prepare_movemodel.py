@@ -51,4 +51,4 @@ for index, cf in enumerate(categorical_features):
   dummy_features.extend(dummies.columns.values)
   moves_df = moves_df.join(dummies)
 
-moves_df.to_hdf(sys.argv[1], 'table')
+moves_df.to_pickle(sys.argv[1])

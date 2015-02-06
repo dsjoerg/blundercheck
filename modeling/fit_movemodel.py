@@ -67,7 +67,7 @@ dot_data = StringIO()
 tree.export_graphviz(rfr.estimators_[0], out_file=dot_data, feature_names=features_to_use)
 print dot_data.getvalue()
 
-B=pgv.AGraph(dot_data)
+B=pgv.AGraph(dot_data.getvalue())
 B.layout('dot')
 B.draw('/data/rfr.png') # draw png
 

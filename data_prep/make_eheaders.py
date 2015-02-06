@@ -2,6 +2,7 @@
 
 import chess.pgn
 import cPickle as pickle
+import sys
 
 def compute_maps():
   # map from player-game to ELO

@@ -60,6 +60,7 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ENV CLUSTER_INPUT_FILE 20150203.json.zl
 
 ADD $CLUSTER_INPUT_FILE /data/
+ADD data.pgn /data/
 
 WORKDIR /home/beaker/src/src/blundercheck
 
@@ -69,10 +70,10 @@ WORKDIR /home/beaker/src/src/blundercheck
 RUN data_prep/extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
 
 # NEXT RERUN: MOVE THIS UP
-ADD data.pgn /data/
 # AND KILL THIS
+
+# WILL THIS FAIL?
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-#-I --no-deps
 
 RUN data_prep/make_eheaders.py < /data/data.pgn > /data/eheaders.p
 RUN data_prep/make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv

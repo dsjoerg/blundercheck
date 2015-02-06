@@ -2,6 +2,8 @@
 
 import sys, time
 import numpy as np
+import pygraphviz as pgv
+from StringIO import StringIO
 from pandas import read_pickle
 from pandas import DataFrame
 from sklearn.externals import joblib
@@ -48,7 +50,7 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_le
 
 begin_time = time.time()
 cvs = cross_val_score(rfr, X, y, cv=cv_groups, n_jobs=1, scoring='mean_absolute_error')
-print "Cross validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(X), n_estimators, cv_groups)
+print "Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(X), n_estimators, cv_groups)
 print "Results: %s" % str(cvs)
 
 print "Fitting model"
@@ -61,14 +63,13 @@ print DataFrame([rfr.feature_importances_, features_to_use]).transpose().sort([0
 
 joblib.dump(rfr, sys.argv[2])
 
-if False:
-    tree.export_graphviz(rfr, out_file='/data/rfr.dot')
+dot_data = StringIO()
+tree.export_graphviz(rfr.estimators_[0], out_file=dot_data, feature_names=features_to_use)
+print dot_data.getvalue()
 
-    dot_data = StringIO()
-    tree.export_graphviz(dtreg, out_file=dot_data)
-    print dot_data.getvalue()
-    pydot.graph_from_dot_data(dot_data.getvalue()).write_pdf('/data/rfr.pdf') 
-
+B=pgv.AGraph(dot_data)
+B.layout('dot')
+B.draw('/data/rfr.png') # draw png
 
 if False:
     rfr.fit(X, y)

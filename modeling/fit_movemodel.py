@@ -45,7 +45,7 @@ if False:
                                            'max': lambda x: np.max(x),
                                        }
 
-    DataFrame([rfr.feature_importances_, features_to_use]
+    DataFrame([rfr.feature_importances_, features_to_use])
 
     train['rfr_error'] = (train['rfr_prediction'] - train['elo']).abs()
     train[train['rfr_error'] > 600][['gamenum', 'side', 'halfply', 'rfr_prediction', 'elo']].head(20)

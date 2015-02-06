@@ -86,9 +86,11 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
 # TODO move this up
-RUN pip install -U numexpr
-RUN pip install -U cython
-RUN apt-get install libhdf5-serial-1.8.4
+#RUN pip install -U numexpr
+#RUN pip install -U cython
+RUN apt-get update
+RUN apt-get install python-tables
+#RUN apt-get -y install libhdf5-dev
 #RUN pip install -U git+https://github.com/PyTables/PyTables.git@v.3.1.1#egg=tables
 
 # prepare movedata for modeling

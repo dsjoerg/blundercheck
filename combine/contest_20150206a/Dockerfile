@@ -79,9 +79,9 @@ RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 # prepare movedata for modeling
-RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
+#RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
 # then play with the movemodel and make N versions for later cross-validation
-RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
-RUN show_movemodel.py /data/movemodel.p
+#RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
+#RUN show_movemodel.py /data/movemodel.p
 

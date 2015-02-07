@@ -54,8 +54,8 @@ print "Model fit took %f seconds." % (time.time() - begin_time)
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
 print "Predicting..."
-y_pred, y_std = rfr.predict(X)
-print DataFrame([y_pred, y_std]).head()
+y_pred = rfr.predict(X)
+print DataFrame([y_pred]).head()
 
 if False:
     rfr.fit(X, y)

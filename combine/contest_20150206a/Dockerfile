@@ -102,7 +102,7 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
 #TODO move this up
-RUN echo '1'
+RUN echo '12'
 #RUN pip install -e git+git@github.com:scikit-learn/scikit-learn@0.15.X#egg=scikit-learn
 RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-learn
 

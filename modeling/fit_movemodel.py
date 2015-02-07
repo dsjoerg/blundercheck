@@ -4,12 +4,13 @@ import sys, time
 import numpy as np
 from StringIO import StringIO
 from pandas import read_pickle
+from pandas import DataFrame
 from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 
-NUM_TO_USE = 200000
+NUM_TO_USE = 2000
 n_estimators = 200
 cv_groups = 3
 
@@ -52,6 +53,9 @@ print "Model fit took %f seconds." % (time.time() - begin_time)
 
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
+print "Predicting..."
+y_pred, y_std = rfr.predict(X)
+print DataFrame([y_pred, y_std]).head()
 
 if False:
     rfr.fit(X, y)

@@ -103,7 +103,7 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 #TODO move this up
 # and install EMACS when you do
-RUN echo '124'
+RUN echo '125'
 #RUN pip install -e git+git@github.com:scikit-learn/scikit-learn@0.15.X#egg=scikit-learn
 RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-learn
 

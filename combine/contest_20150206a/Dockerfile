@@ -44,6 +44,10 @@ RUN pip install -U scikit-learn
 RUN pip install -U statsmodels
 RUN pip install -U patsy
 
+RUN apt-get -y update
+RUN apt-get -y install python-pygraphviz
+RUN apt-get -y install emacs
+
 # boto config with our AWS keys
 ADD config/boto.cfg /etc/boto.cfg
 
@@ -53,7 +57,8 @@ CMD python
 # IT ENSURES THAT WHEN WE MAKE A SUBMISSION CANDIDATE, WE'VE BUILT IT FROM SCRATCH
 ADD submit_build_times.txt /root/src
 
-# pystockfish
+# software we've modified
+RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-learn
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
@@ -65,51 +70,18 @@ ADD $CLUSTER_INPUT_FILE /data/
 ADD data.pgn /data/
 
 ENV PATH /home/beaker/src/src/blundercheck/data_prep:$PATH
+ENV PATH /home/beaker/src/src/blundercheck/modeling:$PATH
 
 RUN extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
-
-## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
-## DONT REMOVE IT OR STEPS WILL BE RERUN !
-ADD codechanged.txt /root/src
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-##
 
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
-
-## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
-## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '12345'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-##
-
 # prepare movedata for modeling
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
-#TODO move this up
-ENV PATH /home/beaker/src/src/blundercheck/modeling:$PATH
-
-RUN apt-get -y update
-#RUN apt-get -y install python-pydot
-RUN apt-get -y install python-pygraphviz
-
-## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
-## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '1'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-##
-
-#TODO move this up
-# and install EMACS when you do
-RUN echo '125'
-#RUN pip install -e git+git@github.com:scikit-learn/scikit-learn@0.15.X#egg=scikit-learn
-RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-learn
-
 # then play with the movemodel and make N versions for later cross-validation
-#RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
-#RUN show_movemodel.py /data/movemodel.p
-
-# DEVELOPMENT <-- is this useful?!
+RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
+RUN show_movemodel.py /data/movemodel.p
 

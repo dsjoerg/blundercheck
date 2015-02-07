@@ -10,7 +10,7 @@ from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 
-NUM_TO_USE = 2000
+NUM_TO_USE = 100000
 n_estimators = 200
 cv_groups = 3
 
@@ -39,7 +39,7 @@ train = moves_df[moves_df['elo'].notnull()]
 X = train[0:NUM_TO_USE][features_to_use]
 y = train[0:NUM_TO_USE]['elo']
 
-rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_leaf=100, min_samples_split=500, verbose=1)
+rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_leaf=300, min_samples_split=1000, verbose=1)
 
 begin_time = time.time()
 cvs = cross_val_score(rfr, X, y, cv=cv_groups, n_jobs=1, scoring='mean_absolute_error')
@@ -54,8 +54,15 @@ print "Model fit took %f seconds." % (time.time() - begin_time)
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
 print "Predicting..."
-y_pred = rfr.predict(X)
-print DataFrame([y_pred]).head()
+begin_time = time.time()
+y_pred, y_std = rfr.predict(X, with_std=True)
+trainset = train[0:NUM_TO_USE]
+summary_df = DataFrame([y_pred, y_std, trainset['gamenum'], trainset['halfply'], trainset['elo']])
+summary_df = summary_df.transpose()
+summary_df.columns = ['y_pred', 'y_std', 'gamenum', 'halfply', 'elo']
+for asc in [True, False]:
+    print summary_df.sort(['y_std'], ascending=asc).head(10)
+print "Predicting took %f seconds." % (time.time() - begin_time)
 
 if False:
     rfr.fit(X, y)

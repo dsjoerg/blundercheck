@@ -102,8 +102,9 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
 #TODO move this up
-RUN pip install -e git+git@github.com:scikit-learn/scikit-learn@0.15.X#egg=scikit-learn
-#RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-learn
+RUN echo '1'
+#RUN pip install -e git+git@github.com:scikit-learn/scikit-learn@0.15.X#egg=scikit-learn
+RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-learn
 
 # then play with the movemodel and make N versions for later cross-validation
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p

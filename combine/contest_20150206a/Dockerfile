@@ -97,11 +97,12 @@ RUN apt-get -y install python-pygraphviz
 
 ## PUT THIS BLOCK JUST BEFORE ANY STEP YOU'RE WORKING ON
 ## DONT REMOVE IT OR STEPS WILL BE RERUN !
-RUN echo '123456'
+RUN echo '1'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ##
 
 #TODO move this up
+RUN pip install -e git+git@github.com:scikit-learn/scikit-learn@0.15.X#egg=scikit-learn
 #RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-learn
 
 # then play with the movemodel and make N versions for later cross-validation

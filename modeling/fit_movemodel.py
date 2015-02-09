@@ -15,6 +15,7 @@ CROSS_VALIDATION_N = 2000
 FITTING_N = 10000
 n_estimators = 10
 cv_groups = 3
+n_jobs = -1
 
 def sample_df(df, n_to_sample):
     row_indexes = np.random.choice(df.index.values, n_to_sample, replace=False)
@@ -46,12 +47,12 @@ crossval_df = sample_df(training_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]
 crossval_y = crossval_df['elo']
 
-rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_leaf=300, min_samples_split=1000, verbose=1)
+rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=300, min_samples_split=1000, verbose=1)
 
 msg("Starting cross validation")
 begin_time = time.time()
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring='mean_absolute_error')
-msg("Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(crossval_X), n_estimators, cv_groups))
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+msg("Crosss validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 fitting_df = sample_df(training_df, FITTING_N)

@@ -20,7 +20,9 @@ def sample_df(df, n_to_sample):
     row_indexes = np.random.choice(df.index.values, n_to_sample, replace=False)
     return df.ix[row_indexes]
 
+msg("Hi, reading moves.")
 moves_df = read_pickle(sys.argv[1])
+msg("Done")
 
 features_to_exclude = [
 'elo',
@@ -38,10 +40,8 @@ categorical_features = [
 ]
 
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
-#print "Using features %s" % str(features_to_use)
 
 training_df = moves_df[moves_df['elo'].notnull()]
-
 crossval_df = sample_df(training_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]
 crossval_y = crossval_df['elo']
@@ -55,17 +55,17 @@ msg("Crosss validation took %f seconds with %i records, %i estimators and %i CV 
 msg("Results: %s" % str(cvs))
 
 fitting_df = sample_df(training_df, FITTING_N)
-fitting_X = crossval_df[features_to_use]
-fitting_y = crossval_df['elo']
+fitting_X = fitting_df[features_to_use]
+fitting_y = fitting_df['elo']
 
-print "Fitting model"
+msg("Fitting model")
 begin_time = time.time()
 rfr.fit(fitting_X, fitting_y)
-print "Model fit took %f seconds." % (time.time() - begin_time)
+msg("Model fit took %f seconds." % (time.time() - begin_time))
 
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
-print "Predicting..."
+msg("Predicting...")
 begin_time = time.time()
 training_features = training_df[features_to_use]
 y_pred, y_std = rfr.predict(training_features, with_std=True)
@@ -74,7 +74,7 @@ summary_df = summary_df.transpose()
 summary_df.columns = ['y_pred', 'y_std', 'gamenum', 'halfply', 'elo']
 for asc in [True, False]:
     print summary_df.sort(['y_std'], ascending=asc).head(10)
-print "Predicting took %f seconds." % (time.time() - begin_time)
+msg("Predicting took %f seconds." % (time.time() - begin_time))
 
 if False:
     rfr.fit(X, y)

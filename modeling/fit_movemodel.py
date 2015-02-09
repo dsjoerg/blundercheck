@@ -9,9 +9,10 @@ from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
+from djeval import *
 
-CROSS_VALIDATION_N = 20000
-FITTING_N = 100000
+CROSS_VALIDATION_N = 200
+FITTING_N = 1000
 n_estimators = 1
 cv_groups = 3
 
@@ -47,10 +48,11 @@ crossval_y = crossval_df['elo']
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_leaf=300, min_samples_split=1000, verbose=1)
 
+msg("Starting cross validation")
 begin_time = time.time()
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=-1, scoring='mean_absolute_error')
-print "Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(crossval_X), n_estimators, cv_groups)
-print "Results: %s" % str(cvs)
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring='mean_absolute_error')
+msg("Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(crossval_X), n_estimators, cv_groups))
+msg("Results: %s" % str(cvs))
 
 fitting_df = sample_df(training_df, FITTING_N)
 fitting_X = crossval_df[features_to_use]

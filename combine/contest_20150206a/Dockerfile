@@ -81,7 +81,7 @@ RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 # prepare movedata for modeling
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
-RUN echo '9876543210123456789'
+RUN echo '98765432101234567890'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # then play with the movemodel and make N versions for later cross-validation

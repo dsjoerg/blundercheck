@@ -76,10 +76,11 @@ joblib.dump([rfr, features_to_use], sys.argv[2])
 
 msg("Preparing training features")
 training_features = training_df[features_to_use]
+X = training_features.values
 msg("Predicting...")
 begin_time = time.time()
-#y_pred, y_std = rfr.predict(training_features, with_std=True)
-y_pred = rfr.predict(training_features)
+#y_pred, y_std = rfr.predict(X, with_std=True)
+y_pred = rfr.predict(X)
 msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(training_df)))
 msg("Summary:")
 summary_df = DataFrame([y_pred, y_std, training_df['gamenum'], training_df['halfply'], training_df['elo']])

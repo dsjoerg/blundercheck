@@ -11,9 +11,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from djeval import *
 
-CROSS_VALIDATION_N = 200
-FITTING_N = 1000
-n_estimators = 1
+CROSS_VALIDATION_N = 2000
+FITTING_N = 10000
+n_estimators = 10
 cv_groups = 3
 
 def sample_df(df, n_to_sample):

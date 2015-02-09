@@ -22,8 +22,9 @@ def sample_df(df, n_to_sample):
     return df.ix[row_indexes]
 
 msg("Hi, reading moves.")
-moves_df = read_pickle(sys.argv[1])
-moves_df['weight'] = 1. / (moves_df.groupby('gamenum')['halfply'].agg({'max':np.max}).clip(1,1000))
+moves_df = read_pickle(sys.argv[1])# 
+# TODO if this fails, try weights of all 1
+moves_df['weight'] = (1. / (moves_df.groupby('gamenum')['halfply'].agg({'max':np.max}).clip(1,1000))).values
 msg("Done")
 
 features_to_exclude = [
@@ -54,8 +55,8 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_sample
 
 msg("Starting cross validation")
 begin_time = time.time()
-#cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
+#cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 

@@ -15,7 +15,7 @@ CROSS_VALIDATION_N = 150000
 FITTING_N = 50000
 n_estimators = 100
 cv_groups = 3
-n_jobs = -1
+n_jobs = 1
 
 def sample_df(df, n_to_sample):
     row_indexes = np.random.choice(df.index.values, n_to_sample, replace=False)

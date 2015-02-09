@@ -23,11 +23,13 @@ def sample_df(df, n_to_sample):
 
 msg("Hi, reading moves.")
 moves_df = read_pickle(sys.argv[1])
+moves_df['weight'] = 1. / moves_df.groupby('gamenum')['halfply'].agg({'max':np.max})
 msg("Done")
 
 features_to_exclude = [
 'elo',
-'gamenum'
+'gamenum',
+'weight'
 ]
 categorical_features = [
     'move_dir',
@@ -46,22 +48,24 @@ training_df = moves_df[moves_df['elo'].notnull()]
 crossval_df = sample_df(training_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]
 crossval_y = crossval_df['elo']
+crossval_weights = crossval_df['weight']
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=300, min_samples_split=1000, verbose=1)
 
 msg("Starting cross validation")
 begin_time = time.time()
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
-msg("Crosss validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
+msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 fitting_df = sample_df(training_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]
 fitting_y = fitting_df['elo']
+fitting_weights = fitting_df['weight']
 
 msg("Fitting model")
 begin_time = time.time()
-rfr.fit(fitting_X, fitting_y)
+rfr.fit(fitting_X, fitting_y, sample_weight=fitting_weights)
 msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), len(fitting_X)))
 
 joblib.dump([rfr, features_to_use], sys.argv[2])

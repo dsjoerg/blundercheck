@@ -56,8 +56,8 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_sample
 
 msg("Starting cross validation")
 begin_time = time.time()
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
-#cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+#cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
@@ -68,7 +68,8 @@ fitting_weights = fitting_df['weight'].values
 
 msg("Fitting model")
 begin_time = time.time()
-rfr.fit(fitting_X, fitting_y, sample_weight=fitting_weights)
+#rfr.fit(fitting_X, fitting_y, sample_weight=fitting_weights)
+rfr.fit(fitting_X, fitting_y)
 msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), len(fitting_X)))
 
 joblib.dump([rfr, features_to_use], sys.argv[2])

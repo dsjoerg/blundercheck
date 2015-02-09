@@ -74,16 +74,19 @@ msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), le
 
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
+msg("Preparing training features")
+training_features = training_df[features_to_use]
 msg("Predicting...")
 begin_time = time.time()
-training_features = training_df[features_to_use]
 y_pred, y_std = rfr.predict(training_features, with_std=True)
+msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(training_df)))
+msg("Summary:")
 summary_df = DataFrame([y_pred, y_std, training_df['gamenum'], training_df['halfply'], training_df['elo']])
 summary_df = summary_df.transpose()
 summary_df.columns = ['y_pred', 'y_std', 'gamenum', 'halfply', 'elo']
 for asc in [True, False]:
     print summary_df.sort(['y_std'], ascending=asc).head(10)
-msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(training_df)))
+msg("Done.")
 
 if False:
     rfr.fit(X, y)

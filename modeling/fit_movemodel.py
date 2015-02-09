@@ -10,9 +10,14 @@ from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 
-NUM_TO_USE = 10000000
-n_estimators = 200
+CROSS_VALIDATION_N = 20000
+FITTING_N = 100000
+n_estimators = 1
 cv_groups = 3
+
+def sample_df(df, n_to_sample):
+    row_indexes = np.random.choice(df.index.values, n_to_sample, replace=False)
+    return df.ix[row_indexes]
 
 moves_df = read_pickle(sys.argv[1])
 
@@ -34,30 +39,35 @@ categorical_features = [
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
 #print "Using features %s" % str(features_to_use)
 
-train = moves_df[moves_df['elo'].notnull()]
-#X = train[0:NUM_TO_USE][features_to_use].values
-X = train[0:NUM_TO_USE][features_to_use]
-y = train[0:NUM_TO_USE]['elo']
+training_df = moves_df[moves_df['elo'].notnull()]
+
+crossval_df = sample_df(training_df, CROSS_VALIDATION_N)
+crossval_X = crossval_df[features_to_use]
+crossval_y = crossval_df['elo']
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_leaf=300, min_samples_split=1000, verbose=1)
 
 begin_time = time.time()
-cvs = cross_val_score(rfr, X, y, cv=cv_groups, n_jobs=1, scoring='mean_absolute_error')
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=-1, scoring='mean_absolute_error')
 print "Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(X), n_estimators, cv_groups)
 print "Results: %s" % str(cvs)
 
+fitting_df = sample_df(train, FITTING_N)
+fitting_X = crossval_df[features_to_use]
+fitting_y = crossval_df['elo']
+
 print "Fitting model"
 begin_time = time.time()
-rfr.fit(X, y)
+rfr.fit(fitting_X, fitting_y)
 print "Model fit took %f seconds." % (time.time() - begin_time)
 
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
 print "Predicting..."
 begin_time = time.time()
-y_pred, y_std = rfr.predict(X, with_std=True)
-trainset = train[0:NUM_TO_USE]
-summary_df = DataFrame([y_pred, y_std, trainset['gamenum'], trainset['halfply'], trainset['elo']])
+training_features = training_df[features_to_use]
+y_pred, y_std = rfr.predict(training_features, with_std=True)
+summary_df = DataFrame([y_pred, y_std, training_features['gamenum'], training_features['halfply'], training_features['elo']])
 summary_df = summary_df.transpose()
 summary_df.columns = ['y_pred', 'y_std', 'gamenum', 'halfply', 'elo']
 for asc in [True, False]:

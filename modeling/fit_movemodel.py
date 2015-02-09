@@ -60,6 +60,7 @@ begin_time = time.time()
 cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
+del crossval_df
 
 fitting_df = sample_df(training_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]
@@ -71,12 +72,14 @@ begin_time = time.time()
 #rfr.fit(fitting_X, fitting_y, sample_weight=fitting_weights)
 rfr.fit(fitting_X, fitting_y)
 msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), len(fitting_X)))
+del fitting_df
 
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
 msg("Preparing training features")
 training_features = training_df[features_to_use]
 X = training_features.values
+del training_df
 msg("Predicting...")
 begin_time = time.time()
 #y_pred, y_std = rfr.predict(X, with_std=True)

@@ -13,7 +13,7 @@ from djeval import *
 
 CROSS_VALIDATION_N = 2000
 FITTING_N = 10000
-n_estimators = 10
+n_estimators = 20
 cv_groups = 3
 n_jobs = -1
 
@@ -62,7 +62,7 @@ fitting_y = fitting_df['elo']
 msg("Fitting model")
 begin_time = time.time()
 rfr.fit(fitting_X, fitting_y)
-msg("Model fit took %f seconds." % (time.time() - begin_time))
+msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), len(fitting_X)))
 
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
@@ -75,7 +75,7 @@ summary_df = summary_df.transpose()
 summary_df.columns = ['y_pred', 'y_std', 'gamenum', 'halfply', 'elo']
 for asc in [True, False]:
     print summary_df.sort(['y_std'], ascending=asc).head(10)
-msg("Predicting took %f seconds." % (time.time() - begin_time))
+msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(training_df)))
 
 if False:
     rfr.fit(X, y)

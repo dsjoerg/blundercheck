@@ -67,7 +67,7 @@ print "Predicting..."
 begin_time = time.time()
 training_features = training_df[features_to_use]
 y_pred, y_std = rfr.predict(training_features, with_std=True)
-summary_df = DataFrame([y_pred, y_std, training_features['gamenum'], training_features['halfply'], training_features['elo']])
+summary_df = DataFrame([y_pred, y_std, training_df['gamenum'], training_df['halfply'], training_df['elo']])
 summary_df = summary_df.transpose()
 summary_df.columns = ['y_pred', 'y_std', 'gamenum', 'halfply', 'elo']
 for asc in [True, False]:

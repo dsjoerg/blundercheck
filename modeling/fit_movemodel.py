@@ -52,7 +52,7 @@ msg("Starting cross validation")
 begin_time = time.time()
 cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring='mean_absolute_error')
 msg("Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(crossval_X), n_estimators, cv_groups))
-msg("Results: %s" % str(cvs))
+msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 fitting_df = sample_df(training_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]

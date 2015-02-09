@@ -11,9 +11,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from djeval import *
 
-CROSS_VALIDATION_N = 2000
-FITTING_N = 10000
-n_estimators = 20
+CROSS_VALIDATION_N = 60000
+FITTING_N = 20000
+n_estimators = 40
 cv_groups = 3
 n_jobs = -1
 

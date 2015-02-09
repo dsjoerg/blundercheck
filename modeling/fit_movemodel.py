@@ -49,7 +49,7 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=-1, min_samples_le
 
 begin_time = time.time()
 cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=-1, scoring='mean_absolute_error')
-print "Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(X), n_estimators, cv_groups)
+print "Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(crossval_X), n_estimators, cv_groups)
 print "Results: %s" % str(cvs)
 
 fitting_df = sample_df(train, FITTING_N)

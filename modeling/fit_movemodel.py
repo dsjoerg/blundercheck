@@ -23,8 +23,9 @@ def sample_df(df, n_to_sample):
 
 msg("Hi, reading moves.")
 moves_df = read_pickle(sys.argv[1])# 
-# TODO if this fails, try weights of all 1
-moves_df['weight'] = (1. / (moves_df.groupby('gamenum')['halfply'].agg({'max':np.max}).clip(1,1000))).values
+msg("Computing weights")
+game_weights = (1. / (moves_df.groupby('gamenum')['halfply'].agg({'max':np.max}).clip(1,1000)))['max']
+moves_df['weight'] = moves_df['gamenum'].map(game_weights)
 msg("Done")
 
 features_to_exclude = [

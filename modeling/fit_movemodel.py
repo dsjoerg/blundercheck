@@ -11,8 +11,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from djeval import *
 
-CROSS_VALIDATION_N = 150000
-FITTING_N = 50000
+CROSS_VALIDATION_N = 15000
+FITTING_N = 5000
 n_estimators = 100
 cv_groups = 3
 n_jobs = 1
@@ -64,7 +64,7 @@ msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 fitting_df = sample_df(training_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]
 fitting_y = fitting_df['elo']
-fitting_weights = fitting_df['weight']
+fitting_weights = fitting_df['weight'].values
 
 msg("Fitting model")
 begin_time = time.time()

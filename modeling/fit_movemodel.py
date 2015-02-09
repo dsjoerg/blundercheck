@@ -52,7 +52,7 @@ cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=-1, scor
 print "Crosss validation took %f seconds with %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), len(crossval_X), n_estimators, cv_groups)
 print "Results: %s" % str(cvs)
 
-fitting_df = sample_df(train, FITTING_N)
+fitting_df = sample_df(training_df, FITTING_N)
 fitting_X = crossval_df[features_to_use]
 fitting_y = crossval_df['elo']
 

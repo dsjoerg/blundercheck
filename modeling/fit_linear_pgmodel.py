@@ -6,7 +6,10 @@ import cPickle as pickle
 from pandas import DataFrame
 from pandas import read_pickle
 from pandas import get_dummies
+import statsmodels.formula.api as sm
+
 from djeval import *
+
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])

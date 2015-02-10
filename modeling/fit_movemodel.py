@@ -90,14 +90,14 @@ for i in range(0, len(moves_df), PREDICT_N):
     y_pred, y_std = rfr.predict(predict_features, with_std=True)
     #y_pred = rfr.predict(X)
     
-    all_y_pred.extend(y_pred)
-    all_y_std.extend(y_std)
+    all_y_pred.extend(y_pred.values)
+    all_y_std.extend(y_std.values)
 
-msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(predict_features)))
+msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(all_y_pred)))
 
 msg("Putting predictions back into moves_df")
-moves_df['elo_predicted'] = y_pred
-moves_df['elo_pred_std'] = y_std
+moves_df['elo_predicted'] = all_y_pred
+moves_df['elo_pred_std'] = all_y_std
 
 msg("Highest and lowest std from in-sample portion:")
 predict_insample_df = moves_df[moves_df['elo'].notnull()]

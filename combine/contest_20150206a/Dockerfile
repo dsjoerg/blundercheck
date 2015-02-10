@@ -118,7 +118,12 @@ RUN prepare_pgmodel.py /data/yy_df.p
 RUN echo 'not yet 1234'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
-# read in yy_df, train a linear model, dump some stats and write it out.
-RUN fit_linear_pgmodel.py /data/yy_df.p /data/linear_pgmodel.P
+# read in yy_df, train a linear model, dump some stats about it
+RUN fit_linear_pgmodel.py /data/yy_df.p
 
-# read in yy_df, train a gradientboosting model, dump some stats and write it out.  also write a submission.
+# TODO remove me when doing an earlier step
+RUN echo 'not yet 0'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
+# read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
+RUN fit_gbr_pgmodel.py /data/yy_df.p

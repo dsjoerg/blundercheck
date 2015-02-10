@@ -14,7 +14,7 @@ elos = eheaders['elos']
 result = eheaders['result']
 checkmate = eheaders['checkmate']
 openings = eheaders['openings']
-opening_count = eheaders['opening_count']
+ocount = eheaders['opening_count']
 
 msg("Hi! Reading movescores into memory, using kaggle-supplied scores as a backstop")
 rows = {}

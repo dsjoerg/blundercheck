@@ -258,7 +258,7 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'opponent_mean_depths_ar', 'opponent_mean_deepest_ar',
               'pct_sanemoves',
               ]
-yy_columns.extend([("moveelo_" + x) for x in move_aggs.columns.values.tolist()])
+#yy_columns.extend([("moveelo_" + x) for x in move_aggs.columns.values.tolist()])
 
 msg("Hi! Building DataFrame")
 yy_df = DataFrame(yy_combined, columns=yy_columns)

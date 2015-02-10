@@ -66,6 +66,7 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 ENV CLUSTER_INPUT_FILE 20150203.json.zl
 
 # COPY DATA IN FROM THE OUTSIDE WORLD
+# TODO pull this from a URL instead to make Docker build startup faster
 ADD $CLUSTER_INPUT_FILE /data/
 ADD data.pgn /data/
 
@@ -78,12 +79,14 @@ RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
+# TODO remove me when doing an earlier step
 RUN echo 'not yet 123'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # prepare movedata for modeling
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
+# TODO remove me when doing an earlier step
 RUN echo 'not yet'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
@@ -98,6 +101,12 @@ ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
 # TODO remove this when you re-run the earlier make_eheaders.py step
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 
+# TODO remove me when doing an earlier step
+RUN echo 'not yet'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # read everything in to memory, compute additional columns and write out yy_df to disk
+RUN prepare_pgmodel.py /data/yy_df.p
+
 # read in yy_df, train a linear model, dump some stats and write it out.
 # read in yy_df, train a gradientboosting model, dump some stats and write it out.  also write a submission.

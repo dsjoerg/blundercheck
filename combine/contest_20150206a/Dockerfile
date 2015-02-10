@@ -108,7 +108,7 @@ RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfis
 #ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
 
 # TODO remove me when doing an earlier step
-RUN echo 'not yet 123456'
+RUN echo 'not yet 1234567'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # read everything in to memory, compute additional columns and write out yy_df to disk

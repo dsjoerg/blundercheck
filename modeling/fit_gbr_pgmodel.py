@@ -7,6 +7,7 @@ from pandas import DataFrame
 from pandas import read_pickle
 from pandas import get_dummies
 from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.cross_validation import cross_val_score
 from djeval import *
 
 msg("Hi, reading yy_df.")

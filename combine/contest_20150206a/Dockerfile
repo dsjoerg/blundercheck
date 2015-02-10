@@ -93,7 +93,7 @@ RUN show_movemodel.py /data/movemodel.p
 
 # copy stockfish.csv in to the container
 ADD http://www.kaggle.com/c/finding-elo/download/stockfish.csv.zip /data/
-RUN unzip /data/stockfish.csv.zip
+#RUN unzip /data/stockfish.csv.zip
 
 # compute_opening_count
 # read everything in to memory, compute additional columns and write out yy_df to disk

@@ -55,4 +55,6 @@ for index, cf in enumerate(categorical_features):
   moves_df = moves_df.join(dummies)
 
 moves_info = {'moves_df': moves_df, 'categorical_features':categorical_features}
-pickle.dump(moves_info, sys.argv[1])
+moves_file = open(sys.argv[1], 'w')
+pickle.dump(moves_info, moves_file)
+moves_file.close()

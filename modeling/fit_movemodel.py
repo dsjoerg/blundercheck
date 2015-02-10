@@ -13,6 +13,7 @@ from djeval import *
 
 CROSS_VALIDATION_N = 15000
 FITTING_N = 5000
+PREDICT_N = 20000
 n_estimators = 100
 cv_groups = 3
 n_jobs = -1
@@ -22,7 +23,7 @@ def sample_df(df, n_to_sample):
     return df.ix[row_indexes]
 
 msg("Hi, reading moves.")
-moves_df = read_pickle(sys.argv[1])# 
+moves_df = read_pickle(sys.argv[1])
 msg("Computing weights")
 game_weights = (1. / (moves_df.groupby('gamenum')['halfply'].agg({'max':np.max}).clip(1,1000)))['max']
 moves_df['weight'] = moves_df['gamenum'].map(game_weights)
@@ -56,11 +57,10 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_sample
 
 msg("Starting cross validation")
 begin_time = time.time()
-#cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
+#cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
-del crossval_df
 
 fitting_df = sample_df(training_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]
@@ -69,28 +69,33 @@ fitting_weights = fitting_df['weight'].values
 
 msg("Fitting model")
 begin_time = time.time()
-#rfr.fit(fitting_X, fitting_y, sample_weight=fitting_weights)
-rfr.fit(fitting_X, fitting_y)
+rfr.fit(fitting_X, fitting_y, sample_weight=fitting_weights)
+#rfr.fit(fitting_X, fitting_y)
 msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), len(fitting_X)))
-del fitting_df
 
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
+
+predict_df = sample_df(moves_df, PREDICT_N)
+
 msg("Preparing training features")
-training_features = training_df[features_to_use]
-X = training_features.values
-del training_df
+predict_features = predict_df[features_to_use]
+
 msg("Predicting...")
 begin_time = time.time()
-#y_pred, y_std = rfr.predict(X, with_std=True)
-y_pred = rfr.predict(X)
+y_pred, y_std = rfr.predict(predict_features, with_std=True)
+#y_pred = rfr.predict(X)
 msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(training_df)))
-msg("Summary:")
-summary_df = DataFrame([y_pred, y_std, training_df['gamenum'], training_df['halfply'], training_df['elo']])
+
+predict_df['elo_predicted'] = y_pred
+predict_df['elo_pred_std'] = y_std
+
+msg("Highest and lowest std from in-sample portion:")
+predict_insample_df = predict_df[predict_df['elo'].notnull()]
+summary_df = predict_insample_df[['elo_predicted', 'elo_pred_std', 'gamenum', 'halfply', 'elo']]
 summary_df = summary_df.transpose()
-summary_df.columns = ['y_pred', 'y_std', 'gamenum', 'halfply', 'elo']
 for asc in [True, False]:
-    print summary_df.sort(['y_std'], ascending=asc).head(10)
+    print summary_df.sort(['elo_pred_std'], ascending=asc).head(10)
 msg("Done.")
 
 if False:

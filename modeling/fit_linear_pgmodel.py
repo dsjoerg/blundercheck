@@ -11,6 +11,7 @@ msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
 
 msg("Getting subset ready.")
+dummies = get_dummies(yy_df['opening_feature'])
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"

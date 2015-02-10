@@ -6,6 +6,7 @@ from StringIO import StringIO
 import cPickle as pickle
 from pandas import DataFrame
 from pandas import concat
+from pandas import read_pickle
 from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
@@ -24,9 +25,10 @@ def sample_df(df, n_to_sample):
     return df.ix[row_indexes]
 
 msg("Hi, reading moves.")
-moves_file = open(sys.argv[1], 'rb')
+moves_df = read_pickle(sys.argv[1])
+
+moves_file = open(sys.argv[1] + '.info', 'rb')
 moves_info = pickle.load(moves_file)
-moves_df = moves_info['moves_df']
 categorical_features = moves_info['categorical_features']
 
 msg("Computing weights")

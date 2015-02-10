@@ -84,10 +84,12 @@ msg("Computing predictions in chunks")
 begin_time = time.time()
 
 for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
-    predict_df = moves_df.iloc[i * PREDICT_N : (i+1) * PREDICT_N]
+    predict_df = moves_df.iloc[i : i + PREDICT_N]
     predict_features = predict_df[features_to_use]
 
     msg("Predicting for chunk %i" % i)
+#    print("Chunk head:")
+#    print predict_df.head()
     y_pred, y_std = rfr.predict(predict_features, with_std=True)
     #y_pred = rfr.predict(X)
     

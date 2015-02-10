@@ -94,9 +94,13 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p
 
+# TODO remove me when doing an earlier step
+RUN echo 'not yet'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # compute_opening_count also
 # TODO remove this when you re-run the earlier make_eheaders.py step
-RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
+RUN make_eheaders.py /data/data.pgn > /data/eheaders2.p
 
 # copy stockfish.csv in to the container
 RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfish.csv

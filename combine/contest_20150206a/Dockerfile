@@ -102,7 +102,7 @@ ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 
 # TODO remove me when doing an earlier step
-RUN echo 'not yet'
+RUN echo 'not yet 1'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # read everything in to memory, compute additional columns and write out yy_df to disk

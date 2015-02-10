@@ -114,5 +114,11 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 # read everything in to memory, compute additional columns and write out yy_df to disk
 RUN prepare_pgmodel.py /data/yy_df.p
 
+# TODO remove me when doing an earlier step
+RUN echo 'not yet'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # read in yy_df, train a linear model, dump some stats and write it out.
+RUN fit_linear_pgmodel.py /data/yy_df.p /data/linear_pgmodel.P
+
 # read in yy_df, train a gradientboosting model, dump some stats and write it out.  also write a submission.

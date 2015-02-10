@@ -89,13 +89,10 @@ msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), l
 
 predict_df['elo_predicted'] = y_pred
 predict_df['elo_pred_std'] = y_std
-print "YO"
-print predict_df.head()
 
 msg("Highest and lowest std from in-sample portion:")
 predict_insample_df = predict_df[predict_df['elo'].notnull()]
 summary_df = predict_insample_df[['elo_predicted', 'elo_pred_std', 'gamenum', 'halfply', 'elo']]
-summary_df = summary_df.transpose()
 for asc in [True, False]:
     print summary_df.sort(['elo_pred_std'], ascending=asc).head(10)
 msg("Done.")

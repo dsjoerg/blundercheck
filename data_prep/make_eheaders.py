@@ -10,10 +10,11 @@ result_side['1-0'] = 1
 result_side['0-1'] = -1
 
 def compute_maps():
-  # map from player-game to ELO
   elos = {}
   result = {}
   checkmate = {}
+  opening_count = defaultdict(int)
+  openings = {}
 
   gamefile = open(sys.argv[1], 'r')
   for offset, headers in chess.pgn.scan_headers(gamefile):
@@ -28,13 +29,31 @@ def compute_maps():
       result[event_num] = result_side[headers['Result']]
     gamefile.seek(offset)
     game = chess.pgn.read_game(gamefile)
+    node = game
+    opening = ""
+    if node.variations:
+        node = game.variation(0)
+        for i in range(0,3):
+            opening = opening + str(node.move)
+            if node.variations:
+                node = node.variation(0)
+            else:
+                break
+    opening_count[opening] = opening_count[opening] + 1
+    openings[event_num] = opening
+
     node = game.end()
     checkmate[event_num] = node.board().is_checkmate()
 
-  return elos, result, checkmate
+  eheaders = {'elos': elos,
+              'result': result,
+              'checkmate': checkmate,
+              'openings': openings,
+              'opening_count': opening_count
+          }
 
-elos, result, checkmate = compute_maps()
-eheaders = {'elos': elos,
-            'result': result,
-            'checkmate': checkmate}
+
+  return eheaders
+
+eheaders = compute_maps()
 pickle.dump(eheaders, sys.stdout)

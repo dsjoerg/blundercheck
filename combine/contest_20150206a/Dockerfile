@@ -95,6 +95,9 @@ RUN show_movemodel.py /data/movemodel.p
 ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
 
 # compute_opening_count
+# TODO remove this when you re-run the earlier make_eheaders.py step
+RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
+
 # read everything in to memory, compute additional columns and write out yy_df to disk
 # read in yy_df, train a linear model, dump some stats and write it out.
 # read in yy_df, train a gradientboosting model, dump some stats and write it out.  also write a submission.

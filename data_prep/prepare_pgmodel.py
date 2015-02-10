@@ -234,11 +234,13 @@ for gamenum in range(1, 50001):
                 opponent_mean_depths_ar, opponent_mean_deepest_ar,
                 pct_sanemoves,
                 )
-    if playergame in move_aggs.index:
-      pg_tuple = pg_tuple + tuple(move_aggs.loc[playergame].values.tolist())
-    else:
-      pg_tuple = pg_tuple + tuple([2400] * 7)
-    yy_combined.append(pg_tuple)
+
+    if False:
+        if playergame in move_aggs.index:
+          pg_tuple = pg_tuple + tuple(move_aggs.loc[playergame].values.tolist())
+        else:
+          pg_tuple = pg_tuple + tuple([2400] * 7)
+        yy_combined.append(pg_tuple)
 
 
 yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate', 'gameoutcome', 'gamelength',

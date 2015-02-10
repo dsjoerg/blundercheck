@@ -46,7 +46,7 @@ categorical_features = [
 ]
 
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
-x
+
 insample_df = moves_df[moves_df['elo'].notnull()]
 crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]

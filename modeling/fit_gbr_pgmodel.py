@@ -66,7 +66,7 @@ gbr.fit(X, y)
 yy_df['gbr_prediction'] = gbr.predict(yyvals)
 yy_df['gbr_error'] = (yy_df['gbr_prediction'] - yy_df['elo']).abs()
 yy_df['training'] = yy_df['elo'].notnull()
-insample_scores = yy_df.groupby('training')['gbr_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std}
+insample_scores = yy_df.groupby('training')['gbr_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
 
 

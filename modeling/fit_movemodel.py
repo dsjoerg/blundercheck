@@ -90,8 +90,8 @@ for i in range(0, len(moves_df), PREDICT_N):
     y_pred, y_std = rfr.predict(predict_features, with_std=True)
     #y_pred = rfr.predict(X)
     
-    all_y_pred.extend(y_pred.values)
-    all_y_std.extend(y_std.values)
+    all_y_pred.extend(y_pred)
+    all_y_std.extend(y_std)
 
 msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(all_y_pred)))
 

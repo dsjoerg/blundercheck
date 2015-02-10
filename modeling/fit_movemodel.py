@@ -12,10 +12,10 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from djeval import *
 
-CROSS_VALIDATION_N = 150000
-FITTING_N = 50000
-PREDICT_N = 200000
-n_estimators = 100
+CROSS_VALIDATION_N = 300000
+FITTING_N = 100000
+PREDICT_N = 400000
+n_estimators = 200
 cv_groups = 3
 n_jobs = -1
 
@@ -87,7 +87,7 @@ for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
     predict_df = moves_df.iloc[i : i + PREDICT_N]
     predict_features = predict_df[features_to_use]
 
-    msg("Predicting for chunk %i" % i)
+#    msg("Predicting for chunk %i" % i)
 #    print("Chunk head:")
 #    print predict_df.head()
     y_pred, y_std = rfr.predict(predict_features, with_std=True)
@@ -95,7 +95,7 @@ for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
     
     all_y_preds.append(y_pred)
     all_y_stds.append(y_std)
-    print "Got %s, and %s" % (type(y_pred), y_pred.shape)
+#    print "Got %s, and %s" % (type(y_pred), y_pred.shape)
 
 msg("Predicting took %f seconds." % ((time.time() - begin_time)))
 

@@ -95,7 +95,7 @@ RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p
 
 # TODO remove me when doing an earlier step
-RUN echo 'not yet'
+RUN echo 'not yet piano1'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # compute_opening_count also

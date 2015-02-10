@@ -5,13 +5,17 @@ import numpy as np
 import cPickle as pickle
 from pandas import DataFrame
 from pandas import read_pickle
+from pandas import get_dummies
 from djeval import *
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
 
 msg("Getting subset ready.")
+
+# TODO save the dummies along with yy_df
 dummies = get_dummies(yy_df['opening_feature'])
+
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"

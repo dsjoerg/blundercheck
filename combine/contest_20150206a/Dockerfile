@@ -115,7 +115,7 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN prepare_pgmodel.py /data/yy_df.p
 
 # TODO remove me when doing an earlier step
-RUN echo 'not yet 12'
+RUN echo 'not yet 123'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # read in yy_df, train a linear model, dump some stats and write it out.

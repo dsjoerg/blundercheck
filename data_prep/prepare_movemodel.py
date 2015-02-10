@@ -29,6 +29,12 @@ columns = [
 
 moves_df = read_csv(sys.stdin, engine='c', header=None, names=columns, index_col=False)
 
+# for the purposes of modeling we dont care about east-west differences
+for colname in ['move_dir', 'bestmove_dir']:
+    moves_df[colname].replace('NE', 'NW', inplace=True)
+    moves_df[colname].replace('SE', 'SW', inplace=True)
+    moves_df[colname].replace('E', 'W', inplace=True)
+
 moves_df['sd_ratio'] = moves_df['seldepth'] / moves_df['depth']
 moves_df['deepest_ar'] = moves_df['deepest_agree'] / moves_df['depth']
 moves_df['depths_ar'] = moves_df['depths_agreeing'] / moves_df['depth']
@@ -39,10 +45,6 @@ categorical_features = [
     'bestmove_dir',
     'move_piece',
     'bestmove_piece',
-    'move_is_capture',
-    'move_is_check',
-    'bestmove_is_capture',
-    'bestmove_is_check',
 ]
 
 dummy_features = []
@@ -51,6 +53,4 @@ for index, cf in enumerate(categorical_features):
   dummy_features.extend(dummies.columns.values)
   moves_df = moves_df.join(dummies)
 
-moves_df.to_pickle(sys.argv[1])
-#TODO pickle not just the df but the list of categorical features
-#then read them in fit_movemodel
+moves_df.to_pickle({'moves_df': sys.argv[1], 'categorical_features':categorical_features})

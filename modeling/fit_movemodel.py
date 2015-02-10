@@ -24,27 +24,31 @@ def sample_df(df, n_to_sample):
     return df.ix[row_indexes]
 
 msg("Hi, reading moves.")
-moves_df = read_pickle(sys.argv[1])
+moves_info = read_pickle(sys.argv[1])
+moves_df = moves_info['moves_df']
+categorical_features = moves_info['categorical_features']
+
 msg("Computing weights")
 game_weights = (1. / (moves_df.groupby('gamenum')['halfply'].agg({'max':np.max}).clip(1,1000)))['max']
 moves_df['weight'] = moves_df['gamenum'].map(game_weights)
 msg("Done")
 
+moves_df['abs_moverscore'] = moves_df['moverscore'].abs()
+
 features_to_exclude = [
 'elo',
 'gamenum',
-'weight'
+'weight',
+'clippedgain',
+'moverscore'
 ]
-categorical_features = [
-    'move_dir',
-    'bestmove_dir',
-    'move_piece',
-    'bestmove_piece',
-    'move_is_capture',
-    'move_is_check',
-    'bestmove_is_capture',
-    'bestmove_is_check',
-]
+
+msg("canonicalizing directions")
+for colname in ['move_dir', 'bestmove_dir']:
+    moves_df[colname].replace('NE', 'NW', inplace=True)
+    moves_df[colname].replace('SE', 'SW', inplace=True)
+    moves_df[colname].replace('E', 'W', inplace=True)
+msg("done")
 
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
 

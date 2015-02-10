@@ -85,10 +85,12 @@ msg("Predicting...")
 begin_time = time.time()
 y_pred, y_std = rfr.predict(predict_features, with_std=True)
 #y_pred = rfr.predict(X)
-msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(training_df)))
+msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(predict_features)))
 
 predict_df['elo_predicted'] = y_pred
 predict_df['elo_pred_std'] = y_std
+print "YO"
+print predict_df.head()
 
 msg("Highest and lowest std from in-sample portion:")
 predict_insample_df = predict_df[predict_df['elo'].notnull()]

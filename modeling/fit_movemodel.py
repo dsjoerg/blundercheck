@@ -91,9 +91,11 @@ for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
     #y_pred = rfr.predict(X)
     
     all_y_preds.append(y_pred)
-    all_y_std.append(y_std)
+    all_y_stds.append(y_std)
 
 msg("Predicting took %f seconds." % ((time.time() - begin_time)))
+
+msg("i got %i all_y_preds which concatenate to %i.  moves_df is %i." % (len(all_y_preds), len(concat(all_y_preds)), len(moves_df)))
 
 msg("Putting predictions back into moves_df")
 moves_df['elo_predicted'] = concat(all_y_preds)

@@ -13,7 +13,7 @@ from djeval import *
 
 CROSS_VALIDATION_N = 15000
 FITTING_N = 5000
-PREDICT_N = 20000
+PREDICT_N = 200000
 n_estimators = 100
 cv_groups = 3
 n_jobs = -1
@@ -46,9 +46,9 @@ categorical_features = [
 ]
 
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
-
-training_df = moves_df[moves_df['elo'].notnull()]
-crossval_df = sample_df(training_df, CROSS_VALIDATION_N)
+x
+insample_df = moves_df[moves_df['elo'].notnull()]
+crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]
 crossval_y = crossval_df['elo']
 crossval_weights = crossval_df['weight']
@@ -62,7 +62,7 @@ cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, 
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
-fitting_df = sample_df(training_df, FITTING_N)
+fitting_df = sample_df(insample_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]
 fitting_y = fitting_df['elo']
 fitting_weights = fitting_df['weight'].values
@@ -76,22 +76,31 @@ msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), le
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
 
-predict_df = sample_df(moves_df, PREDICT_N)
+all_y_pred = []
+all_y_std = []
 
-msg("Preparing training features")
-predict_features = predict_df[features_to_use]
-
-msg("Predicting...")
+msg("Computing predictions in chunks")
 begin_time = time.time()
-y_pred, y_std = rfr.predict(predict_features, with_std=True)
-#y_pred = rfr.predict(X)
+
+for i in range(0, len(moves_df), PREDICT_N):
+    predict_df = moves_df.iloc[i * PREDICT_N : (i+1) * PREDICT_N]
+    predict_features = predict_df[features_to_use]
+
+    msg("Predicting for chunk %i" % i)
+    y_pred, y_std = rfr.predict(predict_features, with_std=True)
+    #y_pred = rfr.predict(X)
+    
+    all_y_pred.extend(y_pred)
+    all_y_std.extend(y_std)
+
 msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(predict_features)))
 
-predict_df['elo_predicted'] = y_pred
-predict_df['elo_pred_std'] = y_std
+msg("Putting predictions back into moves_df")
+moves_df['elo_predicted'] = y_pred
+moves_df['elo_pred_std'] = y_std
 
 msg("Highest and lowest std from in-sample portion:")
-predict_insample_df = predict_df[predict_df['elo'].notnull()]
+predict_insample_df = moves_df[moves_df['elo'].notnull()]
 summary_df = predict_insample_df[['elo_predicted', 'elo_pred_std', 'gamenum', 'halfply', 'elo']]
 for asc in [True, False]:
     print summary_df.sort(['elo_pred_std'], ascending=asc).head(10)

@@ -76,13 +76,13 @@ msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), le
 joblib.dump([rfr, features_to_use], sys.argv[2])
 
 
-all_y_pred = []
-all_y_std = []
+all_y_preds = []
+all_y_stds = []
 
 msg("Computing predictions in chunks")
 begin_time = time.time()
 
-for i in range(0, len(moves_df), PREDICT_N):
+for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
     predict_df = moves_df.iloc[i * PREDICT_N : (i+1) * PREDICT_N]
     predict_features = predict_df[features_to_use]
 
@@ -90,14 +90,14 @@ for i in range(0, len(moves_df), PREDICT_N):
     y_pred, y_std = rfr.predict(predict_features, with_std=True)
     #y_pred = rfr.predict(X)
     
-    all_y_pred.extend(y_pred)
-    all_y_std.extend(y_std)
+    all_y_preds.append(y_pred)
+    all_y_std.append(y_std)
 
-msg("Predicting took %f seconds on %i records." % ((time.time() - begin_time), len(all_y_pred)))
+msg("Predicting took %f seconds." % ((time.time() - begin_time)))
 
 msg("Putting predictions back into moves_df")
-moves_df['elo_predicted'] = all_y_pred
-moves_df['elo_pred_std'] = all_y_std
+moves_df['elo_predicted'] = concat(all_y_preds)
+moves_df['elo_pred_std'] = concat(all_y_std)
 
 msg("Highest and lowest std from in-sample portion:")
 predict_insample_df = moves_df[moves_df['elo'].notnull()]

@@ -93,15 +93,15 @@ for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
     
     all_y_preds.append(y_pred)
     all_y_stds.append(y_std)
-#    print "Got %s, and %s" % (type(y_pred), str(y_pred[0]))
+    print "Got %s, and %s" % (type(y_pred), y_pred.shape)
 
 msg("Predicting took %f seconds." % ((time.time() - begin_time)))
 
-msg("i got %i all_y_preds which concatenate to %i.  moves_df is %i." % (len(all_y_preds), len(np.concatenate(all_y_preds, axis=1)), len(moves_df)))
+msg("i got %i all_y_preds which concatenate to %i, shape %s.  moves_df is %i." % (len(all_y_preds), len(np.concatenate(all_y_preds)), str(np.concatenate(all_y_preds).shape), len(moves_df)))
 
 msg("Putting predictions back into moves_df")
-moves_df['elo_predicted'] = np.concatenate(all_y_preds, axis=1)
-moves_df['elo_pred_std'] = np.concatenate(all_y_stds, axis=1)
+moves_df['elo_predicted'] = np.concatenate(all_y_preds)
+moves_df['elo_pred_std'] = np.concatenate(all_y_stds)
 
 msg("Highest and lowest std from in-sample portion:")
 predict_insample_df = moves_df[moves_df['elo'].notnull()]

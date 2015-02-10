@@ -2,7 +2,7 @@
 
 from pandas  import *
 from numpy  import *
-import djeval
+from djeval import *
 import csv
 import cPickle as pickle
 

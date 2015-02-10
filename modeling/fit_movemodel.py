@@ -12,8 +12,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from djeval import *
 
-CROSS_VALIDATION_N = 300000
-FITTING_N = 100000
+CROSS_VALIDATION_N = 150000
+FITTING_N = 50000
 PREDICT_N = 400000
 n_estimators = 200
 cv_groups = 3
@@ -58,13 +58,6 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_sample
 
 msg("Starting cross validation")
 begin_time = time.time()
-
-# to avoid No space left on device error
-if True:
-    some_filename = "foobaby"
-    joblib.dump(crossval_X, some_filename)
-    crossval_X = joblib.load(some_filename, mmap_mode='r+')
-
 cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
 #cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))

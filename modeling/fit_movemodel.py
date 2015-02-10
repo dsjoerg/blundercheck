@@ -93,6 +93,7 @@ for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
     
     all_y_preds.append(y_pred)
     all_y_stds.append(y_std)
+    print "Got %s, and %s" % (type(y_pred), str(y_pred[0]))
 
 msg("Predicting took %f seconds." % ((time.time() - begin_time)))
 

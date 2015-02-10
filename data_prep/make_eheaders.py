@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from collections import defaultdict
 import chess.pgn
 import cPickle as pickle
 import sys

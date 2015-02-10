@@ -84,6 +84,9 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 # prepare movedata for modeling
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
+RUN echo 'not yet'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # then play with the movemodel and make N versions for later cross-validation
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p

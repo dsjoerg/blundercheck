@@ -24,7 +24,8 @@ def sample_df(df, n_to_sample):
     return df.ix[row_indexes]
 
 msg("Hi, reading moves.")
-moves_info = pickle.load(sys.argv[1])
+moves_file = open(sys.argv[1], 'rb')
+moves_info = pickle.load(moves_file)
 moves_df = moves_info['moves_df']
 categorical_features = moves_info['categorical_features']
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import csv, sys
+import cPickle as pickle
 from pandas import *
 
 columns = [
@@ -53,4 +54,5 @@ for index, cf in enumerate(categorical_features):
   dummy_features.extend(dummies.columns.values)
   moves_df = moves_df.join(dummies)
 
-moves_df.to_pickle({'moves_df': sys.argv[1], 'categorical_features':categorical_features})
+moves_info = {'moves_df': moves_df, 'categorical_features':categorical_features}
+pickle.dump(moves_info, sys.argv[1])

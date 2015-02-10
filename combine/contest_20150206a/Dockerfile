@@ -78,7 +78,7 @@ RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
-RUN echo 'working yay 1'
+RUN echo 'working yay 12'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # prepare movedata for modeling

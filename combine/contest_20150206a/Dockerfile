@@ -94,12 +94,15 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p
 
-# copy stockfish.csv in to the container
-ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
-
 # compute_opening_count
 # TODO remove this when you re-run the earlier make_eheaders.py step
+ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
+
+# copy stockfish.csv in to the container
+RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfish.csv
+# the following was getting run every time
+#ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
 
 # TODO remove me when doing an earlier step
 RUN echo 'not yet 1'

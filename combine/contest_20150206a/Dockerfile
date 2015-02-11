@@ -130,7 +130,7 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.py
 
 # TODO remove me when doing an earlier step
-RUN echo 'not yet 01'
+RUN echo 'not yet 02'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # TODO fix model filename to be .p not .py

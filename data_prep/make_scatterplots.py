@@ -58,27 +58,26 @@ features = ['nmerror',
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
 plottables.extend(['gamelength', 'mean_depth_clipped', 'mean_deepest_ar', 'opponent_mean_deepest_ar'])
 
-for a, b in combinations(plottables, 2):
-    for first, second in [(a,b), (b,a)]:
-        try:
-            groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
-            sns.violinplot(with_elo[second], groupings)
-            plt.savefig('/data/' + first + '_' + second + '.png')
-            plt.close()
-        except:
-            print("Couldnt manage for %s %s" % (first, second))
+do_indivs = False
+if do_indivs:
+    for a, b in combinations(plottables, 2):
+        for first, second in [(a,b), (b,a)]:
+            try:
+                groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
+                sns.violinplot(with_elo[second], groupings)
+                plt.savefig('/data/' + first + '_' + second + '.png')
+                plt.close()
+            except:
+                print("Couldnt manage for %s %s" % (first, second))
 
-#        f, ax = plt.subplots(figsize=(11, 6))
-#        sns.violinplot(with_elo[second], groupings, names=[str(b) + str(b+1) for b in bins[:-1]])
-#        ax.set(ylim=(-.7, 1.05))
-#        sns.despine(left=True, bottom=True)
-        print '.',
-        sys.stdout.flush()
+    #        f, ax = plt.subplots(figsize=(11, 6))
+    #        sns.violinplot(with_elo[second], groupings, names=[str(b) + str(b+1) for b in bins[:-1]])
+    #        ax.set(ylim=(-.7, 1.05))
+    #        sns.despine(left=True, bottom=True)
+            print '.',
+            sys.stdout.flush()
 
 
-g = sns.PairGrid(with_elo[plottables])
-g.map_diag(plt.hist)
-g.map_offdiag(plt.scatter)
-g.add_legend()
-plt.savefig('/data/pairgrid.png')
+g = sns.pairplot(with_elo[plottables], size=2.5)
+plt.savefig('/data/pairplot.png')
 plt.close()

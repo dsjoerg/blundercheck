@@ -88,7 +88,7 @@ RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 ADD modeling/fit_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 
-ADD data_prep/show_movemodel.py $BLUNDERCHECK_DIR/data_prep/
+ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN show_movemodel.py /data/movemodel.p
 
 # prepare playergame data

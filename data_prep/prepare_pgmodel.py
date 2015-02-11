@@ -46,6 +46,7 @@ depthstats_df = depthstats_df.set_index(['gamenum', 'side'])
 
 msg("Hi! Reading moveaggs")
 move_aggs = joblib.load('/data/move_aggs.p')
+move_aggs['stdev'].fillna(40, inplace=True)
 
 # simple list of the scores of all positions
 position_scores = []
@@ -238,7 +239,9 @@ for gamenum in range(1, 50001):
                 )
 
     if playergame in move_aggs.index:
-      pg_tuple = pg_tuple + tuple(move_aggs.loc[playergame].values.tolist())
+      move_agg = move_aggs.loc[playergame]
+      moveelo_values = [move_agg[x] for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+      pg_tuple = pg_tuple + tuple(moveelo_values)
     else:
       pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
 

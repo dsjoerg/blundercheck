@@ -77,9 +77,7 @@ if do_indivs:
             print '.',
             sys.stdout.flush()
 
-# this wasnt working for some reason
-make_pairplot = False
-if make_pairplot:
-    g = sns.pairplot(with_elo[plottables], size=2.5)
-    plt.savefig('/data/pairplot.png')
-    plt.close()
+
+g = sns.pairplot(with_elo[plottables], size=2.5)
+plt.savefig('/data/pairplot.png')
+plt.close()

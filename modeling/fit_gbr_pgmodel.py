@@ -66,7 +66,7 @@ msg("Fitting!")
 gbr.fit(X, y)
 
 msg("Saving model")
-joblib.dump(gbr, sys.argv[2])
+joblib.dump([gbr, features], sys.argv[2])
 
 msg("Making predictions for all playergames")
 yy_df['gbr_prediction'] = gbr.predict(yy_df[features].values)
@@ -96,5 +96,5 @@ for row in yy_df[yy_df['elo'].isnull()][['gamenum', 'side', 'gbr_prediction']].v
 submission = open('/data/submission.csv', 'w')
 submission.write('Event,WhiteElo,BlackElo\\n')
 for eventnum in np.arange(25001,50001):
-  submission.write('%i,%i,%i\\n' % (eventnum, predictions[eventnum][0], predictions[eventnum][1]))
+  submission.write('%i,%i,%i\n' % (eventnum, predictions[eventnum][0], predictions[eventnum][1]))
 submission.close()

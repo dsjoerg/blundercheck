@@ -12,7 +12,9 @@ rfr, features_to_use = joblib.load(sys.argv[1])
 print "Feature importances:"
 print DataFrame([rfr.feature_importances_, features_to_use]).transpose().sort([0], ascending=False)
 
-print "There are %i estimators. Here is the first one:" % len(rfr.estimators_)
+dump_first_tree_to_stdout = False
+if dump_first_tree_to_stdout:
+    print "There are %i estimators. Here is the first one:" % len(rfr.estimators_)
 
 dot_data = StringIO()
 tree.export_graphviz(rfr.estimators_[0], out_file=dot_data, feature_names=features_to_use)

@@ -94,7 +94,7 @@ RUN prepare_pgmodel.py /data/yy_df.p
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
-RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
+#RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
-RUN show_gbrmodel.py /data/gbr_pgmodel.p
+#RUN show_gbrmodel.py /data/gbr_pgmodel.p

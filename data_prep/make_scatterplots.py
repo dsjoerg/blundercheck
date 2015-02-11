@@ -56,7 +56,7 @@ features = ['nmerror',
            ]
 
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
-plottables.extend(['gamelength', 'mean_depth_clipped', 'mean_deepest_ar', 'opponent_mean_deepest_ar']
+plottables.extend(['gamelength', 'mean_depth_clipped', 'mean_deepest_ar', 'opponent_mean_deepest_ar'])
 
 for a, b in combinations(plottables, 2):
     for first, second in [(a,b), (b,a)]:

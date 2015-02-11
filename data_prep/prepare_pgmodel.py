@@ -7,7 +7,7 @@ import csv
 import cPickle as pickle
 
 msg("Hi! Reading eheaders")
-eheaders_filename = '/data/eheaders2.p'
+eheaders_filename = '/data/eheaders.p'
 eheaders_file = open(eheaders_filename, 'r')
 eheaders = pickle.load(eheaders_file)
 elos = eheaders['elos']

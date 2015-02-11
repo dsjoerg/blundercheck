@@ -100,7 +100,7 @@ ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
-ADD modeling/fit_gbr_model.py $BLUNDERCHECK_DIR/modeling/
+ADD modeling/fit_gbr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model

@@ -4,6 +4,7 @@ import sys
 import seaborn as sns
 from pandas import read_pickle
 import matplotlib.pyplot as plt
+from djeval import *
 
 sns.set_palette("deep", desat=.6)
 sns.set_context(rc={"figure.figsize": (8, 4)})

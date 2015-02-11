@@ -114,6 +114,8 @@ RUN pip install seaborn
 RUN echo 'seaborn fun 01'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
+ADD data_prep/make_scatterplots.py /home/beaker/src/src/blundercheck/data_prep
+
 # create histograms of each variable and scatterplots of every pair of
 # variables, so we can look through em and understand our data
 RUN make_scatterplots.py

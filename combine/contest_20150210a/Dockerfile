@@ -111,3 +111,6 @@ RUN show_gbrmodel.py /data/gbr_pgmodel.p
 # variables, so we can look through em and understand our data
 ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_scatterplots.py /data/yy_df.p
+
+# running on simfarm now
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck

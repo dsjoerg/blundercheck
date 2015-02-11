@@ -27,24 +27,27 @@ for ix in range(0, int(args.num_items)):
         break
     ms.append(nextmsg)
 
-msg("COMPOSING BIG BLOB.")
-blob = "["
-for m in ms:
-    blob = blob + m.get_body() + ", "
-blob = blob + "]"
+if len(ms) > 0:
+    msg("COMPOSING BIG BLOB.")
+    blob = "["
+    for m in ms:
+        blob = blob + m.get_body() + ", "
+    blob = blob + "]"
 
-random.seed()
-fifty = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(50))
-keyname = '%s/%s.json' % (args.keyfolder, fifty)
-msg("WRITING ITEMS TO BUCKET %s, KEY %s" % (args.bucket, keyname))
-s3conn = boto.connect_s3()
-bucket = s3conn.get_bucket(args.bucket)
-k = Key(bucket)
-k.key = keyname
-k.set_contents_from_string(blob)
+    random.seed()
+    fifty = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(50))
+    keyname = '%s/%s.json' % (args.keyfolder, fifty)
+    msg("WRITING ITEMS TO BUCKET %s, KEY %s" % (args.bucket, keyname))
+    s3conn = boto.connect_s3()
+    bucket = s3conn.get_bucket(args.bucket)
+    k = Key(bucket)
+    k.key = keyname
+    k.set_contents_from_string(blob)
 
-msg("DELETING ITEMS FROM QUEUE")
-for m in ms:
-    m.delete()
+    msg("DELETING ITEMS FROM QUEUE")
+    for m in ms:
+        m.delete()
 
-msg("DONE")
+    msg("DONE")
+else:
+    msg("NOTHING IN QUEUE, DONE")

@@ -111,14 +111,23 @@ def score_node_and_move(engine, node):
     depths_agreeing = the number of depths that agree with the move actually made
 
     deepest_agree = the deepest depth that agrees with the move made
+
+    num_bestmoves = how many different bestmoves were there during the evaluation
+    
+    num_bestmove_changes = the number of times the bestmove changed
+
+    bestmove_depths = the number of depths that agree with the bestmove
+
+    deepest_change = the # of the deepest depth at which the bestmove changed
     """
 
     engine.setfen(node.board().fen())
 
     result = engine.go_infos()
 
-    if result['move'] != '(none)':
-        best_move_object = Move.from_uci(result['move'])
+    best_move_uci = result['move']
+    if best_move_uci != '(none)':
+        best_move_object = Move.from_uci(best_move_uci)
     else:
         best_move_object = None
 
@@ -148,14 +157,30 @@ def score_node_and_move(engine, node):
         if node.board().turn == BLACK:
             score_cp_for_white = -1 * score_cp_for_white
 
-#        print "infos=%s" % str(infos)
+        print "infos=%s" % str(infos)
 #        print "amu=%s. bestmoves at various depths %s" % (actual_move_uci, str([i[4] for i in infos]))
+
         agreeing_depths = [i[0] for i in infos if i[4] == actual_move_uci]
         depths_agreeing = len(agreeing_depths)
         deepest_agree = agreeing_depths[-1] if depths_agreeing > 0 else 0
         
-#    print 'hello. %s' % str([depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree])
-    return [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree]
+        bestmoves = [i[4] for i in infos]
+        bestmoves.append(best_move_uci)
+        num_bestmoves = len(set(bestmoves))
+
+        bestmove_changes = [i for i in range(0,len(bestmoves)-1) if bestmoves[i] != bestmoves[i+1]]
+        num_bestmove_changes = len(bestmove_changes)
+        if num_bestmove_changes > 0:
+            deepest_change = bestmove_changes[-1] + 1
+        else:
+            deepest_change = 0
+
+        bestmove_agreeing_depths = [i[0] for i in infos if i[4] == best_move_uci]
+        bestmove_depths_agreeing = len(bestmove_agreeing_depths)
+        
+    print 'hello. %s' % str([depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change])
+
+    return [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change]
 
 
 # Given a list of position scores, 
@@ -283,6 +308,11 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
                 engine.movetime = movetime
                 engine.debug = True
 
+        engine.debug = True
+
+        # clear the hash before each move eval so that depth stats are clean
+        engine.put('setoption name Clear Hash')
+
         scoreresult = score_node_and_move(engine, prev_node)
         prev_score_white = scoreresult[2]
         prev_best_move = scoreresult[4]
@@ -300,7 +330,11 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         outstruct['best_moves'].insert(0, prev_node.board().san(prev_best_move))
         outstruct['move_features'].insert(0, features(prev_node.board(), node.move))
         outstruct['best_move_features'].insert(0, features(prev_node.board(), prev_best_move))
-        outstruct['depth_stats'].insert(0, [scoreresult[0], scoreresult[1], scoreresult[5], scoreresult[6]])
+
+        depth_stats = [scoreresult[0], scoreresult[1]]
+        depth_stats.extend(scoreresult[5:])
+        outstruct['depth_stats'].insert(0, depth_stats)
+
         was_bestmove.insert(0, prev_best_move == node.move)
 
         node = prev_node

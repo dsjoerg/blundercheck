@@ -2,11 +2,11 @@
 import chess.pgn
 import chess
 import pystockfish
-import os
+import os, sys
 import numpy
 import random
-from pandas import *
 
+from pandas import *
 
 from djeval import *
 
@@ -61,7 +61,7 @@ engine = pystockfish.Engine(depth=depth, param={'Threads':threads, 'Hash':hash},
 
 game_fd = open(fname, 'r')
 
-for gamesread in range(0,10):
+for gamesread in range(0,int(sys.argv(1))):
     while random.random() > 0.01:
         game = chess.pgn.read_game(game_fd)
 

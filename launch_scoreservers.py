@@ -36,7 +36,7 @@ nodeclusters = tutum.NodeCluster.list()
 nodeclusters = [nc for nc in nodeclusters if nc.state not in ['Terminating', 'Terminated']]
 if len(nodeclusters) == 0 or args.force:
     msg("Launching cluster")
-    nodecluster = tutum.NodeCluster.create(name="scoreservers", node_type='/api/v1/nodetype/aws/c3.8xlarge/', region='/api/v1/region/aws/us-east-1/', target_num_nodes=num_nodes)
+    nodecluster = tutum.NodeCluster.create(name="scoreservers", node_type='/api/v1/nodetype/aws/c3.8xlarge/', region='/api/v1/region/aws/us-east-1/', target_num_nodes=num_nodes, tags=[{'name': 'scorecontainer'}])
     nodecluster.save()
 else:
     nodecluster = nodeclusters[0]

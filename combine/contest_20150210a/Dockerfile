@@ -87,6 +87,10 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p
 
+# TODO removeme later
+RUN echo 'whoops 0123'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # prepare playergame data
 RUN prepare_pgmodel.py /data/yy_df.p
 
@@ -94,7 +98,7 @@ RUN prepare_pgmodel.py /data/yy_df.p
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
-#RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
+RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
-#RUN show_gbrmodel.py /data/gbr_pgmodel.p
+RUN show_gbrmodel.py /data/gbr_pgmodel.p

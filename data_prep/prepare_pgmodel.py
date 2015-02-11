@@ -240,7 +240,7 @@ for gamenum in range(1, 50001):
     if playergame in move_aggs.index:
       pg_tuple = pg_tuple + tuple(move_aggs.loc[playergame].values.tolist())
     else:
-      pg_tuple = pg_tuple + tuple([2400] * 7)
+      pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
 
     yy_combined.append(pg_tuple)
 
@@ -260,7 +260,8 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'opponent_mean_depths_ar', 'opponent_mean_deepest_ar',
               'pct_sanemoves',
               ]
-yy_columns.extend([("moveelo_" + x) for x in move_aggs.columns.values.tolist()])
+moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+yy_columns.extend(moveelo_features)
 
 msg("Hi! Building DataFrame")
 yy_df = DataFrame(yy_combined, columns=yy_columns)

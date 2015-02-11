@@ -34,7 +34,11 @@ formula_rhs = formula_rhs + " + mean_depths_ar + mean_deepest_ar"
 formula_rhs = formula_rhs + " + opponent_mean_depths_ar + opponent_mean_deepest_ar"
 formula_rhs = formula_rhs + " + pct_sanemoves"
 formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
-formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)
+formula_rhs = formula_rhs + " + moveelo_weighted"
+
+# Never mind these, they didnt help much
+#formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)
+
 
 formula = "elo ~ " + formula_rhs
 

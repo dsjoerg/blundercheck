@@ -94,6 +94,10 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 # prepare playergame data
 RUN prepare_pgmodel.py /data/yy_df.p
 
+# TODO removeme later
+RUN echo 'trying stdev weighting on movemodel 0'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # read in yy_df, train a linear model, dump some stats about it
 RUN fit_linear_pgmodel.py /data/yy_df.p
 

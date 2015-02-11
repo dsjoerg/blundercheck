@@ -49,11 +49,16 @@ features = ['nmerror',
             'mean_depths_ar', 'mean_deepest_ar',
             'opponent_mean_depths_ar', 'opponent_mean_deepest_ar',
             'pct_sanemoves',
+            'moveelo_weighted'
            ]
 
 features.extend(dummies)
-moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
-features.extend(moveelo_features)
+
+# The raw movemodel wasnt helping us at all
+use_moveelo_features = False
+if use_moveelo_features:
+    moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+    features.extend(moveelo_features)
 
 X = train[features].values
 y = train['elo']

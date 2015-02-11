@@ -60,12 +60,17 @@ plottables.extend(features)
 
 for a, b in combinations(plottables, 2):
     for first, second in [(a,b), (b,a)]:
-        groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
+        try:
+            groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
+            sns.violinplot(with_elo[second], groupings)
+            plt.savefig('/data/' + first + '_' + second + '.png')
+            plt.close()
+        except:
+            print("Couldnt manage for %s %s" % (first, second))
+
 #        f, ax = plt.subplots(figsize=(11, 6))
 #        sns.violinplot(with_elo[second], groupings, names=[str(b) + str(b+1) for b in bins[:-1]])
-        sns.violinplot(with_elo[second], groupings)
 #        ax.set(ylim=(-.7, 1.05))
 #        sns.despine(left=True, bottom=True)
-        plt.savefig('/data/' + first + '_' + second + '.png')
-        plt.close()
         print '.',
+        sys.stdout.flush()

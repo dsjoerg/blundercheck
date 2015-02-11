@@ -122,8 +122,10 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
 # TODO remove me when doing an earlier step
-RUN echo 'not yet 03'
+RUN echo 'not yet 04'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
-RUN fit_gbr_pgmodel.py /data/yy_df.p
+RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.py
+
+#RUN show_gbr_pgmodel.py /data/movemodel.p

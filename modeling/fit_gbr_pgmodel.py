@@ -8,6 +8,7 @@ from pandas import read_pickle
 from pandas import get_dummies
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.cross_validation import cross_val_score
+from sklearn.externals import joblib
 from djeval import *
 
 msg("Hi, reading yy_df.")
@@ -58,21 +59,24 @@ y = train['elo']
 gbr = GradientBoostingRegressor(loss='lad', n_estimators=400, min_samples_leaf=10, min_samples_split=50)
 
 msg("CROSS VALIDATING")
-cvs = cross_val_score(gbr, X, y, cv=3, n_jobs=1, scoring='mean_absolute_error')
+cvs = cross_val_score(gbr, X, y, cv=3, n_jobs=-1, scoring='mean_absolute_error')
 print cvs
 
 msg("Fitting!")
-
 gbr.fit(X, y)
-yy_df['gbr_prediction'] = gbr.predict(X)
+
+msg("Saving model")
+joblib.dump(gbr, sys.argv[2])
+
+msg("Making predictions for all playergames")
+yy_df['gbr_prediction'] = gbr.predict(yy_df[features].values)
 yy_df['gbr_error'] = (yy_df['gbr_prediction'] - yy_df['elo']).abs()
 yy_df['training'] = yy_df['elo'].notnull()
 insample_scores = yy_df.groupby('training')['gbr_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
 
 
-msg("Preparing submission")
-
+msg("Preparing Kaggle submission")
 # map from eventnum to whiteelo,blackelo array
 
 predictions = {}

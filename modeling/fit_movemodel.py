@@ -131,8 +131,8 @@ for asc in [True, False]:
 msg("Done.")
 
 
-exd = moves_df[['gamenum','side','elo_predicted']]
-grp = exd.groupby(['gamenum', 'side'])
+#exd = moves_df[['gamenum','side','elo_predicted']]
+grp = moves_df.groupby(['gamenum', 'side'])
 move_aggs = grp['elo_predicted'].agg({'mean': np.mean, 'median' : np.median, 'stdev': np.std,
                                       '25': lambda x: np.percentile(x, 25),
                                       '10': lambda x: np.percentile(x, 10),

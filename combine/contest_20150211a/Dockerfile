@@ -75,6 +75,8 @@ ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
+RUN echo '0'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/

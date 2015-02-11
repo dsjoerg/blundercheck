@@ -145,5 +145,6 @@ joblib.dump(move_aggs, '/data/move_aggs.p')
 exd = moves_df[['gamenum','side','elo_weighted_pred','elo_pred_weight']]
 grp = exd.groupby(['gamenum', 'side'])
 wmove_aggs = grp.aggregate(np.sum)
+wmove_aggs['elo_pred'] = wmove_aggs['elo_weighted_pred'] / wmove_aggs['elo_pred_weight']
 joblib.dump(wmove_aggs, '/data/wmove_aggs.p')
 print wmove_aggs.head()

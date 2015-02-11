@@ -48,6 +48,9 @@ msg("Hi! Reading moveaggs")
 move_aggs = joblib.load('/data/move_aggs.p')
 move_aggs['stdev'].fillna(40, inplace=True)
 
+msg("Hi! Reading wmoveaggs")
+wmove_aggs = joblib.load('/data/wmove_aggs.p')
+
 # simple list of the scores of all positions
 position_scores = []
 
@@ -245,6 +248,12 @@ for gamenum in range(1, 50001):
     else:
       pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
 
+    if playergame in wmove_aggs.index:
+      wmove_agg = wmove_aggs.loc[playergame]
+      pg_tuple = pg_tuple + tuple([wmove_agg['elo_pred']])
+    else:
+      pg_tuple = pg_tuple + tuple([2250])
+
     yy_combined.append(pg_tuple)
 
 
@@ -265,6 +274,7 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               ]
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
 yy_columns.extend(moveelo_features)
+yy_columns.append('moveelo_weighted')
 
 msg("Hi! Building DataFrame")
 yy_df = DataFrame(yy_combined, columns=yy_columns)

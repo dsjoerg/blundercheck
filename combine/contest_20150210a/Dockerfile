@@ -102,19 +102,15 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 # read in yy_df, train a linear model, dump some stats about it
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
+# TODO move this up
+RUN pip install seaborn
+
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
 ADD modeling/fit_gbr_model.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
 RUN show_gbrmodel.py /data/gbr_pgmodel.p
-
-# TODO move this up
-RUN pip install seaborn
-
-# TODO removeme later
-RUN echo 'seaborn fun 01'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # create histograms of each variable and scatterplots of every pair of
 # variables, so we can look through em and understand our data

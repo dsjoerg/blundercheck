@@ -14,4 +14,4 @@ print DataFrame([gbr.feature_importances_, features]).transpose().sort([0], asce
 
 print "There are %i estimators. Here is the first one:" % len(gbr.estimators_)
 
-print gbr.estimators_[0]
+print gbr.estimators_[0].tree_

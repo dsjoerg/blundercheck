@@ -94,7 +94,7 @@ for row in yy_df[yy_df['elo'].isnull()][['gamenum', 'side', 'gbr_prediction']].v
   predictions[eventnum][sideindex] = prediction
 
 submission = open('/data/submission.csv', 'w')
-submission.write('Event,WhiteElo,BlackElo\\n')
+submission.write('Event,WhiteElo,BlackElo\n')
 for eventnum in np.arange(25001,50001):
   submission.write('%i,%i,%i\n' % (eventnum, predictions[eventnum][0], predictions[eventnum][1]))
 submission.close()

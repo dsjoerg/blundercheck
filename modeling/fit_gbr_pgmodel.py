@@ -80,7 +80,7 @@ msg("Preparing Kaggle submission")
 # map from eventnum to whiteelo,blackelo array
 
 predictions = {}
-for eventnum in arange(25001,50001):
+for eventnum in np.arange(25001,50001):
   predictions[eventnum] = [0,0]
 
 for row in yy_df[yy_df['elo'].isnull()][['gamenum', 'side', 'gbr_prediction']].values:
@@ -95,6 +95,6 @@ for row in yy_df[yy_df['elo'].isnull()][['gamenum', 'side', 'gbr_prediction']].v
 
 submission = open('/data/submission.csv', 'w')
 submission.write('Event,WhiteElo,BlackElo\\n')
-for eventnum in arange(25001,50001):
+for eventnum in np.arange(25001,50001):
   submission.write('%i,%i,%i\\n' % (eventnum, predictions[eventnum][0], predictions[eventnum][1]))
 submission.close()

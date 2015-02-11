@@ -22,6 +22,6 @@ with sns.axes_style("white"):
 plt.savefig('/data/seaborn.png')
 
 yy_df['nmerror_deciles'], bins = qcut(yy_df['nmerror'], 10, labels=False, retbins=True)
-grp = yy_df.groupby('nmerror_deciles')['elo']
-sns.violinplot(grp)
+#grp = yy_df.groupby('nmerror_deciles')['elo']
+sns.violinplot(yy_df['elo'], yy_df['nmerror_deciles'])
 plt.savefig('/data/seaborn_violin.png')

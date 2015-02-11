@@ -20,6 +20,7 @@ y = yy_df['elo']
 with sns.axes_style("white"):
     sns.jointplot(x, y, kind="hex")
 plt.savefig('/data/seaborn.png')
+plt.close()
 
 with_elo = yy_df[yy_df['elo'].notnull()]
 with_elo['nmerror_deciles'], bins = qcut(with_elo['nmerror'], 10, labels=False, retbins=True)

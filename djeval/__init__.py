@@ -136,13 +136,17 @@ def score_node_and_move(engine, node):
     infos = result['infos']
 
     if len(infos) == 0:
-        print "No infos!"
+        print "No infos! result=%s" % str(result)
         depth = 0
         seldepth = 0
         nodes = 0
         score_cp_for_white = 0
         deepest_agree = 0
         depths_agreeing = 0
+        num_bestmoves = 0
+        num_bestmove_changes = 0
+        bestmove_depths_agreeing = 0
+        deepest_change = 0
     else:
         depth = infos[-1][0]
         seldepth = infos[-1][1]

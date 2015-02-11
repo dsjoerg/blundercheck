@@ -38,6 +38,11 @@ def dump_rows():
         else:
             print float(np.count_nonzero(depths_agreeing_ratio[side])) / len(depths_agreeing_ratio[side]),
         print len(depths)
+        print np.mean(num_bestmoves)
+        print np.mean(num_bestmove_changes)
+        print np.mean(bestmove_depths_agreeing)
+        print np.mean(deepest_change)
+        print np.mean(deepest_change_ratio)
     depths = []
     seldepths = []
     depths_agreeing_ratio[1] = []
@@ -63,6 +68,10 @@ columns = [
 'seldepth',
 'depths_agreeing',
 'deepest_agree',
+'num_bestmoves',
+'num_bestmove_changes',
+'bestmove_depths_agreeing',
+'deepest_change',
 'elo',
 'side',
 'gamenum',
@@ -76,6 +85,11 @@ depths_agreeing_ratio[-1] = []
 deepest_agree_ratio = {}
 deepest_agree_ratio[1] = []
 deepest_agree_ratio[-1] = []
+num_bestmoves = []
+num_bestmove_changes = []
+bestmove_depths_agreeing = []
+deepest_change = []
+deepest_change_ratio = []
 
 csvreader = csv.DictReader(sys.stdin, fieldnames=columns)
 
@@ -88,6 +102,12 @@ for row in csvreader:
         dump_rows()
         current_game = row['gamenum']
     depths.append(int(row['depth']))
+    num_bestmoves.append(int(row['num_bestmoves']))
+    num_bestmove_changes.append(int(row['num_bestmove_changes']))
+    bestmove_depths_agreeing.append(int(row['bestmove_depths_agreeing']))
+    deepest_change.append(int(row['deepest_change']))
+    deepest_change_ratio.append(float(row['deepest_change']) / float(row['depth']))
+
     seldepths.append(int(row['seldepth']))
     side = int(row['side'])
     depths_agreeing_ratio[side].append(float(row['depths_agreeing']) / float(row['depth']))

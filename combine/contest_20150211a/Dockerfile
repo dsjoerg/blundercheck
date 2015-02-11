@@ -65,13 +65,19 @@ ENV BLUNDERCHECK_DIR /home/beaker/src/src/blundercheck
 ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
 ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
 
-ADD data_prep/*.py $BLUNDERCHECK_DIR/data_prep/
+ADD data_prep/extract_movescores.py $BLUNDERCHECK_DIR/data_prep/
 RUN extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
+
+ADD data_prep/make_eheaders.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
+
+ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+
+ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
 ADD modeling/fit_movemodel.py $BLUNDERCHECK_DIR/modeling/

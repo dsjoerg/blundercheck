@@ -93,6 +93,8 @@ bestmove_depths_agreeing = []
 deepest_change = []
 deepest_change_ratio = []
 
+print "WHOA"
+
 csvreader = csv.DictReader(sys.stdin, fieldnames=columns)
 
 

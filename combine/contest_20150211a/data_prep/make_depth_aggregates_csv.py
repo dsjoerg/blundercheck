@@ -99,6 +99,7 @@ csvreader = csv.DictReader(sys.stdin, fieldnames=columns)
 current_game = 0
 rownum = 0
 
+print "YO"
 for row in csvreader:
     if row['gamenum'] != current_game:
         dump_rows()
@@ -115,5 +116,7 @@ for row in csvreader:
     depths_agreeing_ratio[side].append(float(row['depths_agreeing']) / float(row['depth']))
     deepest_agree_ratio[side].append(float(row['deepest_agree']) / float(row['depth']))
     rownum = rownum + 1
+    if rownum % 10 == 0:
+        print "HI %i" % rownum
 #    if rownum > 10000:
 #        break

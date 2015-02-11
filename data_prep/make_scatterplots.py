@@ -13,7 +13,7 @@ from djeval import *
 sns.set_palette("deep", desat=.6)
 sns.set_context(rc={"figure.figsize": (8, 4)})
 
-msg("Hiiii, reading yy_df.")
+msg("Hello there, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
 
 x = yy_df['nmerror']

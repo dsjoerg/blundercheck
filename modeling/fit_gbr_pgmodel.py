@@ -52,6 +52,8 @@ features = ['nmerror',
            ]
 
 features.extend(dummies)
+moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+features.extend(moveelo_features)
 
 X = train[features].values
 y = train['elo']

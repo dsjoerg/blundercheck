@@ -35,7 +35,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
 #formula_rhs = formula_rhs + " + moveelo_25 + moveelo_mean + moveelo_10"
 #formula_rhs = formula_rhs + " + moveelo_min"
 #formula_rhs = formula_rhs + " + moveelo_stdev"
-#formula_rhs = formula_rhs + " + " + " + ".join([("moveelo_" + x) for x in move_aggs.columns.values.tolist()])
+formula_rhs = formula_rhs + " + " + " + ".join([("moveelo_" + x) for x in move_aggs.columns.values.tolist()])
 
 formula = "elo ~ " + formula_rhs
 

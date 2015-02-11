@@ -56,7 +56,7 @@ features = ['nmerror',
            ]
 
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
-plottables.extend(features)
+plottables.extend(['gamelength', 'mean_depth_clipped', 'mean_deepest_ar', 'opponent_mean_deepest_ar']
 
 for a, b in combinations(plottables, 2):
     for first, second in [(a,b), (b,a)]:
@@ -74,3 +74,11 @@ for a, b in combinations(plottables, 2):
 #        sns.despine(left=True, bottom=True)
         print '.',
         sys.stdout.flush()
+
+
+g = sns.PairGrid(with_elo[plottables])
+g.map_diag(plt.hist)
+g.map_offdiag(plt.scatter)
+g.add_legend()
+plt.savefig('/data/pairgrid.png')
+plt.close()

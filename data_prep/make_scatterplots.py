@@ -5,7 +5,7 @@ matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 
 import sys
 import seaborn as sns
-from pandas import read_pickle
+from pandas import read_pickle, qcut
 import matplotlib.pyplot as plt
 from djeval import *
 
@@ -20,3 +20,8 @@ y = yy_df['elo']
 with sns.axes_style("white"):
     sns.jointplot(x, y, kind="hex")
 plt.savefig('/data/seaborn.png')
+
+yy_df['nmerror_deciles'], bins = qcut(yy_df['nmerror'], 10, labels=False, retbins=True)
+grp = yy_df.groupby('nmerror_deciles')['elo']
+sns.violinplot(grp)
+plt.savefig('/data/seaborn_violin.png')

@@ -24,6 +24,8 @@ def dump_rows():
     global depths_agreeing_ratio
     global deepest_agree_ratio
 
+    if rownum % 1000 == 0:
+        print 'row %i' % rownum
     if current_game == 0:
         return
     for side in [1, -1]:

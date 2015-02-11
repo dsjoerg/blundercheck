@@ -12,7 +12,7 @@ gbr, features = joblib.load(sys.argv[1])
 print "Feature importances:"
 print DataFrame([gbr.feature_importances_, features]).transpose().sort([0], ascending=False)
 
-print "There are %i estimators. Here is the first one:" % len(grb.estimators_)
+print "There are %i estimators. Here is the first one:" % len(gbr.estimators_)
 
 dot_data = StringIO()
 tree.export_graphviz(gbr.estimators_[0], out_file=dot_data, feature_names=features)

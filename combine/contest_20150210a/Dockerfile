@@ -69,8 +69,9 @@ RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfis
 # would have rather used ADD but the following was getting run every time instead of just once
 #ADD https://s3.amazonaws.com/bc-games/first/stockfish.csv /data/
 
-ENV PATH /home/beaker/src/src/blundercheck/data_prep:$PATH
-ENV PATH /home/beaker/src/src/blundercheck/modeling:$PATH
+ENV BLUNDERCHECK_DIR /home/beaker/src/src/blundercheck
+ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
+ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
 
 RUN extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
@@ -102,6 +103,7 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
+ADD modeling/fit_gbr_model.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
@@ -114,8 +116,7 @@ RUN pip install seaborn
 RUN echo 'seaborn fun 01'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
-ADD data_prep/make_scatterplots.py /home/beaker/src/src/blundercheck/data_prep/
-
 # create histograms of each variable and scatterplots of every pair of
 # variables, so we can look through em and understand our data
+ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_scatterplots.py /data/yy_df.p

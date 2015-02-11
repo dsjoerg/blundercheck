@@ -10,7 +10,7 @@ class DSJURLopener(urllib.FancyURLopener):
 urllib._urlopener = DSJURLopener()
 
 def msg(str):
-    sys.stderr.write("%s %s" % (time.strftime('%Y%m%d-%H%M%S'), str))
+    sys.stderr.write("%s %s\n" % (time.strftime('%Y%m%d-%H%M%S'), str))
     sys.stderr.flush()
 
 # returns "NE", "SW" etc for a move, from the players perspective

@@ -26,6 +26,11 @@ def dump_rows():
     global seldepths
     global depths_agreeing_ratio
     global deepest_agree_ratio
+    global num_bestmoves
+    global num_bestmove_changes
+    global bestmove_depths_agreeing
+    global deepest_change
+    global deepest_change_ratio
 
     if current_game == 0:
         return
@@ -52,6 +57,12 @@ def dump_rows():
     depths_agreeing_ratio[-1] = []
     deepest_agree_ratio[1] = []
     deepest_agree_ratio[-1] = []
+    num_bestmoves = []
+    num_bestmove_changes = []
+    bestmove_depths_agreeing = []
+    deepest_change = []
+    deepest_change_ratio = []
+
 
 columns = [
 'halfply',

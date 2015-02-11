@@ -3,7 +3,7 @@
 import sys
 import seaborn as sns
 from pandas import read_pickle
-from matplotlib import savefig
+import matplotlib.pyplot as plt
 
 sns.set_palette("deep", desat=.6)
 sns.set_context(rc={"figure.figsize": (8, 4)})
@@ -15,4 +15,4 @@ x = yy_df['nmerror']
 y = yy_df['elo']
 with sns.axes_style("white"):
     sns.jointplot(x, y, kind="hex")
-savefig('/data/seaborn.png')
+plt.savefig('/data/seaborn.png')

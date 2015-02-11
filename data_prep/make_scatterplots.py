@@ -23,7 +23,10 @@ plt.savefig('/data/seaborn.png')
 plt.close()
 
 with_elo = yy_df[yy_df['elo'].notnull()]
-with_elo['nmerror_deciles'], bins = qcut(with_elo['nmerror'], 10, labels=False, retbins=True)
-#grp = with_elo.groupby('nmerror_deciles')['elo']
-sns.violinplot(with_elo['elo'], with_elo['nmerror_deciles'])
-plt.savefig('/data/seaborn_violin.png')
+
+plottables = ['nmerror', 'elo', 'gbr_prediction', 'gbr_error']
+for first, second in itertools.combinations(plottables, 2):
+    groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
+    sns.violinplot(with_elo[second], groupings)
+    plt.savefig('/data/' + first + '_' + second + '.png')
+    plt.close()

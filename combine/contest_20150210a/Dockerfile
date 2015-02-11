@@ -106,3 +106,10 @@ RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
 RUN show_gbrmodel.py /data/gbr_pgmodel.p
+
+# TODO move this up
+RUN pip install seaborn
+
+# create histograms of each variable and scatterplots of every pair of
+# variables, so we can look through em and understand our data
+RUN make_scatterplots.py

@@ -74,6 +74,10 @@ ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
 ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
 
 RUN extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
+
+# TODO move this up
+RUN pip install seaborn
+
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
@@ -81,29 +85,14 @@ RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 # make movemodel
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
-# TODO removeme later
-RUN echo 'whoops 01234567'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p
-
-# TODO removeme later
-RUN echo 'whoops 01234'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # prepare playergame data
 RUN prepare_pgmodel.py /data/yy_df.p
 
-# TODO removeme later
-RUN echo 'trying stdev weighting on movemodel 0'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-
 # read in yy_df, train a linear model, dump some stats about it
 RUN fit_linear_pgmodel.py /data/yy_df.p
-
-# TODO move this up
-RUN pip install seaborn
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
 ADD modeling/fit_gbr_model.py $BLUNDERCHECK_DIR/modeling/

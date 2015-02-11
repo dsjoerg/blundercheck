@@ -20,7 +20,7 @@ n_estimators = 200
 cv_groups = 3
 n_jobs = -1
 
-just_testing = False
+just_testing = True
 if just_testing:
     CROSS_VALIDATION_N = 100
     FITTING_N = 100
@@ -119,10 +119,13 @@ msg("i got %i all_y_preds which concatenate to %i, shape %s.  moves_df is %i." %
 msg("Putting predictions back into moves_df")
 moves_df['elo_predicted'] = np.concatenate(all_y_preds)
 moves_df['elo_pred_std'] = np.concatenate(all_y_stds)
+moves_df['elo_pred_std'].fillna(40, inplace=True)
+moves_df['elo_pred_weight'] = 1. / (moves_df['elo_pred_std'] * moves_df['elo_pred_std'])
+moves_df['elo_weighted_pred'] = moves_df['elo_pred_weight'] * moves_df['elo_predicted']
 
 msg("Highest and lowest std from in-sample portion:")
 predict_insample_df = moves_df[moves_df['elo'].notnull()]
-summary_df = predict_insample_df[['elo_predicted', 'elo_pred_std', 'gamenum', 'halfply', 'elo']]
+summary_df = predict_insample_df[['elo_predicted', 'elo_pred_std', 'gamenum', 'halfply', 'elo', 'elo_pred_weight', 'elo_weighted_pred']]
 for asc in [True, False]:
     print summary_df.sort(['elo_pred_std'], ascending=asc).head(10)
 msg("Done.")
@@ -139,3 +142,7 @@ move_aggs = grp['elo_predicted'].agg({'mean': np.mean, 'median' : np.median, 'st
 
 
 joblib.dump(move_aggs, '/data/move_aggs.p')
+
+wmove_aggs = grp[['elo_weighted_pred', 'elo_pred_weight']].agg({'mean': np.mean})
+joblib.dump(wmove_aggs, '/data/wmove_aggs.p')
+print wmove_aggs.head()

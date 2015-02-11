@@ -318,3 +318,6 @@ yy_df = yy_df.join(dummies)
 
 msg("Hi! Writing yy_df to disk")
 yy_df.to_pickle(sys.argv[1])
+
+msg("Column counts are:")
+# TODO spit out column counts using http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.count.html

@@ -110,6 +110,10 @@ RUN show_gbrmodel.py /data/gbr_pgmodel.p
 # TODO move this up
 RUN pip install seaborn
 
+# TODO removeme later
+RUN echo 'seaborn fun 0'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # create histograms of each variable and scatterplots of every pair of
 # variables, so we can look through em and understand our data
 RUN make_scatterplots.py

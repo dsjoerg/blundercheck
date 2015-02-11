@@ -2,8 +2,8 @@
 
 # make sure your latest code has been pushed to git
 
-docker build -t dsjoerg/kaggle-chess-$name .
-docker tag dsjoerg/kaggle-chess-$name tutum.co/dsjoerg/kaggle-chess
-docker push tutum.co/dsjoerg/kaggle-chess
+docker build -t dsjoerg/scoreserver combine/$name/scoreserver
+docker tag dsjoerg/scoreserver tutum.co/dsjoerg/scoreserver
+docker push tutum.co/dsjoerg/scoreserver
 
 /usr/local/bin/boot2docker ssh sudo ntpclient -s -h pool.ntp.org

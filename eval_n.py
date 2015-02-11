@@ -3,19 +3,21 @@ import chess.pgn
 import chess
 import pystockfish
 import os, sys
-import numpy
 import random
-
 from pandas import *
-
 from djeval import *
+
+# must be run from contest_* image, not from scoreserver, because it uses pandas
+
+def mean(foo):
+    return sum(foo) / len(foo)
 
 def describe_movescores(ms):
 # https://github.com/ornicar/lila/blob/master/modules/analyse/src/main/Advice.scala#L44-L47
-    print "Avg cp loss:  ", numpy.mean(ms)
-    print "Inaccuracies: ", numpy.sum((ms > -100) & (ms <= -50))
-    print "Mistakes:     ", numpy.sum((ms > -300) & (ms <= -100))
-    print "Blunders:     ", numpy.sum(              (ms <= -300))
+    print "Avg cp loss:  ", mean(ms)
+    print "Inaccuracies: ", sum((ms > -100) & (ms <= -50))
+    print "Mistakes:     ", sum((ms > -300) & (ms <= -100))
+    print "Blunders:     ", sum(              (ms <= -300))
     print ms.describe()
 
 def describe_position_scores(ps):
@@ -61,14 +63,14 @@ engine = pystockfish.Engine(depth=depth, param={'Threads':threads, 'Hash':hash},
 
 game_fd = open(fname, 'r')
 
-for gamesread in range(0,int(sys.argv(1))):
+for gamesread in range(0,int(sys.argv[1])):
     while random.random() > 0.01:
         game = chess.pgn.read_game(game_fd)
 
     msg("ANALYZING %s" % (game.headers['Event']))
 
     if backwards:
-        result_struct = do_it_backwards(engine=engine, game=game, depth=depth, debug=DEBUG)
+        result_struct = do_it_backwards(engine=engine, game=game, debug=DEBUG)
     else:
         result_struct = do_it(engine=engine, game=game, depth=depth, debug=DEBUG)
 

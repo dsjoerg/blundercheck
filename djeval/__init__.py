@@ -157,7 +157,7 @@ def score_node_and_move(engine, node):
         if node.board().turn == BLACK:
             score_cp_for_white = -1 * score_cp_for_white
 
-        print "infos=%s" % str(infos)
+#        print "infos=%s" % str(infos)
 #        print "amu=%s. bestmoves at various depths %s" % (actual_move_uci, str([i[4] for i in infos]))
 
         agreeing_depths = [i[0] for i in infos if i[4] == actual_move_uci]
@@ -178,7 +178,7 @@ def score_node_and_move(engine, node):
         bestmove_agreeing_depths = [i[0] for i in infos if i[4] == best_move_uci]
         bestmove_depths_agreeing = len(bestmove_agreeing_depths)
         
-    print 'hello. %s' % str([depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change])
+#    print 'hello. %s' % str([depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change])
 
     return [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change]
 
@@ -307,8 +307,6 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
             else:
                 engine.movetime = movetime
                 engine.debug = True
-
-        engine.debug = True
 
         # clear the hash before each move eval so that depth stats are clean
         engine.put('setoption name Clear Hash')

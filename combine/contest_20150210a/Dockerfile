@@ -104,7 +104,7 @@ ADD modeling/fit_gbr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
-ADD data_prep/show_gbrmodel.py $BLUNDERCHECK_DIR/data_prep/
+ADD modeling/show_gbrmodel.py $BLUNDERCHECK_DIR/modeling/
 RUN show_gbrmodel.py /data/gbr_pgmodel.p
 
 # create histograms of each variable and scatterplots of every pair of

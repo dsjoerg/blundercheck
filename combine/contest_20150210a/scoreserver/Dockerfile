@@ -35,9 +35,9 @@ RUN pip install python-chess
 # boto config with our AWS keys
 ADD config/boto.cfg /etc/boto.cfg
 
-CMD python
+CMD python /src/blundercheck/scoreserver_launcher.py
 
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 
-RUN echo '012'
+RUN echo '123'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck

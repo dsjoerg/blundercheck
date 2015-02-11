@@ -144,6 +144,6 @@ joblib.dump(move_aggs, '/data/move_aggs.p')
 
 exd = moves_df[['gamenum','side','elo_weighted_pred','elo_pred_weight']]
 grp = exd.groupby(['gamenum', 'side'])
-wmove_aggs = grp.agg({'mean': np.mean})
+wmove_aggs = grp.aggregate(np.sum)
 joblib.dump(wmove_aggs, '/data/wmove_aggs.p')
 print wmove_aggs.head()

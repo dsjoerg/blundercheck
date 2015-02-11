@@ -20,7 +20,7 @@ n_estimators = 200
 cv_groups = 3
 n_jobs = -1
 
-just_testing = True
+just_testing = False
 if just_testing:
     CROSS_VALIDATION_N = 100
     FITTING_N = 100

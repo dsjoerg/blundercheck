@@ -85,13 +85,18 @@ RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 # make movemodel
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
+ADD modeling/fit_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
+
+ADD data_prep/show_movemodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN show_movemodel.py /data/movemodel.p
 
 # prepare playergame data
+ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN prepare_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a linear model, dump some stats about it
+ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
@@ -99,6 +104,7 @@ ADD modeling/fit_gbr_model.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
+ADD data_prep/show_gbrmodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN show_gbrmodel.py /data/gbr_pgmodel.p
 
 # create histograms of each variable and scatterplots of every pair of

@@ -20,10 +20,12 @@ n_estimators = 200
 cv_groups = 3
 n_jobs = -1
 
-CROSS_VALIDATION_N = 100
-FITTING_N = 100
-PREDICT_N = 400000
-n_estimators = 5
+just_testing = False
+if just_testing:
+    CROSS_VALIDATION_N = 100
+    FITTING_N = 100
+    PREDICT_N = 400000
+    n_estimators = 5
 
 def sample_df(df, n_to_sample):
     row_indexes = np.random.choice(df.index.values, n_to_sample, replace=False)

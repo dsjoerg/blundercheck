@@ -87,6 +87,10 @@ RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 RUN show_movemodel.py /data/movemodel.p
 
+# TODO removeme later
+RUN echo 'whoops 01'
+RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
 # prepare playergame data
 RUN prepare_pgmodel.py /data/yy_df.p
 

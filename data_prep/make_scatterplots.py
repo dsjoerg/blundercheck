@@ -26,8 +26,13 @@ plt.close()
 with_elo = yy_df[yy_df['elo'].notnull()]
 
 plottables = ['nmerror', 'elo', 'gbr_prediction', 'gbr_error']
-for first, second in combinations(plottables, 2):
-    groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
-    sns.violinplot(with_elo[second], groupings)
-    plt.savefig('/data/' + first + '_' + second + '.png')
-    plt.close()
+for a, b in combinations(plottables, 2):
+    for first, second in [(a,b), (b,a)]:
+        groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
+        f, ax = plt.subplots(figsize=(11, 6))
+        sns.violinplot(with_elo[second], groupings, names=[str(b) for b in bins])
+        ax.set(ylim=(-.7, 1.05))
+        sns.despine(left=True, bottom=True)
+        plt.savefig('/data/' + first + '_' + second + '.png')
+        plt.close()
+        print '.',

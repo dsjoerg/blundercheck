@@ -2,8 +2,9 @@
 
 import sys, csv
 import numpy as np
+from djeval import *
 
-sys.stderr.write("HI THERE")
+msg("HI THERE")
 
 depths = []
 seldepths = []
@@ -116,6 +117,6 @@ for row in csvreader:
     deepest_agree_ratio[side].append(float(row['deepest_agree']) / float(row['depth']))
     rownum = rownum + 1
     if rownum % 20000 == 0:
-        sys.stderr.write('row %i\n' % rownum)
+        msg('row %i\n' % rownum)
 #    if rownum > 10000:
 #        break

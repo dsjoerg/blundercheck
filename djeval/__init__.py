@@ -10,8 +10,8 @@ class DSJURLopener(urllib.FancyURLopener):
 urllib._urlopener = DSJURLopener()
 
 def msg(str):
-    print "%s %s" % (time.strftime('%Y%m%d-%H%M%S'), str)
-    sys.stdout.flush()
+    sys.stderr.write("%s %s" % (time.strftime('%Y%m%d-%H%M%S'), str))
+    sys.stderr.flush()
 
 # returns "NE", "SW" etc for a move, from the players perspective
 # and also the distance moved

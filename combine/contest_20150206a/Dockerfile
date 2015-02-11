@@ -126,10 +126,11 @@ RUN echo 'not yet 07'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
+# TODO fix model filename to be .p not .py
 RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.py
 
 # TODO remove me when doing an earlier step
 RUN echo 'not yet 0'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
-RUN show_gbrmodel.py /data/gbr_pgmodel.p
+RUN show_gbrmodel.py /data/gbr_pgmodel.py

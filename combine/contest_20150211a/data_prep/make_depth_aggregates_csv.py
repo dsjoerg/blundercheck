@@ -26,8 +26,6 @@ def dump_rows():
     global depths_agreeing_ratio
     global deepest_agree_ratio
 
-    if rownum % 1000 == 0:
-        sys.stderr.write('row %i' % rownum)
     if current_game == 0:
         return
     for side in [1, -1]:
@@ -117,5 +115,7 @@ for row in csvreader:
     depths_agreeing_ratio[side].append(float(row['depths_agreeing']) / float(row['depth']))
     deepest_agree_ratio[side].append(float(row['deepest_agree']) / float(row['depth']))
     rownum = rownum + 1
+    if rownum % 1000 == 0:
+        sys.stderr.write('row %i\n' % rownum)
 #    if rownum > 10000:
 #        break

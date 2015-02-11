@@ -131,7 +131,6 @@ for asc in [True, False]:
 msg("Done.")
 
 
-#exd = moves_df[['gamenum','side','elo_predicted']]
 grp = moves_df.groupby(['gamenum', 'side'])
 move_aggs = grp['elo_predicted'].agg({'mean': np.mean, 'median' : np.median, 'stdev': np.std,
                                       '25': lambda x: np.percentile(x, 25),
@@ -143,6 +142,8 @@ move_aggs = grp['elo_predicted'].agg({'mean': np.mean, 'median' : np.median, 'st
 
 joblib.dump(move_aggs, '/data/move_aggs.p')
 
-wmove_aggs = grp[['elo_weighted_pred', 'elo_pred_weight']].agg({'mean': np.mean})
+exd = moves_df[['gamenum','side','elo_weighted_pred','elo_pred_weight']]
+grp = exd.groupby(['gamenum', 'side'])
+wmove_aggs = grp.agg({'mean': np.mean})
 joblib.dump(wmove_aggs, '/data/wmove_aggs.p')
 print wmove_aggs.head()

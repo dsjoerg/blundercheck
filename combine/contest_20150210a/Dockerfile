@@ -81,7 +81,7 @@ RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
 # TODO removeme later
-RUN echo 'whoops 01234'
+RUN echo 'whoops 012345'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p

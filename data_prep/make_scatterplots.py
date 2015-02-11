@@ -26,7 +26,7 @@ plt.close()
 with_elo = yy_df[yy_df['elo'].notnull()]
 
 plottables = ['nmerror', 'elo', 'gbr_prediction', 'gbr_error']
-for first, second in itertools.combinations(plottables, 2):
+for first, second in combinations(plottables, 2):
     groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
     sns.violinplot(with_elo[second], groupings)
     plt.savefig('/data/' + first + '_' + second + '.png')

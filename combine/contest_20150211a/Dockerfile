@@ -91,18 +91,18 @@ ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN prepare_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a linear model, dump some stats about it
-ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_linear_pgmodel.py /data/yy_df.p
+#ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
+#RUN fit_linear_pgmodel.py /data/yy_df.p
 
 # read in yy_df, train a gradientboosting model, dump some stats about it and write a submission.
-ADD modeling/fit_gbr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
+#ADD modeling/fit_gbr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
+#RUN fit_gbr_pgmodel.py /data/yy_df.p /data/gbr_pgmodel.p
 
 # show more about the GBR model
-ADD modeling/show_gbrmodel.py $BLUNDERCHECK_DIR/modeling/
-RUN show_gbrmodel.py /data/gbr_pgmodel.p
+#ADD modeling/show_gbrmodel.py $BLUNDERCHECK_DIR/modeling/
+#RUN show_gbrmodel.py /data/gbr_pgmodel.p
 
 # create histograms of each variable and scatterplots of every pair of
 # variables, so we can look through em and understand our data
-ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
-RUN make_scatterplots.py /data/yy_df.p
+#ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
+#RUN make_scatterplots.py /data/yy_df.p

@@ -70,6 +70,7 @@ gbr = GradientBoostingRegressor(loss='lad', n_estimators=400, min_samples_leaf=1
 msg("CROSS VALIDATING")
 cvs = cross_val_score(gbr, X, y, cv=3, n_jobs=-1, scoring='mean_absolute_error')
 print cvs
+sys.stdout.flush()
 
 msg("Fitting!")
 gbr.fit(X, y)

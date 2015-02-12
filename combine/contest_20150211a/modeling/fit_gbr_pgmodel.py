@@ -18,6 +18,7 @@ msg("Getting subset ready.")
 
 # TODO save the dummies along with yy_df
 dummies = get_dummies(yy_df['opening_feature'])
+new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
 
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
@@ -53,6 +54,7 @@ features = ['nmerror',
            ]
 
 features.extend(dummies)
+features.extend(new_depth_cols)
 
 # The raw movemodel wasnt helping us at all
 use_moveelo_features = False

@@ -83,6 +83,9 @@ RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN show_movemodel.py /data/movemodel.p
 
+# get the previous movescores, do they help?
+RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
+
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN prepare_pgmodel.py /data/yy_df.p

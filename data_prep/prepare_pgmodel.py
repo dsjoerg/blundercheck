@@ -19,7 +19,7 @@ ocount = eheaders['opening_count']
 
 msg("Hi! Reading movescores into memory, using kaggle-supplied scores as a backstop")
 rows = {}
-for scorefile_name in ['/data/movescores.csv', '/data/stockfish.csv']:
+for scorefile_name in ['/data/20150203_movescores.csv', '/data/movescores.csv', '/data/stockfish.csv']:
     stockfish_scores = open(scorefile_name)
     stockfish_reader = csv.reader(stockfish_scores, delimiter=',')
     for row in stockfish_reader:

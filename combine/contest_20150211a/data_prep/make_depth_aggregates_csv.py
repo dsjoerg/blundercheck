@@ -45,12 +45,13 @@ def dump_rows():
             print 0.5,
         else:
             print float(np.count_nonzero(depths_agreeing_ratio[side])) / len(depths_agreeing_ratio[side]),
-        print len(depths)
-        print np.mean(num_bestmoves)
-        print np.mean(num_bestmove_changes)
-        print np.mean(bestmove_depths_agreeing)
-        print np.mean(deepest_change)
+        print len(depths),
+        print np.mean(num_bestmoves),
+        print np.mean(num_bestmove_changes),
+        print np.mean(bestmove_depths_agreeing),
+        print np.mean(deepest_change),
         print np.mean(deepest_change_ratio)
+        # NOTE THAT ONLY THE LAST LINE SHOULD LACK A COMMA
     depths = []
     seldepths = []
     depths_agreeing_ratio[1] = []

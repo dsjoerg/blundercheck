@@ -48,3 +48,16 @@ formula = "elo ~ " + formula_rhs
 msg("Fitting!")
 ols = sm.ols(formula=formula, data=train).fit()
 print ols.summary()
+
+msg("Saving model")
+joblib.dump(ols, sys.argv[2])
+
+msg("Making predictions for all playergames")
+yy_df['ols_prediction'] = ols.predict(yy_df)
+yy_df['ols_error'] = (yy_df['ols_prediction'] - yy_df['elo']).abs()
+yy_df['training'] = yy_df['elo'].notnull()
+insample_scores = yy_df.groupby('training')['ols_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
+print insample_scores
+
+msg("Writing yy_df back out with gbr predictions inside")
+yy_df.to_pickle(sys.argv[1])

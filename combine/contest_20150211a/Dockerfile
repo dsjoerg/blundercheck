@@ -8,24 +8,21 @@ RUN apt-get -y update && apt-get -y upgrade && apt-get -y install \
     python-pip \
     telnet \
     emacs \
-    python-pygraphviz
+    python-pygraphviz \
+    python-matplotlib \
+    python-scipy \
+    git \
+    wget
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# nah this is too useful to kill
+#RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pip install boto
 RUN pip install pandas
 RUN pip install python-chess
-
-#TODO move these up
-RUN apt-get -y update && apt-get -y upgrade && apt-get install -y python-matplotlib python-scipy
-
 RUN pip install -U statsmodels
 RUN pip install -U patsy
 RUN pip install seaborn
-
-#TODO move these up
-RUN apt-get -y install git
-RUN apt-get -y install wget
 
 # SSH git fun from http://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile/25977750#25977750
 ADD config/repo-key /
@@ -75,10 +72,6 @@ ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
-# TODO cleanme
-RUN echo '0'
-RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
-#
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/

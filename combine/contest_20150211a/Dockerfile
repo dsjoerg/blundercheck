@@ -71,9 +71,6 @@ RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
-ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
-RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
-
 ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
@@ -82,6 +79,9 @@ RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 
 ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN show_movemodel.py /data/movemodel.p
+
+ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
+RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 # get the previous movescores, do they help?
 RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv

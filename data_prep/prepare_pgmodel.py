@@ -40,6 +40,11 @@ columns = [
 'mean_deepest_agree_ratio',
 'pct_sanemoves',
 'gamelength',
+'mean_num_bestmoves',
+'mean_num_bestmove_changes',
+'mean_bestmove_depths_agreeing',
+'mean_deepest_change',
+'mean_deepest_change_ratio',
 ]
 depthstats_df = read_csv(depthstats_path, sep=' ', engine='c', header=None, names=columns, index_col=False)
 depthstats_df = depthstats_df.set_index(['gamenum', 'side'])
@@ -184,6 +189,8 @@ for row in rows.values():
 
 msg("Hi! Setting up playergame rows")
 
+new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
+
 yy_combined = []
 
 for gamenum in range(1, 50001):
@@ -206,6 +213,7 @@ for gamenum in range(1, 50001):
       opp_depthstat_row = depthstats_df.loc[opponent_playergame]
       opponent_mean_depths_ar = opp_depthstat_row['mean_depths_agreeing_ratio']
       opponent_mean_deepest_ar = opp_depthstat_row['mean_deepest_agree_ratio']
+      
       if np.isnan(mean_depths_ar):
         mean_depths_ar = 0.5
       if np.isnan(mean_deepest_ar):
@@ -254,6 +262,11 @@ for gamenum in range(1, 50001):
     else:
       pg_tuple = pg_tuple + tuple([2250])
 
+    if playergame in depthstats_df.index:
+      pg_tuple = pg_tuple + tuple(depthstats_df.loc[playergame][new_depth_cols])
+    else:
+      pg_tuple = pg_tuple + tuple([10, 3, 10, 10, 0.6])
+
     yy_combined.append(pg_tuple)
 
 
@@ -275,6 +288,7 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
 yy_columns.extend(moveelo_features)
 yy_columns.append('moveelo_weighted')
+yy_columns.extend(new_depth_cols)
 
 msg("Hi! Building DataFrame")
 yy_df = DataFrame(yy_combined, columns=yy_columns)

@@ -50,9 +50,6 @@ msg("Fitting!")
 ols = sm.ols(formula=formula, data=train).fit()
 print ols.summary()
 
-msg("Saving model")
-joblib.dump(ols, sys.argv[2])
-
 msg("Making predictions for all playergames")
 yy_df['ols_prediction'] = ols.predict(yy_df)
 yy_df['ols_error'] = (yy_df['ols_prediction'] - yy_df['elo']).abs()

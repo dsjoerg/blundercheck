@@ -7,6 +7,7 @@ from pandas import DataFrame
 from pandas import read_pickle
 from pandas import get_dummies
 import statsmodels.formula.api as sm
+from sklearn.externals import joblib
 
 from djeval import *
 

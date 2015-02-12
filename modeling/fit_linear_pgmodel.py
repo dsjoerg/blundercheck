@@ -37,7 +37,6 @@ formula_rhs = formula_rhs + " + opponent_mean_depths_ar + opponent_mean_deepest_
 formula_rhs = formula_rhs + " + pct_sanemoves"
 formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
 formula_rhs = formula_rhs + " + moveelo_weighted"
-formula_rhs = formula_rhs + " + moveelo_weighted"
 formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 
 # Never mind these, they didnt help much

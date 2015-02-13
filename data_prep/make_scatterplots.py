@@ -58,6 +58,7 @@ if make_pairplot:
     plt.savefig('/data/pairplot.png')
     plt.close()
 
+features = ['won_by_checkmate', 'meanerror']
 for a, b in product(features, plottables):
     msg('Making %s %s' % (a, b))
     x = with_elo[a]

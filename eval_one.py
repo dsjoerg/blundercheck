@@ -2,7 +2,7 @@
 import chess.pgn
 import chess
 import pystockfish
-import os
+import os, StringIO
 import numpy
 from pandas import *
 import boto

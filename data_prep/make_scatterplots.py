@@ -60,13 +60,14 @@ new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestm
 features.extend(dummies)
 features.extend(new_depth_cols)
 
+# blunderrate graph looks terrible because its bin edges are: [ 0.        ,  0.        ,  0.        ,  0.        ,  0.01960784, 0.03125   ,  0.04651163,  0.06666667,  0.09090909,  0.12820513,        0.83333333]
+
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
 
 do_indivs = True
 if do_indivs:
     for a, b in product(features, plottables):
-        print '.',
-        sys.stdout.flush()
+        msg('.')
         try:
             groupings, bins = qcut(with_elo[a], 10, labels=False, retbins=True)
             sns.violinplot(with_elo[b], groupings)
@@ -78,7 +79,7 @@ if do_indivs:
                 plt.savefig('/data/' + a + '_' + b + '.png')
                 plt.close()
             except:
-                print("Couldnt manage for %s %s" % (a, b))
+                msg("Couldnt manage for %s %s" % (a, b))
 
     #        f, ax = plt.subplots(figsize=(11, 6))
     #        sns.violinplot(with_elo[second], groupings, names=[str(b) + str(b+1) for b in bins[:-1]])

@@ -319,7 +319,7 @@ yy_df['drawn_game'] = (yy_df['gameoutcome'] == 0)
 yy_df['ended_by_checkmate'] = yy_df['won_by_checkmate'] | yy_df['lost_by_checkmate']
 yy_df['noblunders'] = (yy_df['blunderrate'] == 0)
 yy_df['opponent_noblunders'] = (yy_df['opponent_blunderrate'] == 0)
-yy_df['nmerror'] = log((-1 * yy_df['meanerror']).clip(1,60)).clip(1,4) - 2.53
+
 yy_df['opponent_nmerror'] = log((-1 * yy_df['opponent_meanerror']).clip(1,60)).clip(1,4) - 2.53
 
 yy_df['max_nmerror'] = yy_df[['nmerror', 'opponent_nmerror']].max(axis=1)

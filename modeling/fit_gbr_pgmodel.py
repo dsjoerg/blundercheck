@@ -16,51 +16,18 @@ yy_df = read_pickle(sys.argv[1])
 
 msg("Getting subset ready.")
 
-# TODO save the dummies along with yy_df
-dummies = get_dummies(yy_df['opening_feature'])
-new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
-
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
-                    
-features = ['nmerror',
-            'blunderrate', 'noblunders', 
-            'perfectrate',
-            'gameoutcome',
-            'won_by_checkmate', 'lost_by_checkmate', 'ended_by_checkmate',
-            'my_final_equity', 'final_equity',
-            'grit', 'any_grit', 'opponent_any_grit', 'major_grit',
-            'mate_created', 'mate_destroyed', 'premature_quit',
-            'side',
-            'drawn_game',
-            'gamelength',
-            'meanecho',
-            'opponent_nmerror', 'opponent_noblunders',
-            'mean_depth_clipped',
-            'mean_seldepth',
-            'min_nmerror', 'max_nmerror', 'max_meanecho',
-            'early_lead',
-            'q_error_one', 'q_error_two',
-            'opponent_q_error_one', 'opponent_q_error_two',
-            'pct_sanemoves',
-            'opponent_blunderrate', 'opponent_perfectrate',
-            'opponent_grit', 'opponent_meanecho',
-            'opponent_mate_created', 'opponent_mate_destroyed',
-            'mean_seldepth',
-            'mean_depths_ar', 'mean_deepest_ar',
-            'opponent_mean_depths_ar', 'opponent_mean_deepest_ar',
-            'pct_sanemoves',
-            'moveelo_weighted'
-           ]
+features = yy_df.columns.values
+excluded_features = ['elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'opening_feature', 'ols_error']
+for f in excluded_features:
+    features.remove(f)
 
-features.extend(dummies)
-features.extend(new_depth_cols)
-
-# The raw movemodel wasnt helping us at all
-use_moveelo_features = False
-if use_moveelo_features:
-    moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
-    features.extend(moveelo_features)
+# The raw movemodel wasnt helping us at all.
+# LETS TRY IT ONE LAST TIME
+#use_moveelo_features = False
+#if use_moveelo_features:
+#    features.extend(moveelo_features)
 
 X = train[features].values
 y = train['elo']

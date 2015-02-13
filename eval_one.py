@@ -17,6 +17,7 @@ def get_game_from_s3(game_number):
     msg("Retrieving %s" % key_name)
     k = gamesbucket.get_key(key_name)
     game_pgn_string = k.get_contents_as_string()
+    msg("Game is %s" % game_pgn_string)
     game_fd = StringIO.StringIO(game_pgn_string)
     game = chess.pgn.read_game(game_fd)
 

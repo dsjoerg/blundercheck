@@ -10,6 +10,7 @@ from itertools import product
 import matplotlib.pyplot as plt
 from pandas import get_dummies
 from pandas import groupby
+import numpy as np
 from djeval import *
 
 sns.set_palette("deep", desat=.6)

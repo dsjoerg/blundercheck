@@ -16,6 +16,10 @@ from djeval import *
 sns.set_palette("deep", desat=.6)
 sns.set_context(rc={"figure.figsize": (8, 4)})
 
+def percentile_subset(x, min_pct, max_pct):
+    min_value, max_value = np.percentile(x, [min_pct, max_pct])
+    return x[(x >= min_value) & (x <= max_value)]
+
 msg("Hello there, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
 
@@ -64,8 +68,10 @@ for a, b in product(features, plottables):
     x = with_elo[a]
     y = with_elo[b]
     try:
+        xlim = tuple(np.percentile(x, [1,99]))
+        ylim = tuple(np.percentile(y, [1,99]))
         with sns.axes_style("white"):
-            sns.jointplot(x, y, kind="hex")
+            sns.jointplot(x, y, kind="hex", xlim=xlim, ylim=ylim)
         plt.savefig('/data/scatter_' + a + '_' + b + '.png')
         plt.close()
     except:

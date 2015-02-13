@@ -46,7 +46,7 @@ for a, b in product(features, plottables):
     x = with_elo[a]
     y = with_elo[b]
     msg('type = %s' % x.dtype)
-    if x.dtype == 'str':
+    if x.dtype == 'object':
         plt.figure()
         x.value_counts().plot(kind='bar')
         plt.savefig('/data/' + a + '_hist.png')

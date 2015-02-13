@@ -46,6 +46,10 @@ yy_df['training'] = yy_df['elo'].notnull()
 insample_scores = yy_df.groupby('training')['gbr_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
 
+msg("Error summary by ELO:")
+elo_centuries = cut(yy_df['elo'], 20)
+print yy_df.groupby(elo_centuries)['gbr_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
+
 msg("Writing yy_df back out with gbr predictions inside")
 yy_df.to_pickle(sys.argv[1])
 

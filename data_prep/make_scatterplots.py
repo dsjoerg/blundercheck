@@ -73,12 +73,14 @@ if do_indivs:
     for a, b in product(features, plottables):
         msg('Making %s %s' % (a, b))
         try:
+            plt.figure()
             groupings, bins = qcut(with_elo[a], 10, labels=False, retbins=True)
             sns.violinplot(with_elo[b], groupings)
             plt.savefig('/data/' + a + '_' + b + '.png')
             plt.close()
         except:
             try:
+                plt.figure()
                 sns.violinplot(with_elo[b], with_elo[a])
                 plt.savefig('/data/' + a + '_' + b + '.png')
                 plt.close()

@@ -8,6 +8,7 @@ import seaborn as sns
 from pandas import read_pickle, qcut
 from itertools import product
 import matplotlib.pyplot as plt
+from pandas import get_dummies
 from djeval import *
 
 sns.set_palette("deep", desat=.6)

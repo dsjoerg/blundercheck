@@ -23,12 +23,6 @@ excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_
 for f in excluded_features:
     features.remove(f)
 
-# The raw movemodel wasnt helping us at all.
-# LETS TRY IT ONE LAST TIME
-#use_moveelo_features = False
-#if use_moveelo_features:
-#    features.extend(moveelo_features)
-
 X = train[features].values
 y = train['elo']
 

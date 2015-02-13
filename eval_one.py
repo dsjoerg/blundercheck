@@ -5,9 +5,21 @@ import pystockfish
 import os
 import numpy
 from pandas import *
-
+import boto
+from boto.s3.key import Key
 
 from djeval import *
+
+def get_game_from_s3(game_number):
+    s3conn = boto.connect_s3()
+    gamesbucket = s3conn.get_bucket('bc-games')
+    key_name = "kaggle/%s.pgn" % game_number
+    msg("Retrieving %s" % key_name)
+    k = gamesbucket.get_key(key_name)
+    game_pgn_string = k.get_contents_as_string()
+    game_fd = StringIO.StringIO(game_pgn_string)
+    game = chess.pgn.read_game(game_fd)
+
 
 def describe_movescores(ms):
 # https://github.com/ornicar/lila/blob/master/modules/analyse/src/main/Advice.scala#L44-L47
@@ -45,7 +57,7 @@ else:
     hash = 100
 
 backwards = ('BACKWARDS' in os.environ)
-fname = os.environ['FNAME']
+game_number = int(os.environ['GAMENUM'])
 
 depth = None
 if 'DEPTH' in os.environ:
@@ -60,12 +72,11 @@ movenum=None
 if 'MOVENUM' in os.environ:
     movenum = int(os.environ['MOVENUM'])
 
-msg("Hi! Analyzing %s. Depth=%s, Movetime=%s" % (fname, str(depth), str(movetime)))
+msg("Hi! Analyzing %i. Depth=%s, Movetime=%s" % (game_number, str(depth), str(movetime)))
 
 engine = pystockfish.Engine(depth=depth, param={'Threads':threads, 'Hash':hash}, movetime=movetime)
 
-game_fd = open(fname, 'r')
-game = chess.pgn.read_game(game_fd)
+game = get_game_from_s3(game_number)
 
 if backwards:
     result_struct = do_it_backwards(engine=engine, game=game, debug=DEBUG, movenum=movenum)

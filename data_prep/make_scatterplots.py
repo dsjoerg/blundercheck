@@ -6,7 +6,7 @@ matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
 import sys
 import seaborn as sns
 from pandas import read_pickle, qcut
-from itertools import combinations
+from itertools import product
 import matplotlib.pyplot as plt
 from djeval import *
 
@@ -54,28 +54,35 @@ features = ['nmerror',
             'pct_sanemoves',
             'moveelo_weighted'
            ]
+dummies = get_dummies(yy_df['opening_feature'])
+new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
+features.extend(dummies)
+features.extend(new_depth_cols)
 
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
-plottables.extend(['gamelength', 'mean_depth_clipped', 'mean_deepest_ar', 'opponent_mean_deepest_ar'])
 
-do_indivs = False
+do_indivs = True
 if do_indivs:
-    for a, b in combinations(plottables, 2):
-        for first, second in [(a,b), (b,a)]:
+    for a, b in product(features, plottables):
+        print '.',
+        sys.stdout.flush()
+        try:
+            groupings, bins = qcut(with_elo[a], 10, labels=False, retbins=True)
+            sns.violinplot(with_elo[b], groupings)
+            plt.savefig('/data/' + a + '_' + b + '.png')
+            plt.close()
+        except:
             try:
-                groupings, bins = qcut(with_elo[first], 10, labels=False, retbins=True)
-                sns.violinplot(with_elo[second], groupings)
-                plt.savefig('/data/' + first + '_' + second + '.png')
+                sns.violinplot(with_elo[b], with_elo[a])
+                plt.savefig('/data/' + a + '_' + b + '.png')
                 plt.close()
             except:
-                print("Couldnt manage for %s %s" % (first, second))
+                print("Couldnt manage for %s %s" % (a, b))
 
     #        f, ax = plt.subplots(figsize=(11, 6))
     #        sns.violinplot(with_elo[second], groupings, names=[str(b) + str(b+1) for b in bins[:-1]])
     #        ax.set(ylim=(-.7, 1.05))
     #        sns.despine(left=True, bottom=True)
-            print '.',
-            sys.stdout.flush()
 
 # this wasnt working for some reason
 make_pairplot = False

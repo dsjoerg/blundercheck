@@ -39,5 +39,5 @@ CMD python /src/blundercheck/scoreserver_launcher.py
 
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 
-RUN echo '1234'
+RUN echo '12345'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck

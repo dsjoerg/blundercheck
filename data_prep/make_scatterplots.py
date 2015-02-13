@@ -56,7 +56,7 @@ if make_pairplot:
     plt.close()
 
 for a, b in product(features, plottables):
-    msg('.')
+    msg('Making %s %s' % (a, b))
     x = yy_df[a]
     y = yy_df[b]
     with sns.axes_style("white"):

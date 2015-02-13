@@ -9,6 +9,7 @@ from pandas import read_pickle, qcut
 from itertools import product
 import matplotlib.pyplot as plt
 from pandas import get_dummies
+from pandas import groupby
 from djeval import *
 
 sns.set_palette("deep", desat=.6)
@@ -25,6 +26,7 @@ features = list(yy_df.columns.values)
 # blunderrate graph looks terrible because its bin edges are: [ 0.        ,  0.        ,  0.        ,  0.        ,  0.01960784, 0.03125   ,  0.04651163,  0.06666667,  0.09090909,  0.12820513,        0.83333333]
 
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
+plottables = ['elo']
 
 do_indivs = False
 if do_indivs:
@@ -57,9 +59,16 @@ if make_pairplot:
 
 for a, b in product(features, plottables):
     msg('Making %s %s' % (a, b))
-    x = yy_df[a]
-    y = yy_df[b]
-    with sns.axes_style("white"):
-        sns.jointplot(x, y, kind="hex")
-    plt.savefig('/data/scatter_' + a + '_' + b + '.png')
-    plt.close()
+    x = with_elo[a]
+    y = with_elo[b]
+    try:
+        with sns.axes_style("white"):
+            sns.jointplot(x, y, kind="hex")
+        plt.savefig('/data/scatter_' + a + '_' + b + '.png')
+        plt.close()
+    except:
+        grp = groupby(y, x)
+        counts = grp.agg({'count': np.count})['count']
+        sns.violinplot(x, y, widths=counts)
+        plt.savefig('/data/' + a + '_' + b + '.png')
+        plt.close()

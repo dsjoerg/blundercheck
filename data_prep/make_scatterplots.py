@@ -32,6 +32,40 @@ features = list(yy_df.columns.values)
 
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
 plottables = ['elo']
+features = ['opening_feature']
+
+# this wasnt working for some reason
+make_pairplot = False
+if make_pairplot:
+    g = sns.pairplot(with_elo[plottables], size=2.5)
+    plt.savefig('/data/pairplot.png')
+    plt.close()
+
+for a, b in product(features, plottables):
+    msg('Making %s %s' % (a, b))
+    x = with_elo[a]
+    y = with_elo[b]
+    if x.dtype == 'str':
+        plt.figure()
+        x.value_counts().plot(kind='bar')
+        plt.savefig('/data/' + a + '_hist.png')
+        plt.close()
+    else:
+        try:
+            xlim = tuple(np.percentile(x, [1,99]))
+            ylim = tuple(np.percentile(y, [1,99]))
+            with sns.axes_style("white"):
+                sns.jointplot(x, y, kind="hex", xlim=xlim, ylim=ylim)
+            plt.savefig('/data/scatter_' + a + '_' + b + '.png')
+            plt.close()
+        except:
+    #        sns.violinplot(x, y)
+    #        plt.savefig('/data/' + a + '_' + b + '.png')
+    #        plt.close()
+            plt.figure()
+            x.plot(kind='hist')
+            plt.savefig('/data/' + a + '_hist.png')
+            plt.close()
 
 do_indivs = True
 if do_indivs:
@@ -54,30 +88,3 @@ if do_indivs:
     #        sns.violinplot(with_elo[second], groupings, names=[str(b) + str(b+1) for b in bins[:-1]])
     #        ax.set(ylim=(-.7, 1.05))
     #        sns.despine(left=True, bottom=True)
-
-# this wasnt working for some reason
-make_pairplot = False
-if make_pairplot:
-    g = sns.pairplot(with_elo[plottables], size=2.5)
-    plt.savefig('/data/pairplot.png')
-    plt.close()
-
-for a, b in product(features, plottables):
-    msg('Making %s %s' % (a, b))
-    x = with_elo[a]
-    y = with_elo[b]
-    try:
-        xlim = tuple(np.percentile(x, [1,99]))
-        ylim = tuple(np.percentile(y, [1,99]))
-        with sns.axes_style("white"):
-            sns.jointplot(x, y, kind="hex", xlim=xlim, ylim=ylim)
-        plt.savefig('/data/scatter_' + a + '_' + b + '.png')
-        plt.close()
-    except:
-#        sns.violinplot(x, y)
-#        plt.savefig('/data/' + a + '_' + b + '.png')
-#        plt.close()
-        plt.figure()
-        x.plot(kind='hist')
-        plt.savefig('/data/' + a + '_hist.png')
-        plt.close()

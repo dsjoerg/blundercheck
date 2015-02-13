@@ -32,7 +32,7 @@ features = list(yy_df.columns.values)
 
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
 plottables = ['elo']
-features = ['opening_feature']
+#features = ['opening_feature']
 
 # this wasnt working for some reason
 make_pairplot = False

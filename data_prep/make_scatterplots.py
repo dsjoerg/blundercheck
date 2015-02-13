@@ -78,6 +78,6 @@ for a, b in product(features, plottables):
 #        sns.violinplot(x, y)
 #        plt.savefig('/data/' + a + '_' + b + '.png')
 #        plt.close()
-        x.hist()
+        x.plot(kind='hist')
         plt.savefig('/data/' + a + '_hist.png')
         plt.close()

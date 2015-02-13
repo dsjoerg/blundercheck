@@ -29,7 +29,7 @@ plottables = ['elo', 'gbr_prediction', 'gbr_error']
 do_indivs = False
 if do_indivs:
     for a, b in product(features, plottables):
-        msg('.')
+        msg('Making %s %s' % (a, b))
         try:
             groupings, bins = qcut(with_elo[a], 10, labels=False, retbins=True)
             sns.violinplot(with_elo[b], groupings)

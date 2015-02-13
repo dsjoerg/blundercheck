@@ -3,9 +3,7 @@
 import sys, time
 import numpy as np
 import cPickle as pickle
-from pandas import DataFrame
-from pandas import read_pickle
-from pandas import get_dummies
+from pandas import *
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.cross_validation import cross_val_score
 from sklearn.externals import joblib

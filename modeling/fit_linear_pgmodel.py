@@ -57,5 +57,5 @@ yy_df['training'] = yy_df['elo'].notnull()
 insample_scores = yy_df.groupby('training')['ols_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
 
-msg("Writing yy_df back out with gbr predictions inside")
+msg("Writing yy_df back out with ols predictions inside")
 yy_df.to_pickle(sys.argv[1])

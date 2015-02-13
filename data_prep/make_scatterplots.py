@@ -68,8 +68,9 @@ for a, b in product(features, plottables):
         plt.savefig('/data/scatter_' + a + '_' + b + '.png')
         plt.close()
     except:
-        grp = groupby(y, x)
-        counts = grp.agg({'count': np.count})['count']
-        sns.violinplot(x, y, widths=counts)
+        sns.violinplot(x, y)
         plt.savefig('/data/' + a + '_' + b + '.png')
+        plt.close()
+        x.hist()
+        plt.savefig('/data/' + a + '_hist.png')
         plt.close()

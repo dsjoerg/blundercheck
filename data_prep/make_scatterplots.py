@@ -45,6 +45,7 @@ for a, b in product(features, plottables):
     msg('Making %s %s' % (a, b))
     x = with_elo[a]
     y = with_elo[b]
+    msg('type = %s' % x.dtype)
     if x.dtype == 'str':
         plt.figure()
         x.value_counts().plot(kind='bar')

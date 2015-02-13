@@ -33,7 +33,7 @@ features = list(yy_df.columns.values)
 plottables = ['elo', 'gbr_prediction', 'gbr_error']
 plottables = ['elo']
 
-do_indivs = False
+do_indivs = True
 if do_indivs:
     for a, b in product(features, plottables):
         msg('Making %s %s' % (a, b))
@@ -62,7 +62,6 @@ if make_pairplot:
     plt.savefig('/data/pairplot.png')
     plt.close()
 
-features = ['won_by_checkmate', 'meanerror']
 for a, b in product(features, plottables):
     msg('Making %s %s' % (a, b))
     x = with_elo[a]

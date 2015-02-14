@@ -17,10 +17,9 @@ def get_game_from_s3(game_number):
     msg("Retrieving %s" % key_name)
     k = gamesbucket.get_key(key_name)
     game_pgn_string = k.get_contents_as_string()
-    msg("Game is %s" % game_pgn_string)
     game_fd = StringIO.StringIO(game_pgn_string)
     game = chess.pgn.read_game(game_fd)
-
+    return game
 
 def describe_movescores(ms):
 # https://github.com/ornicar/lila/blob/master/modules/analyse/src/main/Advice.scala#L44-L47
@@ -78,6 +77,8 @@ msg("Hi! Analyzing %i. Depth=%s, Movetime=%s" % (game_number, str(depth), str(mo
 engine = pystockfish.Engine(depth=depth, param={'Threads':threads, 'Hash':hash}, movetime=movetime)
 
 game = get_game_from_s3(game_number)
+
+print 'YO game is %s' % game
 
 if backwards:
     result_struct = do_it_backwards(engine=engine, game=game, debug=DEBUG, movenum=movenum)

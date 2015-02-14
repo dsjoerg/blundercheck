@@ -13,6 +13,16 @@ def msg(str):
     sys.stderr.write("%s %s\n" % (time.strftime('%Y%m%d-%H%M%S'), str))
     sys.stderr.flush()
 
+def hash32(game):
+    node = game
+    halfply = 0
+    while node.variations:
+        halfply = halfply + 1
+        if halfply == 32:
+            return node.board().zobrist_hash()
+        node = node.variation(0)
+    return 0
+
 # returns "NE", "SW" etc for a move, from the players perspective
 # and also the distance moved
 def move_direction_and_distance(board, move):

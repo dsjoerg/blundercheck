@@ -17,7 +17,9 @@ msg("Getting subset ready.")
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
 features = list(yy_df.columns.values)
-excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'opening_feature', 'ols_error']
+categorical_features = ['opening_feature', 'timecontrols']
+excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error']
+excluded_features.extend(categorical_features)
 for f in excluded_features:
     features.remove(f)
 

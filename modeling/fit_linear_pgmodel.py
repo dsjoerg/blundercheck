@@ -18,7 +18,8 @@ yy_df = read_pickle(sys.argv[1])
 msg("Getting subset ready.")
 
 # TODO save the dummies along with yy_df
-dummies = get_dummies(yy_df['opening_feature'])
+categorical_features = ['opening_feature', 'timecontrols']
+dummies = get_dummies(yy_df[categorical_features])
 
 # TODO save the moveelo_features along with yy_df
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]

@@ -37,7 +37,6 @@ def movenum_to_side(movenum):
     else:
         return -1
 
-
 big_fd = open(sys.argv[1], 'r')
 big_str = big_fd.read()
 big_json = json.loads(zlib.decompress(big_str))
@@ -46,6 +45,7 @@ eheaders_filename = '/data/eheaders.p'
 eheaders_file = open(eheaders_filename, 'r')
 eheaders = pickle.load(eheaders_file)
 elos = eheaders['elos']
+timecontrols = eheaders['timecontrols']
 
 prepare_little_zl = False
 
@@ -82,5 +82,6 @@ for game in big_json:
         move_info.append(elo)
         move_info.append(side)
         move_info.append(gamenum)
+        move_info.append(timecontrols[gamenum])
         csvwriter.writerow(move_info)
 

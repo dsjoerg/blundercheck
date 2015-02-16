@@ -29,6 +29,7 @@ columns = [
     'elo',
     'side',
     'gamenum',
+    'timecontrols',
 ]
 
 
@@ -50,6 +51,7 @@ categorical_features = [
     'bestmove_dir',
     'move_piece',
     'bestmove_piece',
+    'timecontrols'
 ]
 
 dummy_features = []

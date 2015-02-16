@@ -16,6 +16,7 @@ result = eheaders['result']
 checkmate = eheaders['checkmate']
 openings = eheaders['openings']
 ocount = eheaders['opening_count']
+timecontrols = eheaders['timecontrols']
 
 msg("Hi! Reading movescores into memory, using kaggle-supplied scores as a backstop")
 rows = {}
@@ -203,6 +204,10 @@ for gamenum in range(1, 50001):
     else:
       my_elo = None
       their_elo = None
+    if gamenum in timecontrols:
+      my_tc = timecontrols[gamenum]
+    else:
+      my_tc = 'standard'
     if playergame in depthstats_df.index:
       depthstat_row = depthstats_df.loc[playergame]
       mean_depth = depthstat_row['mean_depth']
@@ -247,6 +252,7 @@ for gamenum in range(1, 50001):
                 mean_depths_ar, mean_deepest_ar,
                 opponent_mean_depths_ar, opponent_mean_deepest_ar,
                 pct_sanemoves,
+                timecontrols[gamenum]
                 )
 
     if playergame in move_aggs.index:
@@ -284,6 +290,7 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'mean_depths_ar', 'mean_deepest_ar',
               'opponent_mean_depths_ar', 'opponent_mean_deepest_ar',
               'pct_sanemoves',
+              'timecontrols',
               ]
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
 yy_columns.extend(moveelo_features)

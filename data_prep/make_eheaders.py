@@ -3,7 +3,7 @@
 from collections import defaultdict
 import chess.pgn
 import cPickle as pickle
-import sys
+import sys, csv
 
 result_side = {}
 result_side['1/2-1/2'] = 0

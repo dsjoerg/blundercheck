@@ -344,11 +344,15 @@ yy_df['mean_depth_clipped'] = yy_df['mean_depth'].clip(0,25)
 yy_df['gamelength_clipped'] = yy_df['gamelength'].clip(20,200)
 
 msg("Hi! Computing dummy variables")
-dummies = get_dummies(yy_df['opening_feature'])
+categorical_features = ['opening_feature', 'timecontrols']
+dummies = get_dummies(yy_df[categorical_features])
+
 yy_df = yy_df.join(dummies)
 
 msg("Hi! Writing yy_df to disk")
 yy_df.to_pickle(sys.argv[1])
 
 msg("Column counts are:")
+counts = yy_df.count(axis=0)
+print counts
 # TODO spit out column counts using http://pandas.pydata.org/pandas-docs/dev/generated/pandas.DataFrame.count.html

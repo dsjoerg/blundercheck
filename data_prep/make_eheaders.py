@@ -17,8 +17,8 @@ with open('/data/timecontrol.csv', 'r') as timecontrol_fd:
     timecontrol[int(row[0])] = row[1]
 
 def get_timecontrol(gamenum):
-  if gamenum in timecontrol:
-    return timecontrol[gamenum]
+#  if gamenum in timecontrol:
+#    return timecontrol[gamenum]
   return 'standard'
 
 def compute_maps():

@@ -19,15 +19,13 @@ n_jobs = -1
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
-yy_df = yy_df.set_index(['gamenum', 'side'], drop=False)
 
 msg("Getting subset ready.")
-
-train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
+train = yy_df[yy_df.elo.notnull()]
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature', 'timecontrols']
-excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'gbr_prediction', 'gbr_error', 'ols_prediction']
+excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'timecontrols_standard']
 excluded_features.extend(categorical_features)
 for f in excluded_features:
     features.remove(f)
@@ -35,43 +33,12 @@ for f in excluded_features:
 X = train[features].values
 y = train['elo']
 
-#print features
-gamenum_index = features.index('gamenum')
-side_index = features.index('side')
-#ols_index = features.index('ols_prediction')
-
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=10, min_samples_split=50, verbose=1)
 
-def ols_preds_for_Xs(X):
-    ols_preds = []
-    for row in X:
-        gamenum = int(row[gamenum_index])
-        side = int(row[side_index])
-#        print row
-#        print "HI %i %i" % (gamenum, side)
-        ols_preds.append(yy_df.loc[(gamenum, side)]['ols_prediction'])
-    return np.array(ols_preds)
-
-def blended_scorer(estimator, X, y):
-    ols_preds = ols_preds_for_Xs(X)
-    pred_y = estimator.predict(X)
-    msg("BLENDED SCORES FOR a CV GROUP:")
-    for blend in np.arange(0, 1.01, 0.1):
-        blended_prediction = (blend * ols_preds) + ((1.0 - blend) * pred_y)
-        blended_score = mean_absolute_error(blended_prediction, y)
-        msg("%f * OLS yields score of %f" % (blend, blended_score))
-    return mean_absolute_error(y, pred_y)
-
-msg("CROSS VALIDATING DJ STYLE")
-cvs = cross_val_score(rfr, X, y, cv=n_cv_groups, n_jobs=n_jobs, scoring=blended_scorer)
+msg("CROSS VALIDATING")
+cvs = cross_val_score(rfr, X, y, cv=n_cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 print cvs
 sys.stdout.flush()
-
-msg("CROSS VALIDATING SK STYLE TO DOUBLECHECK")
-cvs = cross_val_score(rfr, X, y, cv=n_cv_groups, n_jobs=-1, scoring='mean_absolute_error')
-print cvs
-sys.stdout.flush()
-
 
 msg("Fitting!")
 rfr.fit(X, y)

@@ -18,7 +18,7 @@ yy_df = read_pickle(sys.argv[1])
 msg("Getting subset ready.")
 
 # TODO save the dummies along with yy_df
-categorical_features = ['opening_feature', 'timecontrols']
+categorical_features = ['opening_feature']
 dummies = get_dummies(yy_df[categorical_features])
 
 # TODO save the moveelo_features along with yy_df

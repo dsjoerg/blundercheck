@@ -120,7 +120,6 @@ for row in rows.values():
   matecreated[(gamenum,-1)] = False
   matedestroyed[(gamenum,1)] = False
   matedestroyed[(gamenum,-1)] = False
-  this
 
   for strscore in strscores[1:]:
     # only for stockfish.csv

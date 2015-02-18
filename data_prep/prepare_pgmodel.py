@@ -109,7 +109,7 @@ for row in rows.values():
 #  if gamenum > 30:
 #    break
 
-  if gamenum % 10 == 0:
+  if gamenum % 500 == 0:
     msg("hi doing row %i" % gamenum)
 
   strscores = row[1].split(' ')

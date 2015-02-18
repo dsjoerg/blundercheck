@@ -77,6 +77,7 @@ gritt = {}
 matecreated = {}
 matedestroyed = {}
 
+pos_stdev = {}
 stdeverror = {}
 
 # map from event_num to move # of first move where abs(equity) was > 100
@@ -164,7 +165,7 @@ for row in rows.values():
 
   #print \"MS\", movescores
 
-  pos_stdev = clip(position_scores, -500, 500).std()
+  pos_stdev[gamenum] = clip(position_scores, -500, 500).std()
 
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)
@@ -174,7 +175,6 @@ for row in rows.values():
 
     meanerror[(gamenum, side)] = mean(clippederror)
     stdeverror[(gamenum, side)] = clippederror.std()
-    stdeverror[(gamenum, side)] = 5
     q_error_one[(gamenum, side)] = percentile(clippederror, 25)
     q_error_two[(gamenum, side)] = percentile(clippederror, 10)
 
@@ -261,7 +261,7 @@ for gamenum in range(1, 50001):
                 pct_sanemoves,
                 timecontrols[gamenum],
                 stdeverror[playergame], stdeverror[opponent_playergame],
-                pos_stdev,
+                pos_stdev[gamenum],
                 )
 
     if playergame in move_aggs.index:

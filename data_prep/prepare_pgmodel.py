@@ -168,8 +168,8 @@ for row in rows.values():
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)
     if len(clippederror) == 0:
-      clippederror = [-15]
-      moverecho[side] = [0.1]
+      clippederror = numpy.array([-15])
+      moverecho[side] = numpy.array([0.1])
 
     meanerror[(gamenum, side)] = mean(clippederror)
     stdeverror[(gamenum, side)] = clippederror.std()

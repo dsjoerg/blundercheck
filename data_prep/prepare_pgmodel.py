@@ -163,7 +163,7 @@ for row in rows.values():
 
   #print \"MS\", movescores
 
-  pos_stdev = clip(position_scores, -500, 500).stdev()
+  pos_stdev = clip(position_scores, -500, 500).std()
 
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)
@@ -172,7 +172,7 @@ for row in rows.values():
       moverecho[side] = [0.1]
 
     meanerror[(gamenum, side)] = mean(clippederror)
-    stdeverror[(gamenum, side)] = stdev(clippederror)
+    stdeverror[(gamenum, side)] = clippederror.std()
     q_error_one[(gamenum, side)] = percentile(clippederror, 25)
     q_error_two[(gamenum, side)] = percentile(clippederror, 10)
 

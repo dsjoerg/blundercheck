@@ -106,8 +106,11 @@ for row in rows.values():
   grit[-1] = 0
   lead_established = False
 
-  if gamenum > 30:
-    break
+#  if gamenum > 30:
+#    break
+
+  if gamenum % 10 == 0:
+    msg("hi doing row %i" % gamenum)
 
   strscores = row[1].split(' ')
   side = 1
@@ -169,11 +172,12 @@ for row in rows.values():
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)
     if len(clippederror) == 0:
-      clippederror = array([-15])
-      moverecho[side] = array([0.1])
+      clippederror = [-15]
+      moverecho[side] = [0.1]
 
     meanerror[(gamenum, side)] = mean(clippederror)
-    stdeverror[(gamenum, side)] = clippederror.std()
+#    stdeverror[(gamenum, side)] = clippederror.std()
+    stdeverror[(gamenum, side)] = 5
     q_error_one[(gamenum, side)] = percentile(clippederror, 25)
     q_error_two[(gamenum, side)] = percentile(clippederror, 10)
 

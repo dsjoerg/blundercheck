@@ -264,23 +264,24 @@ for gamenum in range(1, 50001):
                 pos_stdev[gamenum],
                 )
 
-    if playergame in move_aggs.index:
-      move_agg = move_aggs.loc[playergame]
-      moveelo_values = [move_agg[x] for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
-      pg_tuple = pg_tuple + tuple(moveelo_values)
-    else:
-      pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
+    for pg in [playergame, opponent_playergame]:
+        if pg in move_aggs.index:
+          move_agg = move_aggs.loc[pg]
+          moveelo_values = [move_agg[x] for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+          pg_tuple = pg_tuple + tuple(moveelo_values)
+        else:
+          pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
 
-    if playergame in wmove_aggs.index:
-      wmove_agg = wmove_aggs.loc[playergame]
-      pg_tuple = pg_tuple + tuple([wmove_agg['elo_pred']])
-    else:
-      pg_tuple = pg_tuple + tuple([2250])
+        if pg in wmove_aggs.index:
+          wmove_agg = wmove_aggs.loc[pg]
+          pg_tuple = pg_tuple + tuple([wmove_agg['elo_pred']])
+        else:
+          pg_tuple = pg_tuple + tuple([2250])
 
-    if playergame in depthstats_df.index:
-      pg_tuple = pg_tuple + tuple(depthstats_df.loc[playergame][new_depth_cols])
-    else:
-      pg_tuple = pg_tuple + tuple([10, 3, 10, 10, 0.6])
+        if pg in depthstats_df.index:
+          pg_tuple = pg_tuple + tuple(depthstats_df.loc[pg][new_depth_cols])
+        else:
+          pg_tuple = pg_tuple + tuple([10, 3, 10, 10, 0.6])
 
     yy_combined.append(pg_tuple)
 
@@ -303,10 +304,12 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'stdeverror', 'opponent_stdeverror',
               'stdevpos',
               ]
-moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
-yy_columns.extend(moveelo_features)
-yy_columns.append('moveelo_weighted')
-yy_columns.extend(new_depth_cols)
+
+for player_prefix in ["", "opponent_"]:
+    moveelo_features = [(player_prefix + "moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+    yy_columns.extend(moveelo_features)
+    yy_columns.append(player_prefix + 'moveelo_weighted')
+    yy_columns.extend([(player_prefix + colname) for colname in new_depth_cols])
 
 msg("Hi! Building DataFrame")
 yy_df = DataFrame(yy_combined, columns=yy_columns)

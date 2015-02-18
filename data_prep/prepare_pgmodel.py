@@ -57,9 +57,6 @@ move_aggs['stdev'].fillna(40, inplace=True)
 msg("Hi! Reading wmoveaggs")
 wmove_aggs = joblib.load('/data/wmove_aggs.p')
 
-# simple list of the scores of all positions
-position_scores = []
-
 # list of all moves
 moves_list = []
 
@@ -105,6 +102,7 @@ for row in rows.values():
   grit[1] = 0
   grit[-1] = 0
   lead_established = False
+  position_scores = []
 
 #  if gamenum > 30:
 #    break
@@ -122,6 +120,7 @@ for row in rows.values():
   matecreated[(gamenum,-1)] = False
   matedestroyed[(gamenum,1)] = False
   matedestroyed[(gamenum,-1)] = False
+  this
 
   for strscore in strscores[1:]:
     # only for stockfish.csv
@@ -167,16 +166,15 @@ for row in rows.values():
   #print \"MS\", movescores
 
   pos_stdev = clip(position_scores, -500, 500).std()
-#  pos_stdev = 5
 
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)
     if len(clippederror) == 0:
-      clippederror = [-15]
-      moverecho[side] = [0.1]
+      clippederror = array([-15])
+      moverecho[side] = array([0.1])
 
     meanerror[(gamenum, side)] = mean(clippederror)
-#    stdeverror[(gamenum, side)] = clippederror.std()
+    stdeverror[(gamenum, side)] = clippederror.std()
     stdeverror[(gamenum, side)] = 5
     q_error_one[(gamenum, side)] = percentile(clippederror, 25)
     q_error_two[(gamenum, side)] = percentile(clippederror, 10)

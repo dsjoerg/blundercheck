@@ -110,7 +110,7 @@ for row in rows.values():
 #    break
 
   if gamenum % 500 == 0:
-    msg("hi doing row %i" % gamenum)
+    msg("hi doing gamenum %i" % gamenum)
 
   strscores = row[1].split(' ')
   side = 1
@@ -166,8 +166,8 @@ for row in rows.values():
 
   #print \"MS\", movescores
 
-#  pos_stdev = clip(position_scores, -500, 500).std()
-  pos_stdev = 5
+  pos_stdev = clip(position_scores, -500, 500).std()
+#  pos_stdev = 5
 
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)

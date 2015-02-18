@@ -40,7 +40,7 @@ make_pairplot = False
 if make_pairplot:
     g = sns.pairplot(with_elo[plottables], size=2.5)
     plt.savefig('/data/pairplot.png')
-    plt.close()
+    plt.close('all')
 
 for a, b in product(features, plottables):
     msg('Making %s %s' % (a, b))
@@ -51,7 +51,7 @@ for a, b in product(features, plottables):
         plt.figure()
         x.value_counts().plot(kind='bar')
         plt.savefig('/data/' + a + '_hist.png')
-        plt.close()
+        plt.close('all')
     else:
         try:
             xlim = tuple(np.percentile(x, [1,99]))
@@ -59,7 +59,7 @@ for a, b in product(features, plottables):
             with sns.axes_style("white"):
                 sns.jointplot(x, y, kind="hex", xlim=xlim, ylim=ylim)
             plt.savefig('/data/scatter_' + a + '_' + b + '.png')
-            plt.close()
+            plt.close('all')
         except:
     #        sns.violinplot(x, y)
     #        plt.savefig('/data/' + a + '_' + b + '.png')
@@ -67,7 +67,7 @@ for a, b in product(features, plottables):
             plt.figure()
             x.plot(kind='hist')
             plt.savefig('/data/' + a + '_hist.png')
-            plt.close()
+            plt.close('all')
 
 do_indivs = True
 if do_indivs:
@@ -78,13 +78,13 @@ if do_indivs:
             groupings, bins = qcut(with_elo[a], 10, labels=False, retbins=True)
             sns.violinplot(with_elo[b], groupings)
             plt.savefig('/data/' + a + '_' + b + '.png')
-            plt.close()
+            plt.close('all')
         except:
             try:
                 plt.figure()
                 sns.violinplot(with_elo[b], with_elo[a])
                 plt.savefig('/data/' + a + '_' + b + '.png')
-                plt.close()
+                plt.close('all')
             except:
                 msg("Couldnt manage for %s %s" % (a, b))
 

@@ -163,7 +163,8 @@ for row in rows.values():
 
   #print \"MS\", movescores
 
-  pos_stdev = clip(position_scores, -500, 500).std()
+#  pos_stdev = clip(position_scores, -500, 500).std()
+  pos_stdev = 5
 
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)

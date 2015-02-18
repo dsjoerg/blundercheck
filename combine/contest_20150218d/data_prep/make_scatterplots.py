@@ -23,7 +23,7 @@ def percentile_subset(x, min_pct, max_pct):
 msg("Hello there, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
 
-yy_df['gbr_residual'] = (yy_df['gbr_prediction'] - yy_df['elo'])
+yy_df['rfr_residual'] = (yy_df['rfr_prediction'] - yy_df['elo'])
 
 with_elo = yy_df[yy_df['elo'].notnull()]
 
@@ -31,7 +31,7 @@ features = list(yy_df.columns.values)
 
 # blunderrate graph looks terrible because its bin edges are: [ 0.        ,  0.        ,  0.        ,  0.        ,  0.01960784, 0.03125   ,  0.04651163,  0.06666667,  0.09090909,  0.12820513,        0.83333333]
 
-plottables = ['elo', 'gbr_prediction', 'gbr_residual']
+plottables = ['elo', 'rfr_prediction', 'rfr_residual']
 plottables = ['elo']
 #features = ['opening_feature']
 

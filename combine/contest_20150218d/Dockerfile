@@ -115,3 +115,5 @@ RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
 # variables, so we can look through em and understand our data
 ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_scatterplots.py /data/yy_df.p
+
+# TODO make CROSS VALIDATING step in RFR spit out the average of the three values

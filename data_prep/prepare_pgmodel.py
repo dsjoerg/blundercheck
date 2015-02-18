@@ -80,6 +80,8 @@ gritt = {}
 matecreated = {}
 matedestroyed = {}
 
+stdeverror = {}
+
 # map from event_num to move # of first move where abs(equity) was > 100
 early_lead = {}
 
@@ -161,6 +163,8 @@ for row in rows.values():
 
   #print \"MS\", movescores
 
+  pos_stdev = stdev(clip(position_scores, -500, 500))
+
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)
     if len(clippederror) == 0:
@@ -168,6 +172,7 @@ for row in rows.values():
       moverecho[side] = [0.1]
 
     meanerror[(gamenum, side)] = mean(clippederror)
+    stdeverror[(gamenum, side)] = stdev(clippederror)
     q_error_one[(gamenum, side)] = percentile(clippederror, 25)
     q_error_two[(gamenum, side)] = percentile(clippederror, 10)
 
@@ -252,7 +257,9 @@ for gamenum in range(1, 50001):
                 mean_depths_ar, mean_deepest_ar,
                 opponent_mean_depths_ar, opponent_mean_deepest_ar,
                 pct_sanemoves,
-                timecontrols[gamenum]
+                timecontrols[gamenum],
+                stdeverror[playergame], stdeverror[opponent_playergame],
+                pos_stdev,
                 )
 
     if playergame in move_aggs.index:
@@ -291,6 +298,8 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'opponent_mean_depths_ar', 'opponent_mean_deepest_ar',
               'pct_sanemoves',
               'timecontrols',
+              'stdeverror', 'opponent_stdeverror',
+              'stdevpos',
               ]
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
 yy_columns.extend(moveelo_features)

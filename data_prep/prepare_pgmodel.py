@@ -106,8 +106,8 @@ for row in rows.values():
   grit[-1] = 0
   lead_established = False
 
-#  if gamenum > 30:
-#    break
+  if gamenum > 30:
+    break
 
   strscores = row[1].split(' ')
   side = 1

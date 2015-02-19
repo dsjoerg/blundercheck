@@ -70,6 +70,7 @@ for colname in ['move_dir', 'bestmove_dir']:
 msg("done")
 
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
+features_to_use = ['moverscore', 'halfply', 'movergain', 'side']
 
 insample_df = moves_df[moves_df['elo'].notnull()]
 crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)

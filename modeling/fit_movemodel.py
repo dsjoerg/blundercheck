@@ -23,13 +23,11 @@ cv_groups = 3
 n_jobs = -1
 
 
-inflation = 2
+inflation = 4
 CROSS_VALIDATION_N = inflation * CROSS_VALIDATION_N
 MIN_SAMPLES_LEAF = inflation * MIN_SAMPLES_LEAF
 MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
 FITTING_N = inflation * FITTING_N
-PREDICT_N = inflation * PREDICT_N
-n_estimators = inflation * n_estimators
 
 
 just_testing = False

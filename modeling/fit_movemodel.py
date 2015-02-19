@@ -14,11 +14,23 @@ from sklearn.metrics import mean_absolute_error
 from djeval import *
 
 CROSS_VALIDATION_N = 150000
+MIN_SAMPLES_LEAF = 300
+MIN_SAMPLES_SPLIT = 1000
 FITTING_N = 50000
 PREDICT_N = 400000
 n_estimators = 200
 cv_groups = 3
 n_jobs = -1
+
+
+inflation = 2
+CROSS_VALIDATION_N = inflation * CROSS_VALIDATION_N
+MIN_SAMPLES_LEAF = inflation * MIN_SAMPLES_LEAF
+MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
+FITTING_N = inflation * FITTING_N
+PREDICT_N = inflation * PREDICT_N
+n_estimators = inflation * n_estimators
+
 
 just_testing = False
 if just_testing:
@@ -68,7 +80,7 @@ crossval_X = crossval_df[features_to_use]
 crossval_y = crossval_df['elo']
 crossval_weights = crossval_df['weight']
 
-rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=300, min_samples_split=1000, verbose=1)
+rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 
 msg("Starting cross validation")
 begin_time = time.time()
@@ -148,3 +160,6 @@ wmove_aggs = grp.aggregate(np.sum)
 wmove_aggs['elo_pred'] = wmove_aggs['elo_weighted_pred'] / wmove_aggs['elo_pred_weight']
 joblib.dump(wmove_aggs, '/data/wmove_aggs.p')
 print wmove_aggs.head()
+
+msg("Writing moves_df back out with rfr predictions inside")
+moves_df.to_pickle(sys.argv[1])

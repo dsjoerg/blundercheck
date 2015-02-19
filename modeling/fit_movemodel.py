@@ -53,14 +53,13 @@ game_weights = (1. / (moves_df.groupby('gamenum')['halfply'].agg({'max':np.max})
 moves_df['weight'] = moves_df['gamenum'].map(game_weights)
 msg("Done")
 
-moves_df['abs_moverscore'] = moves_df['moverscore'].abs()
+#moves_df['abs_moverscore'] = moves_df['moverscore'].abs()
 
 features_to_exclude = [
 'elo',
 'gamenum',
 'weight',
 'clippedgain',
-'moverscore'
 ]
 
 msg("canonicalizing directions")

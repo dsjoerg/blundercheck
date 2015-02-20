@@ -26,7 +26,7 @@ n_jobs = -1
 
 # so that we can test the idea that dataset size being equal,
 # we make better predictions with data specifically in that blundergroup
-CROSS_VALIDATION_N = 10000
+CROSS_VALIDATION_N = 7500
 
 
 if False:

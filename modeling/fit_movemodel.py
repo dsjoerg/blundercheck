@@ -34,6 +34,7 @@ if False:
 just_testing = True
 if just_testing:
     n_estimators = 2
+    n_jobs = 1
 
 def sample_df(df, n_to_sample):
     if n_to_sample >= len(df.index.values):

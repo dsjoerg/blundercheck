@@ -59,7 +59,8 @@ def crossval_rfr(df):
     begin_time = time.time()
     cvs = cross_val_score(rfr_here, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
     msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
-    msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))    
+    msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
+    return cvs
 
 
 msg("Hi, reading moves.")

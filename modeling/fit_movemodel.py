@@ -18,17 +18,17 @@ MIN_SAMPLES_LEAF = 300
 MIN_SAMPLES_SPLIT = 1000
 FITTING_N = 50000
 PREDICT_N = 400000
-n_estimators = 200
+n_estimators = 5
 cv_groups = 3
 n_jobs = -1
 
 
-inflation = 4
-CROSS_VALIDATION_N = inflation * CROSS_VALIDATION_N
-MIN_SAMPLES_LEAF = inflation * MIN_SAMPLES_LEAF
-MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
-FITTING_N = inflation * FITTING_N
-
+if False:
+    inflation = 4
+    CROSS_VALIDATION_N = inflation * CROSS_VALIDATION_N
+    MIN_SAMPLES_LEAF = inflation * MIN_SAMPLES_LEAF
+    MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
+    FITTING_N = inflation * FITTING_N
 
 just_testing = False
 if just_testing:
@@ -38,8 +38,28 @@ if just_testing:
     n_estimators = 5
 
 def sample_df(df, n_to_sample):
+    if n_to_sample >= len(df.index.values):
+        return df
+
     row_indexes = np.random.choice(df.index.values, n_to_sample, replace=False)
     return df.ix[row_indexes]
+
+def crossval_rfr(df):
+    sampled_df = sample_df(df, CROSS_VALIDATION_N):
+    sample_size = len(sampled_df)
+    mss = max([sample_size / 150, 100])
+    msl = max([sample_size / 450,  30])
+    rfr_here = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
+    crossval_X = sampled_df[features_to_use]
+    crossval_y = sampled_df['elo']
+    crossval_weights = sampled_df['weight']
+
+    msg("Starting cross validation. %i records" % sample_size)
+    begin_time = time.time()
+    cvs = cross_val_score(rfr_here, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
+    msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
+    msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))    
+
 
 msg("Hi, reading moves.")
 moves_df = read_pickle(sys.argv[1])
@@ -70,9 +90,19 @@ for colname in ['move_dir', 'bestmove_dir']:
 msg("done")
 
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
-features_to_use = ['moverscore', 'halfply', 'movergain', 'side']
+#features_to_use = ['moverscore', 'halfply', 'movergain', 'side']
 
 insample_df = moves_df[moves_df['elo'].notnull()]
+
+blunder_cats = [-1e9,-1024,-512,-256,-128,-64,-32, -16, -8, -1, 0]
+blunder_groups, blunder_bins = cut(insample_df['movergain'], blunder_cats, retbins=True)
+
+msg("Doing RFR CV per blunder group")
+blunder_grouped = insample_df.groupby(blunder_groups)
+cv_scores = blunder_grouped.apply(lambda x: crossval_rfr(x))
+msg("SCORES:")
+print cv_scores
+
 crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]
 crossval_y = crossval_df['elo']
@@ -80,7 +110,7 @@ crossval_weights = crossval_df['weight']
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 
-msg("Starting cross validation")
+msg("Starting full DF cross validation")
 begin_time = time.time()
 cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
 #cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')

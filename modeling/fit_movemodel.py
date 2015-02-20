@@ -36,7 +36,7 @@ just_testing = True
 if just_testing:
     CROSS_VALIDATION_N = 1500
     n_estimators = 2
-    n_jobs = 1
+    n_jobs = -1
 
 blunder_cv_results = []
 

@@ -144,7 +144,7 @@ concat_df = concat(blunder_cv_results, axis=1)
 concat_df['avg_lad'] = concat_df.mean(axis=1)
 msg("full dataframe cross-validation, per blundergroup:\n%s" % concat_df)
 
-concat_df = concat(concat_df, cv_scores, lads)
+concat_df = concat([concat_df, cv_scores, lads], axis=1)
 msg("everything together:\n%s" % concat_df)
 
 

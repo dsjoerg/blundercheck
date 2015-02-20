@@ -51,7 +51,7 @@ def group_scorer(estimator, X, y):
     dfx['pred_abserror'] = (pred_y - dfx['elo']).abs()
     blunder_cvgroups, blunder_cvbins = cut(dfx['movergain'], blunder_cats, retbins=True)
     blunder_cvgrouped = dfx.groupby(blunder_cvgroups)['pred_abserror'].agg({'lad': np.mean})
-    msg(blunder_cvgrouped)
+    msg("scores: %s" % str(blunder_cvgrouped))
     return mean_absolute_error(y, pred_y)
 
 def crossval_rfr(df):

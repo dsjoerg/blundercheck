@@ -45,7 +45,7 @@ def sample_df(df, n_to_sample):
     return df.ix[row_indexes]
 
 def crossval_rfr(df):
-    sampled_df = sample_df(df, CROSS_VALIDATION_N):
+    sampled_df = sample_df(df, CROSS_VALIDATION_N)
     sample_size = len(sampled_df)
     mss = max([sample_size / 150, 100])
     msl = max([sample_size / 450,  30])

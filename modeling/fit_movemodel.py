@@ -32,7 +32,7 @@ if False:
     MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
     FITTING_N = inflation * FITTING_N
 
-just_testing = True
+just_testing = False
 if just_testing:
     CROSS_VALIDATION_N = 1500
     n_estimators = 2
@@ -145,6 +145,7 @@ concat_df['LAD from RFR on whole dataset'] = concat_df.mean(axis=1)
 msg("full dataframe cross-validation, per blundergroup:\n%s" % concat_df)
 
 concat_df = concat([concat_df.mean(axis=1), cv_scores, lads], axis=1)
+concat_df.columns = ['single RFR', 'RFR per blundergroup', 'mean-value benchmark']
 msg("everything together:\n%s" % concat_df)
 
 

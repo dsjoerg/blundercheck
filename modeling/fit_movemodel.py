@@ -68,7 +68,8 @@ def crossval_rfr(df):
     sample_size = len(sampled_df)
     mss = max([sample_size / 150, 100])
     msl = max([sample_size / 450,  30])
-    rfr_here = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
+#    rfr_here = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
+    rfr_here = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
     crossval_X = sampled_df[features_to_use]
     crossval_y = sampled_df['elo']
     crossval_weights = sampled_df['weight']
@@ -132,13 +133,7 @@ crossval_y = crossval_df['elo']
 crossval_weights = crossval_df['weight']
 movergain_index = features_to_use.index('movergain')
 
-# does this make it better or worse?!
-sample_size = len(crossval_df)
-mss = max([sample_size / 150, 100])
-msl = max([sample_size / 450,  30])
-
-#rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
-rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
+rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 
 msg("Starting full DF cross validation")
 begin_time = time.time()

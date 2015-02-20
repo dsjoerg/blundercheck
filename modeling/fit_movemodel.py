@@ -138,9 +138,11 @@ msg("Cross validation took %f seconds with %i threads, %i records, %i estimators
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 msg("per-blundergroup results:")
-for bcv in blunder_cv_results:
-    msg("here: %s" % bcv)
-msg("concat: %s" % concat(blunder_cv_results, axis=1))
+#for bcv in blunder_cv_results:
+#    msg("here: %s" % bcv)
+concat_df = concat(blunder_cv_results, axis=1)
+concat_df['avg_lad'] = concat_df.mean(axis=1)
+msg("concat: %s" % concat_df)
 
 fitting_df = sample_df(insample_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]

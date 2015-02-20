@@ -74,7 +74,7 @@ def crossval_rfr(df):
     cvs = cross_val_score(rfr_here, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
     msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
     msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
-    return cvs
+    return np.mean(cvs)
 
 
 msg("Hi, reading moves.")
@@ -141,10 +141,10 @@ msg("per-blundergroup results:")
 #for bcv in blunder_cv_results:
 #    msg("here: %s" % bcv)
 concat_df = concat(blunder_cv_results, axis=1)
-concat_df['avg_lad'] = concat_df.mean(axis=1)
+concat_df['LAD from RFR on whole dataset'] = concat_df.mean(axis=1)
 msg("full dataframe cross-validation, per blundergroup:\n%s" % concat_df)
 
-concat_df = concat([concat_df, cv_scores, lads], axis=1)
+concat_df = concat([concat_df.mean(axis=1), cv_scores, lads], axis=1)
 msg("everything together:\n%s" % concat_df)
 
 

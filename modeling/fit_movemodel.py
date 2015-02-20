@@ -32,7 +32,7 @@ if False:
     MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
     FITTING_N = inflation * FITTING_N
 
-just_testing = True
+just_testing = False
 if just_testing:
     CROSS_VALIDATION_N = 1500
     n_estimators = 2
@@ -132,6 +132,8 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_sample
 
 msg("Starting full DF cross validation")
 begin_time = time.time()
+# using n_jobs=1 here because the parallelization of cross_val_score interferes with
+# our gross hack of stashing info about blundergroups into a global variable as a side effect
 cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring=group_scorer, fit_params={'sample_weight': crossval_weights})
 #cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))

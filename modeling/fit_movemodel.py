@@ -8,6 +8,7 @@ from pandas import DataFrame
 from pandas import concat
 from pandas import read_pickle
 from pandas import cut
+from pandas import concat
 from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
@@ -139,7 +140,7 @@ msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 msg("per-blundergroup results:")
 for bcv in blunder_cv_results:
     msg("here: %s" % bcv)
-#msg("here: %s" % blunder_cv_results[0].join(blunder_cv_results[1:]))
+msg("concat: %s" % concat(blunder_cv_results, axis=1))
 
 fitting_df = sample_df(insample_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]

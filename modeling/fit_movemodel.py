@@ -137,7 +137,9 @@ msg("Cross validation took %f seconds with %i threads, %i records, %i estimators
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 msg("per-blundergroup results:")
-msg("here: %s" % blunder_cv_results[0].join(blunder_cv_results[1:]))
+for bcv in blunder_cv_results:
+    msg("here: %s", bcv)
+#msg("here: %s" % blunder_cv_results[0].join(blunder_cv_results[1:]))
 
 fitting_df = sample_df(insample_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]

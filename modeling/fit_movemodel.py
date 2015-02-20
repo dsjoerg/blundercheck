@@ -24,6 +24,10 @@ n_estimators = 200
 cv_groups = 3
 n_jobs = -1
 
+# so that we can test the idea that dataset size being equal,
+# we make better predictions with data specifically in that blundergroup
+CROSS_VALIDATION_N = 10000
+
 
 if False:
     inflation = 4

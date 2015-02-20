@@ -33,10 +33,11 @@ if False:
 
 just_testing = True
 if just_testing:
+    CROSS_VALIDATION_N = 1500
     n_estimators = 2
     n_jobs = 1
 
-blunder_cvgroups = []
+blunder_cv_results = []
 
 
 def sample_df(df, n_to_sample):
@@ -53,7 +54,7 @@ def group_scorer(estimator, X, y):
     dfx['pred_abserror'] = abs(pred_y - y)
     blunder_cvgroups, blunder_cvbins = cut(dfx['movergain'], blunder_cats, retbins=True)
     blunder_cvgrouped = dfx.groupby(blunder_cvgroups)['pred_abserror'].agg({'lad': np.mean})
-    blunder_cvgroups.append(blunder_cvgrouped)
+    blunder_cv_results.append(blunder_cvgrouped)
     msg("scores: %s" % str(blunder_cvgrouped))
     return mean_absolute_error(y, pred_y)
 
@@ -136,7 +137,7 @@ msg("Cross validation took %f seconds with %i threads, %i records, %i estimators
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 msg("per-blundergroup results:")
-msg("here: %s" % blunder_cvgroups[0].join(blunder_cvgroups[1:]))
+msg("here: %s" % blunder_cv_results[0].join(blunder_cv_results[1:]))
 
 fitting_df = sample_df(insample_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]

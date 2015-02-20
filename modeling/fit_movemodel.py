@@ -47,8 +47,7 @@ def group_scorer(estimator, X, y):
     pred_y = estimator.predict(X)
     msg("GROUPED SCORES FOR a CV GROUP:")
     dfx = DataFrame(X, columns=features_to_use)
-    dfx['pred_y'] = pred_y
-    dfx['pred_abserror'] = (pred_y - dfx['elo']).abs()
+    dfx['pred_abserror'] = (pred_y - y).abs()
     blunder_cvgroups, blunder_cvbins = cut(dfx['movergain'], blunder_cats, retbins=True)
     blunder_cvgrouped = dfx.groupby(blunder_cvgroups)['pred_abserror'].agg({'lad': np.mean})
     msg("scores: %s" % str(blunder_cvgrouped))
@@ -89,7 +88,6 @@ msg("Done")
 
 features_to_exclude = [
 'elo',
-'gamenum',
 'weight',
 'clippedgain',
 ]

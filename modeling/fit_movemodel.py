@@ -31,12 +31,9 @@ if False:
     MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
     FITTING_N = inflation * FITTING_N
 
-just_testing = False
+just_testing = True
 if just_testing:
-    CROSS_VALIDATION_N = 100
-    FITTING_N = 100
-    PREDICT_N = 400000
-    n_estimators = 5
+    n_estimators = 2
 
 def sample_df(df, n_to_sample):
     if n_to_sample >= len(df.index.values):
@@ -61,6 +58,17 @@ def crossval_rfr(df):
     msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
     msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
     return cvs
+
+def group_scorer(estimator, X, y):
+    pred_y = estimator.predict(X)
+    msg("GROUPED SCORES FOR a CV GROUP:")
+    dfx = DataFrame(X, columns=features_to_use)
+    dfx['pred_y'] = pred_y
+    dfx['pred_abserror'] = (pred_y - dfx['elo']).abs()
+    blunder_cvgroups, blunder_cvbins = cut(dfx['movergain'], blunder_cats, retbins=True)
+    blunder_cvgrouped = dfx.groupby(blunder_cvgroups)['pred_abserror'].agg({'lad': np.mean})
+    msg(blunder_cvgrouped)
+    return mean_absolute_error(y, pred_y)
 
 
 msg("Hi, reading moves.")
@@ -103,12 +111,17 @@ msg("Doing RFR CV per blunder group")
 blunder_grouped = insample_df.groupby(blunder_groups)
 cv_scores = blunder_grouped.apply(lambda x: crossval_rfr(x))
 msg("SCORES:")
-print cv_scores
+msg(cv_scores)
+
+msg("blunder group errors vs mean-value")
+lads = blunder_grouped.apply(lambda x: np.mean((x['elo'] - np.mean(x['elo'])).abs()))
+msg(lads)
 
 crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]
 crossval_y = crossval_df['elo']
 crossval_weights = crossval_df['weight']
+movergain_index = features_to_use.index('movergain')
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 

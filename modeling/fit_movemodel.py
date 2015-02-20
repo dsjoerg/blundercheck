@@ -132,7 +132,7 @@ rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_sample
 
 msg("Starting full DF cross validation")
 begin_time = time.time()
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring=group_scorer, fit_params={'sample_weight': crossval_weights})
+cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring=group_scorer, fit_params={'sample_weight': crossval_weights})
 #cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))

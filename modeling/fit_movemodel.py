@@ -36,6 +36,9 @@ if just_testing:
     n_estimators = 2
     n_jobs = 1
 
+blunder_cvgroups = []
+
+
 def sample_df(df, n_to_sample):
     if n_to_sample >= len(df.index.values):
         return df
@@ -50,6 +53,7 @@ def group_scorer(estimator, X, y):
     dfx['pred_abserror'] = abs(pred_y - y)
     blunder_cvgroups, blunder_cvbins = cut(dfx['movergain'], blunder_cats, retbins=True)
     blunder_cvgrouped = dfx.groupby(blunder_cvgroups)['pred_abserror'].agg({'lad': np.mean})
+    blunder_cvgroups.append(blunder_cvgrouped)
     msg("scores: %s" % str(blunder_cvgrouped))
     return mean_absolute_error(y, pred_y)
 
@@ -68,7 +72,7 @@ def crossval_rfr(df):
     cvs = cross_val_score(rfr_here, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error', fit_params={'sample_weight': crossval_weights})
     msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
     msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
-    return cvs
+    return (cvs, np.mean(cvs))
 
 
 msg("Hi, reading moves.")
@@ -130,6 +134,9 @@ cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, 
 #cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
+
+msg("per-blundergroup results:")
+msg("here: %s" % blunder_cvgroups[0].join(blunder_cvgroups[1:]))
 
 fitting_df = sample_df(insample_df, FITTING_N)
 fitting_X = fitting_df[features_to_use]

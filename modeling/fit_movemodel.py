@@ -7,6 +7,7 @@ import cPickle as pickle
 from pandas import DataFrame
 from pandas import concat
 from pandas import read_pickle
+from pandas import cut
 from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor

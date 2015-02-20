@@ -47,7 +47,7 @@ def group_scorer(estimator, X, y):
     pred_y = estimator.predict(X)
     msg("GROUPED SCORES FOR a CV GROUP:")
     dfx = DataFrame(X, columns=features_to_use)
-    dfx['pred_abserror'] = (pred_y - y).abs()
+    dfx['pred_abserror'] = abs(pred_y - y)
     blunder_cvgroups, blunder_cvbins = cut(dfx['movergain'], blunder_cats, retbins=True)
     blunder_cvgrouped = dfx.groupby(blunder_cvgroups)['pred_abserror'].agg({'lad': np.mean})
     msg("scores: %s" % str(blunder_cvgrouped))
@@ -114,7 +114,7 @@ msg("SCORES:")
 msg(cv_scores)
 
 msg("blunder group errors vs mean-value")
-lads = blunder_grouped.apply(lambda x: np.mean((x['elo'] - np.mean(x['elo'])).abs()))
+lads = blunder_grouped.apply(lambda x: np.mean(abs(x['elo'] - np.mean(x['elo']))))
 msg(lads)
 
 crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)

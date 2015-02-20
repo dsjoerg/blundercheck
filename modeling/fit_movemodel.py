@@ -138,7 +138,7 @@ msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 msg("per-blundergroup results:")
 for bcv in blunder_cv_results:
-    msg("here: %s", bcv)
+    msg("here: %s" % bcv)
 #msg("here: %s" % blunder_cv_results[0].join(blunder_cv_results[1:]))
 
 fitting_df = sample_df(insample_df, FITTING_N)

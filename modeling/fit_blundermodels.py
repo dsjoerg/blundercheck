@@ -8,9 +8,9 @@ from pandas import read_pickle, cut
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.externals import joblib
 
-NUM_ELO_GROUPS = 2
-NUM_MG_QUANTILES = 10
-NUM_ESTIMATORS = 5
+NUM_ELO_GROUPS = sys.argv[1]
+NUM_MG_QUANTILES = sys.argv[2]
+NUM_ESTIMATORS = sys.argv[3]
 MG_CLIP = -300
 
 msg('splitting ELOs')

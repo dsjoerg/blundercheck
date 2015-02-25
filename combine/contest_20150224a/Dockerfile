@@ -119,17 +119,4 @@ ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 #RUN make_scatterplots.py /data/yy_df.p
 
 
-# TODO make CROSS VALIDATING step in RFR spit out the average of the three values
-# TODO write moves_df back out at the end of fit_movemodel.py
-# TODO add predict_move_elos() to fit_movemodel.py
-
-RUN apt-get update
-RUN apt-get install -y r-base r-base-dev libcurl4-gnutls-dev
-RUN Rscript -e "install.packages('Rserve',,'http://cran.us.r-project.org')"
-RUN Rscript -e "install.packages('ggplot2',,'http://cran.us.r-project.org')"
-RUN Rscript -e "install.packages('devtools',,'http://cran.us.r-project.org')"
-RUN Rscript -e "install.packages('RJSONIO',,'http://cran.us.r-project.org')"
-RUN Rscript -e "install.packages('RCurl',,'http://cran.us.r-project.org')"
-RUN Rscript -e "install.packages('quantregForest',,'http://cran.us.r-project.org')"
-
-ADD data_prep/prepare_vw_movemodel.py $BLUNDERCHECK_DIR/data_prep/
+ADD modeling/fit_blundermodel.py $BLUNDERCHECK_DIR/modeling/

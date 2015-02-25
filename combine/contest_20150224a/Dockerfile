@@ -119,4 +119,4 @@ ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 #RUN make_scatterplots.py /data/yy_df.p
 
 
-ADD modeling/fit_blundermodel.py $BLUNDERCHECK_DIR/modeling/
+ADD modeling/fit_blundermodels.py $BLUNDERCHECK_DIR/modeling/

@@ -118,6 +118,8 @@ ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 #RUN make_scatterplots.py /data/yy_df.p
 
-
 ADD modeling/fit_blundermodels.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_blundermodels.py 10 10 400
+RUN fit_blundermodels.py 10 10 400 /data/blundermodel/
+
+ADD modeling/test_blundermodels.py $BLUNDERCHECK_DIR/modeling/
+RUN test_blundermodels.py /data/blundermodel/

@@ -41,7 +41,7 @@ stdev_cols = ['stdeverror', 'opponent_stdeverror', 'stdevpos']
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
 # lets look at in sample first
-train = train[train['gamenum'] % 2 == 0]
+train = train[train['gamenum'] % 2 == 1]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"
 formula_rhs = formula_rhs + " + opponent_nmerror + opponent_noblunders"

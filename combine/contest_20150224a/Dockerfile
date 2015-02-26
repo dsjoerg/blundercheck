@@ -119,7 +119,7 @@ ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_linear_pgmodel.py /data/yy_df.p
 
 ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-#RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
+RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
 
 # create histograms of each variable and scatterplots of every pair of
 # variables, so we can look through em and understand our data

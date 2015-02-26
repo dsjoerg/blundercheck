@@ -123,3 +123,6 @@ RUN fit_blundermodels.py 10 10 400 /data/blundermodel/
 
 ADD modeling/test_blundermodels.py $BLUNDERCHECK_DIR/modeling/
 RUN test_blundermodels.py /data/blundermodel/
+
+ADD modeling/compute_perfect_elo.py $BLUNDERCHECK_DIR/modeling/
+RUN compute_perfect_elo.py /data/blundermodel/

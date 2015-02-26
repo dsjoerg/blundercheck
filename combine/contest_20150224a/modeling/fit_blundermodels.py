@@ -5,7 +5,7 @@ import cPickle as pickle
 from djeval import *
 from numpy import percentile, arange
 from pandas import read_pickle, cut
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
 from sklearn.externals import joblib
 
 NUM_ELO_GROUPS = int(sys.argv[1])
@@ -36,20 +36,31 @@ mg_quants = arange(0, 1. + 1e-9, 1./float(NUM_MG_QUANTILES+1))
 mg_quants = mg_quants[1:-1]
 msg('we will compute movergain quantiles for %s' % mg_quants)
 
-blundermodel_dir = '/data/blundermodel/'
+blundermodel_dir = sys.argv[4]
 if not os.path.exists(blundermodel_dir):
     os.makedirs(blundermodel_dir)
 
 joblib.dump([elo_bins, mg_quants], blundermodel_dir + 'groups.p')
+features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change']
 
 modelnum = 0
 for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
     msg('working on elo group %s, of size %i' % (elo_name, elo_df.shape[0]))
+
+    msg('computing perfect-move model')
+    gbc = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
+    X = elo_df[features]
+    y = (elo_df['clipped_movergain'] == 0)
+    gbc.fit(X, y)
+    joblib.dump([elo_name, 1.0, gbc], '%s%i.p' % (blundermodel_dir, modelnum))
+    modelnum = modelnum + 1
+
     for mg_quant in mg_quants:
         msg('computing mg_quant %f' % mg_quant)
         gbr = GradientBoostingRegressor(loss='quantile', alpha=mg_quant, min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
-        X = elo_df[['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change']]
-        y = elo_df['clipped_movergain']
+        imperfect_df = elo_df[elo_df['clipped_movergain'] < 0]
+        X = imperfect_df[features]
+        y = imperfect_df['clipped_movergain']
         gbr.fit(X, y)
         joblib.dump([elo_name, mg_quant, gbr], '%s%i.p' % (blundermodel_dir, modelnum))
         modelnum = modelnum + 1

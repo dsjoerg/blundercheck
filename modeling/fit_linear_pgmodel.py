@@ -56,7 +56,9 @@ formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
 formula_rhs = formula_rhs + " + moveelo_weighted"
 formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
-formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
+
+# do these really not help?!
+#formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 # Never mind these, they didnt help much
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)

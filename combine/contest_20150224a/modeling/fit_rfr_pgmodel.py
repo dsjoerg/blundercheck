@@ -30,15 +30,31 @@ excluded_features.extend(categorical_features)
 for f in excluded_features:
     features.remove(f)
 
-X = train[features].values
-y = train['elo']
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=10, min_samples_split=50, verbose=1)
 
-msg("CROSS VALIDATING")
-cvs = cross_val_score(rfr, X, y, cv=n_cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
-print cvs
-sys.stdout.flush()
+use_sklearn_cv = False
+if use_sklearn_cv:
+    X = train[features].values
+    y = train['elo']
+    msg("CROSS VALIDATING")
+    cvs = cross_val_score(rfr, X, y, cv=n_cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+    print cvs
+    sys.stdout.flush()
+else:
+    for modulo in [0,1]:
+        in_df = train[(train['gamenum'] % 2) == modulo]
+        out_df = train[(train['gamenum'] % 2) == (1 - modulo)]
+        X = in_df[features].values
+        y = in_df['elo']
+        msg("fitting using group %i" % modulo)
+        rfr.fit(X, y)
+        pred = rfr.predict(out_df[features].values)
+        msg("group %i MAE is %f" % (modulo, np.mean((pred - out_df['elo']).abs())))
+        
+
+X = train[features].values
+y = train['elo']
 
 msg("Fitting!")
 rfr.fit(X, y)

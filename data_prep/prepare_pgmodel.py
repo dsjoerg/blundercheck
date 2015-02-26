@@ -292,7 +292,7 @@ for gamenum in range(2, 25000, 2):
           pm_agg = pm_agg_df.loc[pg]
           pg_tuple = pg_tuple + tuple(pm_agg_df.loc[pg][:-1])
         else:
-          pg_tuple = pg_tuple + tuple([0.1] * 10)
+          pg_tuple = pg_tuple + tuple([1.0 / len(elorange_cols)] * len(elorange_cols))
 
 
     yy_combined.append(pg_tuple)

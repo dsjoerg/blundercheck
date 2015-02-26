@@ -201,10 +201,12 @@ msg("Hi! Setting up playergame rows")
 
 new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
 elorange_cols = list(pm_agg_df.columns.values)[:-1]
+msg("elorange cols are %s" % elorange_cols)
 
 yy_combined = []
 
-for gamenum in range(1, 50001):
+#for gamenum in range(1, 50001):
+for gamenum in range(2, 25000, 2):
   for side in [-1, 1]:
     playergame = (gamenum, side)
     opponent_playergame = (gamenum, side * -1)
@@ -321,6 +323,8 @@ for player_prefix in ["", "opponent_"]:
     yy_columns.append(player_prefix + 'moveelo_weighted')
     yy_columns.extend([(player_prefix + colname) for colname in new_depth_cols])
     yy_columns.extend([(player_prefix + colname) for colname in elorange_cols])
+
+msg("now yy_columns is %s" % yy_columns)    
 
 msg("Hi! Building DataFrame")
 yy_df = DataFrame(yy_combined, columns=yy_columns)

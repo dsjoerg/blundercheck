@@ -93,22 +93,30 @@ ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN show_movemodel.py /data/movemodel.p
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
-#RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+
+ADD modeling/fit_blundermodels.py $BLUNDERCHECK_DIR/modeling/
+RUN fit_blundermodels.py 6 1 400 /data/blundermodel/
+
+ADD modeling/test_blundermodels.py $BLUNDERCHECK_DIR/modeling/
+RUN test_blundermodels.py /data/blundermodel/
+
+ADD modeling/compute_perfect_elo.py $BLUNDERCHECK_DIR/modeling/
+RUN compute_perfect_elo.py /data/blundermodel/
 
 # get the previous movescores, do they help?
-#RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
+RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
-#RUN prepare_pgmodel.py /data/yy_df.p
+RUN prepare_pgmodel.py /data/yy_df.p
 
-# TODO move this up one
 ADD data_prep/show_pgdata.py $BLUNDERCHECK_DIR/data_prep/
-#RUN show_pgdata.py /data/yy_df.p
+RUN show_pgdata.py /data/yy_df.p
 
 # read in yy_df, train a linear model, dump some stats about it
 ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-#RUN fit_linear_pgmodel.py /data/yy_df.p
+RUN fit_linear_pgmodel.py /data/yy_df.p
 
 ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 #RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
@@ -118,11 +126,3 @@ ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 #RUN make_scatterplots.py /data/yy_df.p
 
-ADD modeling/fit_blundermodels.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_blundermodels.py 10 10 400 /data/blundermodel/
-
-ADD modeling/test_blundermodels.py $BLUNDERCHECK_DIR/modeling/
-RUN test_blundermodels.py /data/blundermodel/
-
-ADD modeling/compute_perfect_elo.py $BLUNDERCHECK_DIR/modeling/
-RUN compute_perfect_elo.py /data/blundermodel/

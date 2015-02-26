@@ -12,7 +12,7 @@ from sklearn.externals import joblib
 from djeval import *
 
 def fix_colname(cn):
-    return cn.replace(' ', '')
+    return cn.translate(None, ' ()[]')
 
 
 msg("Hi, reading yy_df.")

@@ -11,9 +11,17 @@ from sklearn.externals import joblib
 
 from djeval import *
 
+def fix_colname(cn):
+    return cn.replace(' ', '')
+
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
+
+colnames = list(yy_df.columns.values)
+colnames = [fix_colname(cn) for cn in colnames]
+yy_df.columns = colnames
+
 
 msg("Getting subset ready.")
 

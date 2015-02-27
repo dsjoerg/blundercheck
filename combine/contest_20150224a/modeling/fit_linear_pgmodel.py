@@ -29,8 +29,8 @@ msg("Getting subset ready.")
 categorical_features = ['opening_feature']
 dummies = get_dummies(yy_df[categorical_features])
 
-elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elo_')]
-elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elo_')])
+elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
+elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')])
 
 # TODO save the moveelo_features along with yy_df
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]

@@ -39,7 +39,7 @@ moves_df = read_pickle('/data/movedata.p')
 moves_df['clipped_movergain'] = moves_df['movergain'].clip(-1e9,0)
 train_df = moves_df[moves_df['elo'].notnull()]
 
-validating = True
+validating = False
 if validating:
     train_df = train_df[train_df['gamenum'] % 2 == 0]
 

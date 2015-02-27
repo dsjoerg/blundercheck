@@ -41,7 +41,9 @@ stdev_cols = ['stdeverror', 'opponent_stdeverror', 'stdevpos']
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
 # lets look at in sample first
-train = train[train['gamenum'] % 2 == 0]
+validating = False
+if validating:
+    train = train[train['gamenum'] % 2 == 0]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"
 formula_rhs = formula_rhs + " + opponent_nmerror + opponent_noblunders"
@@ -58,7 +60,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
 
 # do these really not help?!
-#formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
+formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 # Never mind these, they didnt help much
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)

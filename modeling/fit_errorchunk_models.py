@@ -9,6 +9,7 @@ from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier,
 from sklearn.cross_validation import StratifiedKFold, cross_val_score
 from sklearn.metrics import average_precision_score
 from sklearn.externals import joblib
+from sklearn.linear_model import LinearRegression
 
 NUM_ELO_GROUPS = int(sys.argv[1])
 NUM_ERRORCHUNKS = int(sys.argv[2])
@@ -45,7 +46,7 @@ train_df = moves_df[moves_df['elo'].notnull()]
 
 chain_validating = True
 if chain_validating:
-    train_df = train_df[train_df['gamenum'] % 2 == 0]
+    train_df = train_df[train_df['gamenum'] % 3 == 0]
 
 msg('Looking at %i moves' % train_df.shape[0])
 train_df['elo_groups'] = cut(train_df['elo'], elo_bins, include_lowest=True)
@@ -87,6 +88,8 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         else:
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 
+        clf = LogisticRegression()
+
         msg('CROSS VALIDATING')
         skf = StratifiedKFold(y, n_folds=2, shuffle=True)
         ins = []
@@ -102,7 +105,7 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
 
         msg('FITTING')
         if chain_validating:
-            fit_df = subset_df[subset_df['gamenum'] % 2 == 0]
+            fit_df = subset_df[subset_df['gamenum'] % 3 == 0]
             fit_X = fit_df[features]
             fit_y = (fit_df['clipped_movergain'] >= cb)
             clf.fit(fit_X, fit_y)

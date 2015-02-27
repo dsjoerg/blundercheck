@@ -46,15 +46,15 @@ if use_sklearn_cv:
     print cvs
     sys.stdout.flush()
 else:
-    for modulo in [0,1]:
-        in_df = train[(train['gamenum'] % 2) == modulo]
-        out_df = train[(train['gamenum'] % 2) == (1 - modulo)]
+    for train_m,test_m in [[1,2],[1,1]]:
+        in_df = train[(train['gamenum'] % 3) == train_m]
+        out_df = train[(train['gamenum'] % 3) == test_m]
         X = in_df[features].values
         y = in_df['elo']
-        msg("fitting using group %i" % modulo)
+        msg("fitting using group %i" % train_m)
         rfr.fit(X, y)
         pred = rfr.predict(out_df[features].values)
-        msg("group %i MAE using model fit on group %i is %f" % ((1-modulo), modulo, np.mean((pred - out_df['elo']).abs())))
+        msg("group %i MAE using model fit on group %i is %f" % (test_m, train_m, np.mean((pred - out_df['elo']).abs())))
         
 
 X = train[features].values

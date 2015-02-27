@@ -42,7 +42,7 @@ train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
 chain_validating = True
 if chain_validating:
-    train = train[train['gamenum'] % 2 == 0]
+    train = train[train['gamenum'] % 3 == 1]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"
 formula_rhs = formula_rhs + " + opponent_nmerror + opponent_noblunders"
@@ -65,7 +65,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)
 
 # hey lets just use the elorange columns and see how they do
-formula_rhs = " + ".join(elorange_cols)
+#formula_rhs = " + ".join(elorange_cols)
 
 formula = "elo ~ " + formula_rhs
 
@@ -76,7 +76,7 @@ print ols.summary()
 msg("Making predictions for all playergames")
 yy_df['ols_prediction'] = ols.predict(yy_df)
 yy_df['ols_error'] = (yy_df['ols_prediction'] - yy_df['elo']).abs()
-yy_df['training'] = (yy_df['gamenum'] % 2 == 0)
+yy_df['training'] = (yy_df['gamenum'] % 3)
 insample_scores = yy_df.groupby('training')['ols_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
 

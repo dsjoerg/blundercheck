@@ -4,9 +4,10 @@ import os, code
 import cPickle as pickle
 from djeval import *
 import numpy as np
-from pandas import read_pickle, cut
+from pandas import read_pickle, cut, concat, Series
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
-from sklearn.cross_validation import cross_val_score
+from sklearn.cross_validation import StratifiedKFold, cross_val_score
+from sklearn.metrics import average_precision_score
 from sklearn.externals import joblib
 
 NUM_ELO_GROUPS = int(sys.argv[1])
@@ -42,7 +43,7 @@ moves_df = read_pickle('/data/movedata.p')
 moves_df['clipped_movergain'] = moves_df['movergain'].clip(-1e9,0)
 train_df = moves_df[moves_df['elo'].notnull()]
 
-chain_validating = False
+chain_validating = True
 if chain_validating:
     train_df = train_df[train_df['gamenum'] % 2 == 0]
 
@@ -71,8 +72,17 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 
         msg('CROSS VALIDATING')
-        cvs = cross_val_score(clf, X, y, cv=n_cv_groups, n_jobs=-1, scoring='roc_auc')
-        msg('CV scores: %s = %f' % (cvs, np.mean(cvs)))
+        skf = StratifiedKFold(y, n_folds=2, shuffle=True)
+        ins = []
+        outs = []
+        for train_index, test_index in skf:
+            foo = clf.fit(X.iloc[train_index], y.iloc[train_index])
+            ins.append(average_precision_score(clf.predict(X.iloc[train_index]), y.iloc[train_index]))
+            outs.append(average_precision_score(clf.predict(X.iloc[test_index]), y.iloc[test_index]))
+        msg("insample  average precision score: %s = %f" % (ins, np.mean(ins)))
+        msg("outsample average precision score: %s = %f" % (outs, np.mean(outs)))
+        # cvs = cross_val_score(clf, X, y, cv=n_cv_groups, n_jobs=-1, scoring='roc_auc')
+        # msg('CV scores: %s = %f' % (cvs, np.mean(cvs)))
 
         msg('FITTING')
         if chain_validating:
@@ -83,11 +93,18 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         else:
             clf.fit(X, y)
 
-        msg('OOB SCORE: %f' % clf.oob_score_)
         # measure in-sample score
         # measure extent of over-fitting
         # measure model quality in-sample and out-of-sample
-        shell()
+
+        pred_y = clf.predict_proba(X)
+        pred_y = [x[1] for x in pred_y]
+        combo = concat([Series(y.values), Series(pred_y)], axis=1)
+        combo.columns = ['actual', 'predicted']
+        combo_groups = cut(combo['predicted'], 10)
+        msg("PREDICTION DISTRIBUTION AND SUCCESS:\n%s" % combo.groupby(combo_groups)['actual'].agg({'mean actual': np.mean, 'count': len}))
+
+        msg("FULL INSAMPLE AVERAGE PRECISION SCORE: %f" % average_precision_score(y, pred_y))
 
         joblib.dump([elo_name, cb, clf], '%s%i.p' % (blundermodel_dir, modelnum))
         modelnum = modelnum + 1

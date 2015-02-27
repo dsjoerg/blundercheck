@@ -40,9 +40,8 @@ stdev_cols = ['stdeverror', 'opponent_stdeverror', 'stdevpos']
 
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
-# lets look at in sample first
-validating = False
-if validating:
+chain_validating = True
+if chain_validating:
     train = train[train['gamenum'] % 2 == 0]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"
@@ -65,6 +64,8 @@ formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 # Never mind these, they didnt help much
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)
 
+# hey lets just use the elorange columns and see how they do
+#formula_rhs = " + ".join(elorange_cols)
 
 formula = "elo ~ " + formula_rhs
 

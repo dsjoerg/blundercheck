@@ -88,14 +88,16 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         else:
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 
+        clf = LogisticRegression()
+
         msg('CROSS VALIDATING')
         skf = StratifiedKFold(y, n_folds=2, shuffle=True)
         ins = []
         outs = []
         for train_index, test_index in skf:
             foo = clf.fit(X.iloc[train_index], y.iloc[train_index])
-            ins.append(average_precision_score(clf.predict_proba(X.iloc[train_index]), y.iloc[train_index]))
-            outs.append(average_precision_score(clf.predict_proba(X.iloc[test_index]), y.iloc[test_index]))
+            ins.append(average_precision_score(clf.predict(X.iloc[train_index]), y.iloc[train_index]))
+            outs.append(average_precision_score(clf.predict(X.iloc[test_index]), y.iloc[test_index]))
         msg("insample  average precision score: %s = %f" % (ins, np.mean(ins)))
         msg("outsample average precision score: %s = %f" % (outs, np.mean(outs)))
         # cvs = cross_val_score(clf, X, y, cv=n_cv_groups, n_jobs=-1, scoring='roc_auc')

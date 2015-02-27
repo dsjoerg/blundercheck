@@ -58,7 +58,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
 
 # do these really not help?!
-#formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
+formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 # Never mind these, they didnt help much
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)

@@ -73,7 +73,7 @@ print ols.summary()
 msg("Making predictions for all playergames")
 yy_df['ols_prediction'] = ols.predict(yy_df)
 yy_df['ols_error'] = (yy_df['ols_prediction'] - yy_df['elo']).abs()
-yy_df['training'] = yy_df['elo'].notnull()
+yy_df['training'] = (yy_df['gamenum'] % 2 == 0)
 insample_scores = yy_df.groupby('training')['ols_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
 

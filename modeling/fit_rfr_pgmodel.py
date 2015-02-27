@@ -30,7 +30,7 @@ elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opp
 
 excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'timecontrols_standard']
 excluded_features.extend(categorical_features)
-excluded_features.extend(elorange_cols)
+#excluded_features.extend(elorange_cols)
 for f in excluded_features:
     features.remove(f)
 
@@ -54,7 +54,7 @@ else:
         msg("fitting using group %i" % modulo)
         rfr.fit(X, y)
         pred = rfr.predict(out_df[features].values)
-        msg("group %i MAE is %f" % (modulo, np.mean((pred - out_df['elo']).abs())))
+        msg("group %i MAE using model fit on group %i is %f" % ((1-modulo), modulo, np.mean((pred - out_df['elo']).abs())))
         
 
 X = train[features].values

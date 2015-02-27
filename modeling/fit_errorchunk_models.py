@@ -88,8 +88,6 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         else:
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 
-        clf = LogisticRegression()
-
         msg('CROSS VALIDATING')
         skf = StratifiedKFold(y, n_folds=2, shuffle=True)
         ins = []

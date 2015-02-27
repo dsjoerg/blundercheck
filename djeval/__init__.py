@@ -3,6 +3,12 @@ import time
 import urllib
 from chess import *
 
+def shell():
+    vars = globals()
+    vars.update(locals())
+    shell = code.InteractiveConsole(vars)
+    shell.interact()
+
 # so that we can open URLs directly from lichess when needed
 class DSJURLopener(urllib.FancyURLopener):
     version = "dsjoerg"

@@ -56,8 +56,8 @@ move_aggs['stdev'].fillna(40, inplace=True)
 
 msg("Hi! Reading wmoveaggs")
 wmove_aggs = joblib.load('/data/wmove_aggs.p')
-pm_agg_df = joblib.load('/data/perfectmove_aggs.p')
-pm_agg_df.index = pm_agg_df.index.droplevel('elo')
+ch_agg_df = joblib.load('/data/chunk_aggs.p')
+ch_agg_df.index = ch_agg_df.index.droplevel('elo')
 
 # list of all moves
 moves_list = []
@@ -200,7 +200,7 @@ for row in rows.values():
 msg("Hi! Setting up playergame rows")
 
 new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
-elorange_cols = list(pm_agg_df.columns.values)[:-1]
+elorange_cols = list(ch_agg_df.columns.values)
 msg("elorange cols are %s" % elorange_cols)
 
 yy_combined = []
@@ -288,9 +288,9 @@ for gamenum in range(1, 25001):
         else:
           pg_tuple = pg_tuple + tuple([10, 3, 10, 10, 0.6])
 
-        if pg in pm_agg_df.index:
-          pm_agg = pm_agg_df.loc[pg]
-          pg_tuple = pg_tuple + tuple(pm_agg_df.loc[pg][:-1])
+        if pg in ch_agg_df.index:
+          pm_agg = ch_agg_df.loc[pg]
+          pg_tuple = pg_tuple + tuple(ch_agg_df.loc[pg])
         else:
           pg_tuple = pg_tuple + tuple([1.0 / len(elorange_cols)] * len(elorange_cols))
 

@@ -95,17 +95,17 @@ RUN show_movemodel.py /data/movemodel.p
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
-ADD modeling/fit_blundermodels.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_blundermodels.py 6 1 400 /data/blundermodel/
-
-ADD modeling/test_blundermodels.py $BLUNDERCHECK_DIR/modeling/
-RUN test_blundermodels.py /data/blundermodel/
-
-ADD modeling/compute_perfect_elo.py $BLUNDERCHECK_DIR/modeling/
-RUN compute_perfect_elo.py /data/blundermodel/
-
 # get the previous movescores, do they help?
 RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
+
+ADD modeling/fit_errorchunk_models.py $BLUNDERCHECK_DIR/modeling/
+RUN fit_errorchunk_models.py 3 3 400 8 300 /data/errorchunks/
+
+#ADD modeling/test_blundermodels.py $BLUNDERCHECK_DIR/modeling/
+#RUN test_blundermodels.py /data/blundermodel/
+
+ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
+RUN compute_chunklikes.py /data/errorchunks/
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/

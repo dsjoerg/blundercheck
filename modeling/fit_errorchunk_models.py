@@ -4,7 +4,7 @@ import os, code
 import cPickle as pickle
 from djeval import *
 import numpy as np
-from pandas import read_pickle, cut, concat, Series
+from pandas import read_pickle, cut, concat, Series, get_dummies
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.cross_validation import StratifiedKFold, cross_val_score
 from sklearn.metrics import average_precision_score

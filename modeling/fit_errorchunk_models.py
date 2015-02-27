@@ -3,7 +3,7 @@
 import os, code
 import cPickle as pickle
 from djeval import *
-from numpy import percentile, arange
+import numpy as np
 from pandas import read_pickle, cut
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.cross_validation import cross_val_score
@@ -34,7 +34,7 @@ eheaders_filename = '/data/eheaders.p'
 eheaders_file = open(eheaders_filename, 'r')
 eheaders = pickle.load(eheaders_file)
 elos = eheaders['elos'].values()
-elo_bins = percentile(elos, arange(0, 100. + 1e-9, 100./float(NUM_ELO_GROUPS)))
+elo_bins = np.percentile(elos, np.arange(0, 100. + 1e-9, 100./float(NUM_ELO_GROUPS)))
 msg('ELO bins are %s' % str(elo_bins))
 
 msg('reading movedata')

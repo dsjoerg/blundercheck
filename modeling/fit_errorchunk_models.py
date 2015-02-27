@@ -54,8 +54,18 @@ blundermodel_dir = sys.argv[6]
 if not os.path.exists(blundermodel_dir):
     os.makedirs(blundermodel_dir)
 
+dummy_features = []
+for index, cf in enumerate(categorical_features):
+  dummies = get_dummies(train_df[cf], prefix=cf)
+  dummy_features.extend(dummies.columns.values)
+
 joblib.dump([elo_bins, chunk_bounds], blundermodel_dir + 'groups.p')
-features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change']
+features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change', 'bestmove_piece', 'bestmove_dir', 'bestmove_dist', 'prevgain']
+features.extend(dummy_features)
+
+# more features you could have:
+#  * loss for the 2nd, 3rd, 4th, 5th best move, etc (perfect move is
+#    less likely if there are several very close alternatives)
 
 modelnum = 0
 for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
@@ -67,7 +77,7 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
 
         rfc = True
         if rfc:
-            clf = RandomForestClassifier(min_samples_split=500, min_samples_leaf=300, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
+            clf = RandomForestClassifier(min_samples_split=200, min_samples_leaf=50, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
         else:
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 

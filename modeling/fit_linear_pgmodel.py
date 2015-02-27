@@ -65,7 +65,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)
 
 # hey lets just use the elorange columns and see how they do
-#formula_rhs = " + ".join(elorange_cols)
+formula_rhs = " + ".join(elorange_cols)
 
 formula = "elo ~ " + formula_rhs
 

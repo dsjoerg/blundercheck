@@ -21,7 +21,7 @@ def compute_movegains(positionscores):
 
         mover_score = last_equity * side
 
-        move = [movenum, mover_score, movergain]
+        move = [movenum, mover_score, movergain, last_gain]
         moves_list.append( move )
 
         last_equity = positionscore

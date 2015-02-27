@@ -69,6 +69,7 @@ columns = [
 'halfply',
 'moverscore',
 'movergain',
+'prevgain',
 'move_piece',
 'move_dir',
 'move_dist',

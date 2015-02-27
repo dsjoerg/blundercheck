@@ -63,7 +63,7 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         
         rfr = True
         if rfr:
-            clf = RandomForestClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, njobs=-1)
+            clf = RandomForestClassifier(min_samples_split=500, min_samples_leaf=300, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1)
         else:
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 

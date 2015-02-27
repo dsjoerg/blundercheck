@@ -29,8 +29,8 @@ msg("Getting subset ready.")
 categorical_features = ['opening_feature']
 dummies = get_dummies(yy_df[categorical_features])
 
-elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('perfect_')]
-elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_perfect_')])
+elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elo_')]
+elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elo_')])
 
 # TODO save the moveelo_features along with yy_df
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
@@ -58,7 +58,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
 
 # do these really not help?!
-#formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
+formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 # Never mind these, they didnt help much
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)

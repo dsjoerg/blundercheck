@@ -322,7 +322,7 @@ for player_prefix in ["", "opponent_"]:
     yy_columns.extend(moveelo_features)
     yy_columns.append(player_prefix + 'moveelo_weighted')
     yy_columns.extend([(player_prefix + colname) for colname in new_depth_cols])
-    yy_columns.extend([(player_prefix + 'elo_' + colname) for colname in elorange_cols])
+    yy_columns.extend([(player_prefix + 'elochunk_' + colname) for colname in elorange_cols])
 
 msg("now yy_columns is %s" % yy_columns)    
 

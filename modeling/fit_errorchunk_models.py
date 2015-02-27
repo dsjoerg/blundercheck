@@ -5,7 +5,7 @@ import cPickle as pickle
 from djeval import *
 import numpy as np
 from pandas import read_pickle, cut, concat, Series, get_dummies
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier
 from sklearn.cross_validation import StratifiedKFold, cross_val_score
 from sklearn.metrics import average_precision_score
 from sklearn.externals import joblib
@@ -79,7 +79,11 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
 
         rfc = True
         if rfc:
-            clf = RandomForestClassifier(min_samples_split=200, min_samples_leaf=50, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
+            extra = True
+            if extra:
+                clf = ExtraTreesClassifier(min_samples_split=200, min_samples_leaf=50, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
+            else:
+                clf = RandomForestClassifier(min_samples_split=200, min_samples_leaf=50, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
         else:
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 

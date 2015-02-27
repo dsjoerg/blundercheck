@@ -54,13 +54,14 @@ blundermodel_dir = sys.argv[6]
 if not os.path.exists(blundermodel_dir):
     os.makedirs(blundermodel_dir)
 
+categorical_features = ['bestmove_piece', 'bestmove_dir']
 dummy_features = []
 for index, cf in enumerate(categorical_features):
   dummies = get_dummies(train_df[cf], prefix=cf)
   dummy_features.extend(dummies.columns.values)
 
 joblib.dump([elo_bins, chunk_bounds], blundermodel_dir + 'groups.p')
-features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change', 'bestmove_piece', 'bestmove_dir', 'bestmove_dist', 'prevgain']
+features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change', 'bestmove_dist', 'prevgain']
 features.extend(dummy_features)
 
 # more features you could have:

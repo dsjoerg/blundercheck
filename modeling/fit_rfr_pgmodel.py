@@ -25,8 +25,8 @@ train = yy_df[yy_df.elo.notnull()]
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature', 'timecontrols']
-elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('perfect_')]
-elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_perfect_')])
+elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
+elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')])
 
 excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'timecontrols_standard']
 excluded_features.extend(categorical_features)

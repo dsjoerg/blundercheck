@@ -63,10 +63,6 @@ diagnose = False
 if diagnose:
     train_df = sample_df(train_df, 30)
 
-validating = True
-if validating:
-    train_df = train_df[train_df['gamenum'] % 2 == 0]
-
 like_colnames = []
 X = train_df[features]
 

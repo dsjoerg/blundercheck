@@ -38,7 +38,11 @@ msg('reading movedata')
 moves_df = read_pickle('/data/movedata.p')
 moves_df['clipped_movergain'] = moves_df['movergain'].clip(-1e9,0)
 train_df = moves_df[moves_df['elo'].notnull()]
-train_df = train_df[train_df['gamenum'] % 2 == 0]
+
+validating = True
+if validating:
+    train_df = train_df[train_df['gamenum'] % 2 == 0]
+
 msg('Looking at %i moves' % train_df.shape[0])
 train_df['elo_groups'] = cut(train_df['elo'], elo_bins, include_lowest=True)
 

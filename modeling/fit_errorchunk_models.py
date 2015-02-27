@@ -63,9 +63,9 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         
         rfr = True
         if rfr:
-            clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
-        else:
             clf = RandomForestClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, njobs=-1)
+        else:
+            clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 
         clf.fit(X, y)
         joblib.dump([elo_name, cb, clf], '%s%i.p' % (blundermodel_dir, modelnum))

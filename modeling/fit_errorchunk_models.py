@@ -9,7 +9,7 @@ from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier,
 from sklearn.cross_validation import StratifiedKFold, cross_val_score
 from sklearn.metrics import average_precision_score
 from sklearn.externals import joblib
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LogisticRegression
 
 NUM_ELO_GROUPS = int(sys.argv[1])
 NUM_ERRORCHUNKS = int(sys.argv[2])

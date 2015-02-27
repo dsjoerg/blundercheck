@@ -5,7 +5,7 @@ import cPickle as pickle
 from djeval import *
 from numpy import percentile, arange
 from pandas import read_pickle, cut
-from sklearn.ensemble import GradientBoostingRegressor, GradientBoostingClassifier
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.externals import joblib
 
 NUM_ELO_GROUPS = int(sys.argv[1])
@@ -60,8 +60,14 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         msg('working on elo group %s, of size %i. fitting model for error >= %f' % (elo_name, subset_df.shape[0], cb))
         X = subset_df[features]
         y = (subset_df['clipped_movergain'] >= cb)
-        gbc = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
-        gbc.fit(X, y)
-        joblib.dump([elo_name, cb, gbc], '%s%i.p' % (blundermodel_dir, modelnum))
+        
+        rfr = True
+        if rfr:
+            clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
+        else:
+            clf = RandomForestClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, njobs=-1)
+
+        clf.fit(X, y)
+        joblib.dump([elo_name, cb, clf], '%s%i.p' % (blundermodel_dir, modelnum))
         modelnum = modelnum + 1
         subset_df = subset_df[~y]

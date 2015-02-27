@@ -6,6 +6,7 @@ from djeval import *
 from numpy import percentile, arange
 from pandas import read_pickle, cut
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.cross_validation import cross_val_score
 from sklearn.externals import joblib
 
 NUM_ELO_GROUPS = int(sys.argv[1])
@@ -13,6 +14,8 @@ NUM_ERRORCHUNKS = int(sys.argv[2])
 NUM_ESTIMATORS = int(sys.argv[3])
 LOW_BOUND = float(sys.argv[4])
 HIGH_BOUND = float(sys.argv[5])
+
+n_cv_groups = 2
 
 def shell():
     vars = globals()
@@ -39,8 +42,8 @@ moves_df = read_pickle('/data/movedata.p')
 moves_df['clipped_movergain'] = moves_df['movergain'].clip(-1e9,0)
 train_df = moves_df[moves_df['elo'].notnull()]
 
-validating = False
-if validating:
+chain_validating = False
+if chain_validating:
     train_df = train_df[train_df['gamenum'] % 2 == 0]
 
 msg('Looking at %i moves' % train_df.shape[0])
@@ -60,14 +63,32 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         msg('working on elo group %s, of size %i. fitting model for error >= %f' % (elo_name, subset_df.shape[0], cb))
         X = subset_df[features]
         y = (subset_df['clipped_movergain'] >= cb)
-        
-        rfr = True
-        if rfr:
-            clf = RandomForestClassifier(min_samples_split=500, min_samples_leaf=300, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1)
+
+        rfc = True
+        if rfc:
+            clf = RandomForestClassifier(min_samples_split=500, min_samples_leaf=300, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
         else:
             clf = GradientBoostingClassifier(min_samples_split=500, min_samples_leaf=300, n_estimators=NUM_ESTIMATORS, verbose=1, subsample=0.5, learning_rate=0.2)
 
-        clf.fit(X, y)
+        msg('CROSS VALIDATING')
+        cvs = cross_val_score(clf, X, y, cv=n_cv_groups, n_jobs=-1, scoring='roc_auc')
+        msg('CV scores: %s = %f' % (cvs, np.mean(cvs)))
+
+        msg('FITTING')
+        if chain_validating:
+            fit_df = subset_df[subset_df['gamenum'] % 2 == 0]
+            fit_X = fit_df[features]
+            fit_y = (fit_df['clipped_movergain'] >= cb)
+            clf.fit(fit_X, fit_y)
+        else:
+            clf.fit(X, y)
+
+        msg('OOB SCORE: %f' % clf.oob_score_)
+        # measure in-sample score
+        # measure extent of over-fitting
+        # measure model quality in-sample and out-of-sample
+        shell()
+
         joblib.dump([elo_name, cb, clf], '%s%i.p' % (blundermodel_dir, modelnum))
         modelnum = modelnum + 1
         subset_df = subset_df[~y]

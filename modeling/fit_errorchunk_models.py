@@ -60,9 +60,10 @@ for index, cf in enumerate(categorical_features):
   dummies = get_dummies(train_df[cf], prefix=cf)
   dummy_features.extend(dummies.columns.values)
 
-joblib.dump([elo_bins, chunk_bounds], blundermodel_dir + 'groups.p')
 features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change', 'bestmove_dist', 'prevgain']
 features.extend(dummy_features)
+
+joblib.dump([elo_bins, chunk_bounds, features], blundermodel_dir + 'groups.p')
 
 # more features you could have:
 #  * loss for the 2nd, 3rd, 4th, 5th best move, etc (perfect move is

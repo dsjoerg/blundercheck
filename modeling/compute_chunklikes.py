@@ -25,6 +25,7 @@ blundermodel_dir = sys.argv[1]
 thing = joblib.load(blundermodel_dir + 'groups.p')
 elo_bins = thing[0]
 chunk_bounds = thing[1]
+features = thing[2]
 
 print 'elo_bins is %s' % str(elo_bins)
 print 'chunk_bounds is %s' % str(chunk_bounds)
@@ -50,8 +51,6 @@ msg('reading movedata')
 moves_df = read_pickle('/data/movedata.p')
 moves_df['clipped_movergain'] = moves_df['movergain'].clip(-1e9,0)
 train_df = moves_df[moves_df['elo'].notnull()]
-
-features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change']
 
 testing = False
 if testing:

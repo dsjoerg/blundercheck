@@ -81,7 +81,7 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         if rfc:
             extra = True
             if extra:
-                clf = ExtraTreesClassifier(min_samples_split=200, min_samples_leaf=50, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
+                clf = ExtraTreesClassifier(min_samples_split=200, min_samples_leaf=50, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1)
             else:
                 clf = RandomForestClassifier(min_samples_split=200, min_samples_leaf=50, n_jobs=-1, n_estimators=NUM_ESTIMATORS, verbose=1, oob_score=True)
         else:

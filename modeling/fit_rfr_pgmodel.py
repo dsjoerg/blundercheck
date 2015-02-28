@@ -13,7 +13,7 @@ import pygraphviz as pgv
 from StringIO import StringIO
 from djeval import *
 
-n_estimators = 200
+n_estimators = 2000
 n_cv_groups = 3
 n_jobs = -1
 

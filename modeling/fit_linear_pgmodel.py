@@ -42,7 +42,7 @@ train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
 chain_validating = True
 if chain_validating:
-    train = train[train['gamenum'] % 3 == 1]
+    train = train[train['gamenum'] % 3 == 0]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"
 formula_rhs = formula_rhs + " + opponent_nmerror + opponent_noblunders"

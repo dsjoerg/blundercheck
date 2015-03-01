@@ -7,6 +7,17 @@ import csv
 import cPickle as pickle
 from sklearn.externals import joblib
 
+final_elo = {}
+final_ply = {}
+final_num_games = {}
+with open('/data/data.pgn.eloscored', 'r') as eloscored_fd:
+  elo_score_reader = csv.reader(eloscored_fd)
+  for row in elo_score_reader:
+      gamenum = int(row[0])
+      final_elo[gamenum] = int(row[1])
+      final_ply[gamenum] = int(row[2])
+      final_num_games[gamenum] = int(row[3])
+
 msg("Hi! Reading eheaders")
 eheaders_filename = '/data/eheaders.p'
 eheaders_file = open(eheaders_filename, 'r')
@@ -267,6 +278,8 @@ for gamenum in range(1, 50001):
                 timecontrols[gamenum],
                 stdeverror[playergame], stdeverror[opponent_playergame],
                 pos_stdev[gamenum],
+                final_elo[gamenum], final_ply[gamenum],
+                final_num_games[gamenum]
                 )
 
     for pg in [playergame, opponent_playergame]:
@@ -314,7 +327,7 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'pct_sanemoves',
               'timecontrols',
               'stdeverror', 'opponent_stdeverror',
-              'stdevpos',
+              'stdevpos', 'final_elo', 'final_ply', 'final_num_games'
               ]
 
 for player_prefix in ["", "opponent_"]:

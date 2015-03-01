@@ -37,7 +37,7 @@ for f in excluded_features:
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=10, min_samples_split=50, verbose=1)
 
-use_sklearn_cv = False
+use_sklearn_cv = True
 if use_sklearn_cv:
     X = train[features].values
     y = train['elo']

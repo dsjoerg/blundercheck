@@ -60,7 +60,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
 formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games "
 
 # do these really not help?!
-formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
+#formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 # Never mind these, they didnt help much
 #formula_rhs = formula_rhs + " + " + " + ".join(moveelo_features)

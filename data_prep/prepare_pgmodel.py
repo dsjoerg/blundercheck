@@ -217,6 +217,7 @@ msg("elorange cols are %s" % elorange_cols)
 yy_combined = []
 
 #TODO why is this so slow? any easy way to speed it up?
+# as of 20150228, takes SEVEN minutes
 for gamenum in range(1, 50001):
   for side in [-1, 1]:
     playergame = (gamenum, side)

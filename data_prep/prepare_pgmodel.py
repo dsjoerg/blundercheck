@@ -118,8 +118,8 @@ for row in rows.values():
   lead_established = False
   position_scores = []
 
-#  if gamenum > 30:
-#    break
+  if gamenum > 501:
+    break
 
   if gamenum % 500 == 0:
     msg("hi doing gamenum %i" % gamenum)
@@ -342,7 +342,7 @@ for player_prefix in ["", "opponent_"]:
     yy_columns.extend([(player_prefix + 'elochunk_' + colname) for colname in elorange_cols])
 
 runtime = time.time() - begin_time
-msg("runtime was %f", runtime)
+msg("runtime was %f" % runtime)
 
 msg("now yy_columns is %s" % yy_columns)    
 

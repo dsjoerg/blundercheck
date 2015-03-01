@@ -186,6 +186,7 @@ for row in rows.values():
   #print \"MS\", movescores
 
   pos_stdev[gamenum] = clip(position_scores, -500, 500).std()
+  pos_ffts[gamenum] = fft.fft(position_scores, 5).real
 
   for side in [-1, 1]:
     clippederror = clip(movescores[side], -150, 0)
@@ -296,7 +297,8 @@ for gamenum in range(1, 50001):
                 stdeverror[playergame], stdeverror[opponent_playergame],
                 pos_stdev[gamenum],
                 final_elo[gamenum], final_ply[gamenum],
-                final_num_games[gamenum]
+                final_num_games[gamenum],
+                pos_ffts[gamenum][0], pos_ffts[gamenum][1], pos_ffts[gamenum][2], pos_ffts[gamenum][3]
                 )
 
     list_for_tuple = []
@@ -322,7 +324,8 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'pct_sanemoves',
               'timecontrols',
               'stdeverror', 'opponent_stdeverror',
-              'stdevpos', 'final_elo', 'final_ply', 'final_num_games'
+              'stdevpos', 'final_elo', 'final_ply', 'final_num_games',
+              'pos_fft_0', 'pos_fft_1', 'pos_fft_2', 'pos_fft_3', 
               ]
 
 for player_prefix in ["", "opponent_"]:

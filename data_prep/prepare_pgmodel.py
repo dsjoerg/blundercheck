@@ -221,7 +221,7 @@ yy_combined = []
 
 begin_time = time.time()
 
-for gamenum in range(1, 50001):
+for gamenum in range(1, 501):
   for side in [-1, 1]:
     playergame = (gamenum, side)
     opponent_playergame = (gamenum, side * -1)

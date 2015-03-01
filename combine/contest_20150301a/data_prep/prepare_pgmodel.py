@@ -286,30 +286,31 @@ for gamenum in range(1, 501):
                 final_num_games[gamenum]
                 )
 
-    for pg in [playergame, opponent_playergame]:
-        if pg in move_aggs.index:
-          move_agg = move_aggs.loc[pg]
-          moveelo_values = [move_agg[x] for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
-          pg_tuple = pg_tuple + tuple(moveelo_values)
-        else:
-          pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
+    if False:
+        for pg in [playergame, opponent_playergame]:
+            if pg in move_aggs.index:
+              move_agg = move_aggs.loc[pg]
+              moveelo_values = [move_agg[x] for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+              pg_tuple = pg_tuple + tuple(moveelo_values)
+            else:
+              pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
 
-        if pg in wmove_aggs.index:
-          wmove_agg = wmove_aggs.loc[pg]
-          pg_tuple = pg_tuple + tuple([wmove_agg['elo_pred']])
-        else:
-          pg_tuple = pg_tuple + tuple([2250])
+            if pg in wmove_aggs.index:
+              wmove_agg = wmove_aggs.loc[pg]
+              pg_tuple = pg_tuple + tuple([wmove_agg['elo_pred']])
+            else:
+              pg_tuple = pg_tuple + tuple([2250])
 
-        if pg in depthstats_df.index:
-          pg_tuple = pg_tuple + tuple(depthstats_df.loc[pg][new_depth_cols])
-        else:
-          pg_tuple = pg_tuple + tuple([10, 3, 10, 10, 0.6])
+            if pg in depthstats_df.index:
+              pg_tuple = pg_tuple + tuple(depthstats_df.loc[pg][new_depth_cols])
+            else:
+              pg_tuple = pg_tuple + tuple([10, 3, 10, 10, 0.6])
 
-        if pg in ch_agg_df.index:
-          pm_agg = ch_agg_df.loc[pg]
-          pg_tuple = pg_tuple + tuple(ch_agg_df.loc[pg])
-        else:
-          pg_tuple = pg_tuple + tuple([1.0 / len(elorange_cols)] * len(elorange_cols))
+            if pg in ch_agg_df.index:
+              pm_agg = ch_agg_df.loc[pg]
+              pg_tuple = pg_tuple + tuple(ch_agg_df.loc[pg])
+            else:
+              pg_tuple = pg_tuple + tuple([1.0 / len(elorange_cols)] * len(elorange_cols))
 
 
     yy_combined.append(pg_tuple)

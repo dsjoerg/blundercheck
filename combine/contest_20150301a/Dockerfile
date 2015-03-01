@@ -111,7 +111,7 @@ ADD data.pgn.eloscored /data/
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
-RUN prepare_pgmodel.py /data/yy_df.p
+#RUN prepare_pgmodel.py /data/yy_df.p
 
 ADD data_prep/show_pgdata.py $BLUNDERCHECK_DIR/data_prep/
 #RUN show_pgdata.py /data/yy_df.p

@@ -218,6 +218,9 @@ yy_combined = []
 
 #TODO why is this so slow? any easy way to speed it up?
 # as of 20150228, takes SEVEN minutes
+
+begin_time = time.time()
+
 for gamenum in range(1, 50001):
   for side in [-1, 1]:
     playergame = (gamenum, side)
@@ -337,6 +340,9 @@ for player_prefix in ["", "opponent_"]:
     yy_columns.append(player_prefix + 'moveelo_weighted')
     yy_columns.extend([(player_prefix + colname) for colname in new_depth_cols])
     yy_columns.extend([(player_prefix + 'elochunk_' + colname) for colname in elorange_cols])
+
+runtime = time.time() - begin_time
+msg("runtime was %f", runtime)
 
 msg("now yy_columns is %s" % yy_columns)    
 

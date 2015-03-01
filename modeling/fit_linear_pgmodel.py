@@ -58,6 +58,7 @@ formula_rhs = formula_rhs + " + moveelo_weighted"
 formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
 formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games "
+formula_rhs = formula_rhs + " + " + " + ".join(['pos_fft_'+str(i) for i in [0,1,2,3]])
 
 # do these really not help?!
 #formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)

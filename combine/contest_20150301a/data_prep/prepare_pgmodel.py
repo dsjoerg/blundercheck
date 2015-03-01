@@ -3,9 +3,15 @@
 from pandas  import *
 from numpy  import *
 from djeval import *
-import csv
+import csv, code
 import cPickle as pickle
 from sklearn.externals import joblib
+
+def shell():
+    vars = globals()
+    vars.update(locals())
+    shell = code.InteractiveConsole(vars)
+    shell.interact()
 
 final_elo = {}
 final_ply = {}
@@ -102,6 +108,7 @@ def was_matecreated(prev, next):
 def was_matedestroyed(prev, next):
   return (prev > 1000 and next < 500)
 
+# Takes 24 seconds, currently
 msg("Hi! Running through movescores")
 for row in rows.values():
 
@@ -118,8 +125,8 @@ for row in rows.values():
   lead_established = False
   position_scores = []
 
-  if gamenum > 501:
-    break
+#  if gamenum > 501:
+#    break
 
   if gamenum % 500 == 0:
     msg("hi doing gamenum %i" % gamenum)
@@ -216,12 +223,18 @@ msg("elorange cols are %s" % elorange_cols)
 
 yy_combined = []
 
-#TODO why is this so slow? any easy way to speed it up?
-# as of 20150228, takes SEVEN minutes
+# as of 20150301, takes 40 seconds
+# assemble data from other DFs and fill in missing values
+mega_df = concat([move_aggs[['mean', 'median', '25', '10', 'min', 'max', 'stdev']], wmove_aggs['elo_pred'], depthstats_df[new_depth_cols], ch_agg_df], axis=1)
+full_index = pandas.MultiIndex.from_product([range(0,50001), [1,-1]], names=['gamenum', 'side'])
+mega_df = mega_df.reindex(full_index)
+mega_df = mega_df.fillna(mega_df.mean())
 
 begin_time = time.time()
 
-for gamenum in range(1, 501):
+for gamenum in range(1, 50001):
+  if gamenum % 500 == 0:
+    msg("hi doing gamenum %i" % gamenum)
   for side in [-1, 1]:
     playergame = (gamenum, side)
     opponent_playergame = (gamenum, side * -1)
@@ -286,33 +299,9 @@ for gamenum in range(1, 501):
                 final_num_games[gamenum]
                 )
 
-    if True:
-        list_for_tuple = []
-        for pg in [playergame, opponent_playergame]:
-            if pg in move_aggs.index:
-              move_agg = move_aggs.loc[pg]
-              moveelo_values = [move_agg[x] for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
-              pg_tuple = pg_tuple + tuple(moveelo_values)
-            else:
-              pg_tuple = pg_tuple + tuple(([2250] * 6) + [40]) 
-
-            if pg in wmove_aggs.index:
-              wmove_agg = wmove_aggs.loc[pg]
-              pg_tuple = pg_tuple + tuple([wmove_agg['elo_pred']])
-            else:
-              pg_tuple = pg_tuple + tuple([2250])
-
-            if pg in depthstats_df.index:
-              pg_tuple = pg_tuple + tuple(depthstats_df.loc[pg][new_depth_cols])
-            else:
-              pg_tuple = pg_tuple + tuple([10, 3, 10, 10, 0.6])
-
-            if pg in ch_agg_df.index:
-              pm_agg = ch_agg_df.loc[pg]
-              pg_tuple = pg_tuple + tuple(ch_agg_df.loc[pg])
-            else:
-              pg_tuple = pg_tuple + tuple([1.0 / len(elorange_cols)] * len(elorange_cols))
-
+    list_for_tuple = []
+    for pg in [playergame, opponent_playergame]:
+        pg_tuple = pg_tuple + tuple(mega_df.loc[pg].values)
 
     yy_combined.append(pg_tuple)
 

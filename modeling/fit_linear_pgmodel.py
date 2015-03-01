@@ -57,6 +57,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
 formula_rhs = formula_rhs + " + moveelo_weighted"
 formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
+formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games "
 
 # do these really not help?!
 formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)

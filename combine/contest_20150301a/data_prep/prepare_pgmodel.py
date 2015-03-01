@@ -286,7 +286,8 @@ for gamenum in range(1, 501):
                 final_num_games[gamenum]
                 )
 
-    if False:
+    if True:
+        list_for_tuple = []
         for pg in [playergame, opponent_playergame]:
             if pg in move_aggs.index:
               move_agg = move_aggs.loc[pg]

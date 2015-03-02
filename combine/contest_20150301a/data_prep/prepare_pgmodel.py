@@ -97,6 +97,7 @@ matecreated = {}
 matedestroyed = {}
 
 pos_stdev = {}
+pos_ffts = {}
 stdeverror = {}
 
 # map from event_num to move # of first move where abs(equity) was > 100

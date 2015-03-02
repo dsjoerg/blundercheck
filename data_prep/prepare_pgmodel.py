@@ -326,7 +326,7 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'timecontrols',
               'stdeverror', 'opponent_stdeverror',
               'stdevpos', 'final_elo', 'final_ply', 'final_num_games',
-              'pos_fft_0', 'pos_fft_1', 'pos_fft_2', 'pos_fft_3', 
+              'pos_fft_1',
               ]
 
 for player_prefix in ["", "opponent_"]:

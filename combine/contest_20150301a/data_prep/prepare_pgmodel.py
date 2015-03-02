@@ -299,7 +299,7 @@ for gamenum in range(1, 50001):
                 pos_stdev[gamenum],
                 final_elo[gamenum], final_ply[gamenum],
                 final_num_games[gamenum],
-                pos_ffts[gamenum][0], pos_ffts[gamenum][1], pos_ffts[gamenum][2], pos_ffts[gamenum][3]
+                pos_ffts[gamenum][1],
                 )
 
     list_for_tuple = []

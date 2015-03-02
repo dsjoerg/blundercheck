@@ -43,7 +43,7 @@ max_elo = int(sys.argv[3])
 
 yy_df = yy_df[(yy_df['elo'] >= min_elo) & (yy_df['elo'] <= max_elo)]
 pandas.set_option('display.max_rows', None)
-gamerow = yy_df.sort('gbr_error', ascending=False).iloc[int(sys.argv[1])]
+gamerow = yy_df.sort('rfr_error', ascending=False).iloc[int(sys.argv[1])]
 print gamerow
 
 rows = {}

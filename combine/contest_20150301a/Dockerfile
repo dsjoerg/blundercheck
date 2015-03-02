@@ -128,3 +128,4 @@ RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
 ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 #RUN make_scatterplots.py /data/yy_df.p
 
+ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/

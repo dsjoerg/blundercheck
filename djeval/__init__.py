@@ -361,9 +361,9 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         outstruct['best_move_features'].insert(0, features(prev_node.board(), prev_best_move))
 
         depth_stats = [scoreresult[0], scoreresult[1]]
-        depth_stats.extend(scoreresult[5:7])
+        depth_stats.extend(scoreresult[5:11])
         outstruct['depth_stats'].insert(0, depth_stats)
-        outstruct['material_stats'].insert(0, scoreresult[7:10])
+        outstruct['material_stats'].insert(0, scoreresult[11:14])
 
         was_bestmove.insert(0, prev_best_move == node.move)
 

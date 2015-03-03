@@ -15,6 +15,7 @@ from djeval import *
 
 
 DEBUG = ('DEBUG' in os.environ)
+MIN_ITEMS_PER_KEY = 100
 NUM_ITEMS_PER_KEY = 1000
 
 movetime = None
@@ -67,8 +68,8 @@ gamesbucket = s3conn.get_bucket('bc-games')
 # read outputs from outqueue in batches and stuff them into S3
 def consolidate_outputs():
 
-    if outq.count() == 0:
-        msg("No outputs to consolidate. Sleeping 10 seconds.")
+    if outq.count() < MIN_ITEMS_PER_KEY * 2:
+        msg("Not enough outputs to consolidate. Sleeping 10 seconds.")
         time.sleep(10)
         return
 
@@ -82,8 +83,8 @@ def consolidate_outputs():
             break
         ms.append(nextmsg)
 
-    if len(ms) == 0:
-        msg("No messages read. Sleeping 10 seconds.")
+    if len(ms) < MIN_ITEMS_PER_KEY:
+        msg("Not enough messages read. Sleeping 10 seconds.")
         time.sleep(10)
         return
 

@@ -3,8 +3,6 @@ import chess.pgn
 import chess
 import pystockfish
 import os, StringIO
-import numpy
-from pandas import *
 import boto
 from boto.s3.key import Key
 
@@ -23,10 +21,10 @@ def get_game_from_s3(game_number):
 
 def describe_movescores(ms):
 # https://github.com/ornicar/lila/blob/master/modules/analyse/src/main/Advice.scala#L44-L47
-    print "Avg cp loss:  ", numpy.mean(ms)
-    print "Inaccuracies: ", numpy.sum((ms > -100) & (ms <= -50))
-    print "Mistakes:     ", numpy.sum((ms > -300) & (ms <= -100))
-    print "Blunders:     ", numpy.sum(              (ms <= -300))
+    print "Avg cp loss:  ", sum(ms) / len(ms)
+    print "Inaccuracies: ", sum((ms > -100) & (ms <= -50))
+    print "Mistakes:     ", sum((ms > -300) & (ms <= -100))
+    print "Blunders:     ", sum(              (ms <= -300))
     print ms.describe()
 
 def describe_position_scores(ps):

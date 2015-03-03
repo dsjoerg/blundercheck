@@ -5,8 +5,8 @@ import argparse
 
 # Usage launch_scoreservers.py [num_nodes]
 #
-# Where num_nodes is how many c3.8xlarge machines you want launched.
-# Each will have 32 containers running on it
+# Where num_nodes is how many c4.8xlarge machines you want launched.
+# Each will have 36 containers running on it
 #
 
 parser = argparse.ArgumentParser(description='Launch a cluster if needed or requested, and some containers, to score games')
@@ -36,7 +36,7 @@ nodeclusters = tutum.NodeCluster.list()
 nodeclusters = [nc for nc in nodeclusters if nc.state not in ['Terminating', 'Terminated']]
 if len(nodeclusters) == 0 or args.force:
     msg("Launching cluster")
-    nodecluster = tutum.NodeCluster.create(name="scoreservers", node_type='/api/v1/nodetype/aws/c3.8xlarge/', region='/api/v1/region/aws/us-east-1/', target_num_nodes=num_nodes, tags=[{'name': 'scorecontainer'}])
+    nodecluster = tutum.NodeCluster.create(name="scoreservers", node_type='/api/v1/nodetype/aws/c4.8xlarge/', region='/api/v1/region/aws/us-east-1/', target_num_nodes=num_nodes, tags=[{'name': 'scorecontainer'}])
     nodecluster.save()
 else:
     nodecluster = nodeclusters[0]

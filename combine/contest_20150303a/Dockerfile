@@ -45,8 +45,17 @@ RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
 # CONFIGURE INPUT
-ENV CLUSTER_INPUT_FILE 20150211.json.zl
+ENV CLUSTER_INPUT_FILE 20150303.json.zl
 
+# ipython hooray
+RUN pip install "ipython[notebook]"
+EXPOSE 8888
+ADD notebook.sh /
+RUN chmod u+x /notebook.sh
+ENV PEM_FILE /key.pem
+# $PASSWORD will get `unset` within notebook.sh, turned into an IPython style hash
+ENV PASSWORD Dont make this your default
+ENV USE_HTTP 0
 
 
 # COPY DATA IN FROM THE OUTSIDE WORLD
@@ -72,16 +81,6 @@ RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
-
-# TODO move all this BS up
-RUN pip install "ipython[notebook]"
-EXPOSE 8888
-ADD notebook.sh /
-RUN chmod u+x /notebook.sh
-ENV PEM_FILE /key.pem
-# $PASSWORD will get `unset` within notebook.sh, turned into an IPython style hash
-ENV PASSWORD Dont make this your default
-ENV USE_HTTP 0
 
 ADD modeling/fit_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p

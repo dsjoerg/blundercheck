@@ -73,6 +73,5 @@ for gamesread in range(0,int(sys.argv[1])):
     else:
         result_struct = do_it(engine=engine, game=game, depth=depth, debug=DEBUG)
 
-    describe_position_scores(result_struct['position_scores'])
-    describe_position_scores(result_struct['massaged_position_scores'])
+    print result_struct
 

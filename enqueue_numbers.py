@@ -15,7 +15,7 @@ if len(sys.argv) > 1 and sys.argv[1]:
     exit()
 
 batch = []
-for game_num in range(1,50001):
+for game_num in range(1,100001):
 
     m.set_body(str(game_num))
     batch.append((game_num, m.get_body_encoded(), 0))

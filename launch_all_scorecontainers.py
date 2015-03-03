@@ -6,7 +6,7 @@ import time, sys
 def msg(str):
     print "%s %s" % (time.strftime('%Y%m%d-%H%M%S'), str)
 
-SCORESERVERS_PER_CONTAINER = 36
+SCORESERVERS_PER_CONTAINER = 32
 
 envvars = []
 envvars.append({"key": "NUM_SCORESERVERS", "value": str(SCORESERVERS_PER_CONTAINER)})

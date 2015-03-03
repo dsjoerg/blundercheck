@@ -106,7 +106,10 @@ def score_node(engine, node):
 
 def score_node_and_move(engine, node):
     """
-    Returns [depth, seldepth, score, nodes, best_move, depths_agreeing, deepest_agree]
+
+    Returns [depth, seldepth, score, nodes, best_move,
+    depths_agreeing, deepest_agree, white_material, black_material,
+    game_phase]
     
     depth = deepest depth that the engine was able to search all branches.
             due to hashing from previous searches it may not be strictly
@@ -135,9 +138,14 @@ def score_node_and_move(engine, node):
     bestmove_depths = the number of depths that agree with the bestmove
 
     deepest_change = the # of the deepest depth at which the bestmove changed
+
+    white_material = standard-scored material value of current position, for white
+    black_material = standard-scored material value of current position, for black
+    game_phase = game phase using Stockfish criteria. midgame=128, endgame=0
+
     """
 
-    engine.setfen(node.board().fen())
+    material_info = engine.setfen(node.board().fen())
 
     result = engine.go_infos()
 
@@ -198,9 +206,11 @@ def score_node_and_move(engine, node):
         bestmove_agreeing_depths = [i[0] for i in infos if i[4] == best_move_uci]
         bestmove_depths_agreeing = len(bestmove_agreeing_depths)
         
-#    print 'hello. %s' % str([depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change])
 
-    return [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change]
+    result = [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change]
+    result.extend(material_info)
+
+    return result
 
 
 # Given a list of position scores, 
@@ -300,6 +310,7 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
     outstruct['move_features'] = []
     outstruct['best_move_features'] = []
     outstruct['depth_stats'] = []
+    outstruct['material_stats'] = []
 
     was_bestmove = []
 
@@ -350,8 +361,9 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         outstruct['best_move_features'].insert(0, features(prev_node.board(), prev_best_move))
 
         depth_stats = [scoreresult[0], scoreresult[1]]
-        depth_stats.extend(scoreresult[5:])
+        depth_stats.extend(scoreresult[5:7])
         outstruct['depth_stats'].insert(0, depth_stats)
+        outstruct['material_stats'].insert(0, scoreresult[7:10])
 
         was_bestmove.insert(0, prev_best_move == node.move)
 

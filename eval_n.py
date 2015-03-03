@@ -4,7 +4,6 @@ import chess
 import pystockfish
 import os, sys
 import random
-from pandas import *
 from djeval import *
 
 # must be run from contest_* image, not from scoreserver, because it uses pandas

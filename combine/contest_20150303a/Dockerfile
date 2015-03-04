@@ -90,16 +90,16 @@ ADD data_prep/extract_movescores.py $BLUNDERCHECK_DIR/data_prep/
 RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
 
 ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/
-#RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
+RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
 ADD modeling/fit_movemodel.py $BLUNDERCHECK_DIR/modeling/
-#RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
+RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 
 ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
-#RUN show_movemodel.py /data/movemodel.p
+RUN show_movemodel.py /data/movemodel.p
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
-#RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 # compute material aggregates / features here
 

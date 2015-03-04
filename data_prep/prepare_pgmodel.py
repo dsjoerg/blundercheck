@@ -100,8 +100,11 @@ move_aggs['stdev'].fillna(40, inplace=True)
 
 msg("Hi! Reading wmoveaggs")
 wmove_aggs = joblib.load('/data/wmove_aggs.p')
-ch_agg_df = joblib.load('/data/chunk_aggs.p')
-ch_agg_df.index = ch_agg_df.index.droplevel('elo')
+
+do_elochunk = False
+if do_elochunk:
+    ch_agg_df = joblib.load('/data/chunk_aggs.p')
+    ch_agg_df.index = ch_agg_df.index.droplevel('elo')
 
 # list of all moves
 moves_list = []
@@ -247,14 +250,20 @@ for row in rows.values():
 msg("Hi! Setting up playergame rows")
 
 new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
-elorange_cols = list(ch_agg_df.columns.values)
-msg("elorange cols are %s" % elorange_cols)
+
+if do_elochunk:
+    elorange_cols = list(ch_agg_df.columns.values)
+    msg("elorange cols are %s" % elorange_cols)
 
 yy_combined = []
 
 # as of 20150301, takes 40 seconds
 # assemble data from other DFs and fill in missing values
-mega_df = concat([move_aggs[['mean', 'median', '25', '10', 'min', 'max', 'stdev']], wmove_aggs['elo_pred'], depthstats_df[new_depth_cols], ch_agg_df], axis=1)
+supplemental_dfs = [move_aggs[['mean', 'median', '25', '10', 'min', 'max', 'stdev']], wmove_aggs['elo_pred'], depthstats_df[new_depth_cols]]
+if do_elochunk:
+    supplemental_dfs.append(ch_agg_df)
+
+mega_df = concat(supplemental_dfs, axis=1)
 full_index = pandas.MultiIndex.from_product([range(0,50001), [1,-1]], names=['gamenum', 'side'])
 mega_df = mega_df.reindex(full_index)
 mega_df = mega_df.fillna(mega_df.mean())
@@ -361,7 +370,8 @@ for player_prefix in ["", "opponent_"]:
     yy_columns.extend(moveelo_features)
     yy_columns.append(player_prefix + 'moveelo_weighted')
     yy_columns.extend([(player_prefix + colname) for colname in new_depth_cols])
-    yy_columns.extend([(player_prefix + 'elochunk_' + colname) for colname in elorange_cols])
+    if do_elochunk:
+        yy_columns.extend([(player_prefix + 'elochunk_' + colname) for colname in elorange_cols])
 
 runtime = time.time() - begin_time
 msg("runtime was %f" % runtime)

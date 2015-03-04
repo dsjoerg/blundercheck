@@ -32,7 +32,7 @@ n_jobs = -1
 # CROSS_VALIDATION_N = 7500
 
 # debugging 'Cannot allocate memory'
-CROSS_VALIDATION_N = 100
+n_jobs = 1
 
 
 if False:

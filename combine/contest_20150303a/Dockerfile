@@ -98,6 +98,9 @@ RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN show_movemodel.py /data/movemodel.p
 
+ADD modeling/use_movemodel.py $BLUNDERCHECK_DIR/modeling/
+RUN use_movemodel.py /data/movedata.p /data/movemodel.p
+
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 

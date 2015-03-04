@@ -108,13 +108,6 @@ features_to_exclude = [
 'clippedgain',
 ]
 
-msg("canonicalizing directions")
-for colname in ['move_dir', 'bestmove_dir']:
-    moves_df[colname].replace('NE', 'NW', inplace=True)
-    moves_df[colname].replace('SE', 'SW', inplace=True)
-    moves_df[colname].replace('E', 'W', inplace=True)
-msg("done")
-
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
 #features_to_use = ['moverscore', 'halfply', 'movergain', 'side']
 
@@ -135,25 +128,27 @@ if do_blunder_groups:
     lads = blunder_grouped.apply(lambda x: np.mean(abs(x['elo'] - np.mean(x['elo']))))
     msg(lads)
 
-crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
-crossval_X = crossval_df[features_to_use]
-crossval_y = crossval_df['elo']
-crossval_weights = crossval_df['weight']
-movergain_index = features_to_use.index('movergain')
-
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 
-msg("Starting full DF cross validation")
-begin_time = time.time()
-# using n_jobs=1 here because the parallelization of cross_val_score interferes with
-# our gross hack of stashing info about blundergroups into a global variable as a side effect
+do_crossval = False
+if do_crossval:
+    crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
+    crossval_X = crossval_df[features_to_use]
+    crossval_y = crossval_df['elo']
+    crossval_weights = crossval_df['weight']
+    movergain_index = features_to_use.index('movergain')
 
-if do_blunder_groups:
-    cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring=group_scorer, fit_params={'sample_weight': crossval_weights})
-else:
-    cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
-msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
-msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
+    msg("Starting full DF cross validation")
+    begin_time = time.time()
+    # using n_jobs=1 here because the parallelization of cross_val_score interferes with
+    # our gross hack of stashing info about blundergroups into a global variable as a side effect
+
+    if do_blunder_groups:
+        cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring=group_scorer, fit_params={'sample_weight': crossval_weights})
+    else:
+        cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+    msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
+    msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
 if do_blunder_groups:
     msg("per-blundergroup results:")
@@ -181,64 +176,3 @@ msg("Model fit took %f seconds on %i records." % ((time.time() - begin_time), le
 
 msg("Saving model")
 joblib.dump([rfr, features_to_use], sys.argv[2])
-
-
-all_y_preds = []
-all_y_stds = []
-
-msg("Computing predictions in chunks")
-begin_time = time.time()
-
-for i in range(0, len(moves_df) + PREDICT_N, PREDICT_N):
-    predict_df = moves_df.iloc[i : i + PREDICT_N]
-    predict_features = predict_df[features_to_use]
-
-#    msg("Predicting for chunk %i" % i)
-#    print("Chunk head:")
-#    print predict_df.head()
-    y_pred, y_std = rfr.predict(predict_features, with_std=True)
-    #y_pred = rfr.predict(X)
-    
-    all_y_preds.append(y_pred)
-    all_y_stds.append(y_std)
-#    print "Got %s, and %s" % (type(y_pred), y_pred.shape)
-
-msg("Predicting took %f seconds." % ((time.time() - begin_time)))
-
-msg("i got %i all_y_preds which concatenate to %i, shape %s.  moves_df is %i." % (len(all_y_preds), len(np.concatenate(all_y_preds)), str(np.concatenate(all_y_preds).shape), len(moves_df)))
-
-msg("Putting predictions back into moves_df")
-moves_df['elo_predicted'] = np.concatenate(all_y_preds)
-moves_df['elo_pred_std'] = np.concatenate(all_y_stds)
-moves_df['elo_pred_std'].fillna(40, inplace=True)
-moves_df['elo_pred_weight'] = 1. / (moves_df['elo_pred_std'] * moves_df['elo_pred_std'])
-moves_df['elo_weighted_pred'] = moves_df['elo_pred_weight'] * moves_df['elo_predicted']
-
-msg("Highest and lowest std from in-sample portion:")
-predict_insample_df = moves_df[moves_df['elo'].notnull()]
-summary_df = predict_insample_df[['elo_predicted', 'elo_pred_std', 'gamenum', 'halfply', 'elo', 'elo_pred_weight', 'elo_weighted_pred']]
-for asc in [True, False]:
-    print summary_df.sort(['elo_pred_std'], ascending=asc).head(10)
-msg("Done.")
-
-
-grp = moves_df.groupby(['gamenum', 'side'])
-move_aggs = grp['elo_predicted'].agg({'mean': np.mean, 'median' : np.median, 'stdev': np.std,
-                                      '25': lambda x: np.percentile(x, 25),
-                                      '10': lambda x: np.percentile(x, 10),
-                                      'min': lambda x: np.min(x),
-                                      'max': lambda x: np.max(x),
-                                  })
-
-
-joblib.dump(move_aggs, '/data/move_aggs.p')
-
-exd = moves_df[['gamenum','side','elo_weighted_pred','elo_pred_weight']]
-grp = exd.groupby(['gamenum', 'side'])
-wmove_aggs = grp.aggregate(np.sum)
-wmove_aggs['elo_pred'] = wmove_aggs['elo_weighted_pred'] / wmove_aggs['elo_pred_weight']
-joblib.dump(wmove_aggs, '/data/wmove_aggs.p')
-print wmove_aggs.head()
-
-msg("Writing moves_df back out with rfr predictions inside")
-moves_df.to_pickle(sys.argv[1])

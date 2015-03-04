@@ -37,7 +37,7 @@ timecontrols = eheaders['timecontrols']
 
 msg("Hi! Reading movescores into memory, using kaggle-supplied scores as a backstop")
 rows = {}
-for scorefile_name in ['/data/20150203_movescores.csv', '/data/movescores.csv', '/data/stockfish.csv']:
+for scorefile_name in ['/data/movescores.csv', '/data/stockfish.csv']:
     stockfish_scores = open(scorefile_name)
     stockfish_reader = csv.reader(stockfish_scores, delimiter=',')
     for row in stockfish_reader:
@@ -49,6 +49,26 @@ for scorefile_name in ['/data/20150203_movescores.csv', '/data/movescores.csv', 
 
 msg("Hi! Reading depthstats")
 depthstats_path = '/data/depthstats.csv'
+columns = [
+'gamenum',
+'side',
+'mean_depth',
+'mean_seldepth',
+'mean_depths_agreeing_ratio',
+'mean_deepest_agree_ratio',
+'pct_sanemoves',
+'gamelength',
+'mean_num_bestmoves',
+'mean_num_bestmove_changes',
+'mean_bestmove_depths_agreeing',
+'mean_deepest_change',
+'mean_deepest_change_ratio',
+]
+depthstats_df = read_csv(depthstats_path, sep=' ', engine='c', header=None, names=columns, index_col=False)
+depthstats_df = depthstats_df.set_index(['gamenum', 'side'])
+
+msg("Hi! Reading material")
+depthstats_path = '/data/material.csv'
 columns = [
 'gamenum',
 'side',

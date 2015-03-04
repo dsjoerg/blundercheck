@@ -28,7 +28,7 @@ categorical_features = ['opening_feature', 'timecontrols']
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
 elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')])
 
-excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'timecontrols_standard']
+excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'timecontrols_standard', 'gamenum']
 excluded_features.extend(categorical_features)
 #excluded_features.extend(elorange_cols)
 for f in excluded_features:

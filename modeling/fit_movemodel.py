@@ -19,7 +19,6 @@ CROSS_VALIDATION_N = 150000
 MIN_SAMPLES_LEAF = 300
 MIN_SAMPLES_SPLIT = 1000
 FITTING_N = 50000
-PREDICT_N = 100000
 n_estimators = 200
 cv_groups = 3
 n_jobs = -1
@@ -131,7 +130,8 @@ if do_blunder_groups:
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 
-do_crossval = True
+# Results: -221.781702, [-221.24820221 -222.91541283 -221.18149079]
+do_crossval = False
 if do_crossval:
     crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
     crossval_X = crossval_df[features_to_use]

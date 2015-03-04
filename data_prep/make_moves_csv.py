@@ -37,7 +37,7 @@ def movenum_to_side(movenum):
     else:
         return -1
 
-big_fd = open(sys.argv[1], 'rb')
+big_fd = gzip.open(sys.argv[1], 'rb')
 
 eheaders_filename = '/data/eheaders.p'
 eheaders_file = open(eheaders_filename, 'r')

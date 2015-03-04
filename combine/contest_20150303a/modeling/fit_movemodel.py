@@ -31,6 +31,9 @@ n_jobs = -1
 #
 # CROSS_VALIDATION_N = 7500
 
+# debugging 'Cannot allocate memory'
+CROSS_VALIDATION_N = 10000
+
 
 if False:
     inflation = 4

@@ -106,6 +106,7 @@ features_to_exclude = [
 'elo',
 'weight',
 'clippedgain',
+'gamenum',
 ]
 
 features_to_use = [col for col in moves_df.columns if (col not in features_to_exclude and col not in categorical_features)]
@@ -130,7 +131,7 @@ if do_blunder_groups:
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 
-do_crossval = False
+do_crossval = True
 if do_crossval:
     crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
     crossval_X = crossval_df[features_to_use]

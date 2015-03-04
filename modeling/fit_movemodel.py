@@ -24,9 +24,12 @@ n_estimators = 200
 cv_groups = 3
 n_jobs = -1
 
+# For when we were messing around with blundergroups:
+#
 # so that we can test the idea that dataset size being equal,
 # we make better predictions with data specifically in that blundergroup
-CROSS_VALIDATION_N = 7500
+#
+# CROSS_VALIDATION_N = 7500
 
 
 if False:
@@ -114,18 +117,20 @@ features_to_use = [col for col in moves_df.columns if (col not in features_to_ex
 
 insample_df = moves_df[moves_df['elo'].notnull()]
 
-blunder_cats = [-1e9,-1024,-512,-256,-128,-64,-32, -16, -8, -1, 0]
-blunder_groups, blunder_bins = cut(insample_df['movergain'], blunder_cats, retbins=True)
+do_blunder_groups = False
+if do_blunder_groups:
+    blunder_cats = [-1e9,-1024,-512,-256,-128,-64,-32, -16, -8, -1, 0]
+    blunder_groups, blunder_bins = cut(insample_df['movergain'], blunder_cats, retbins=True)
 
-msg("Doing RFR CV per blunder group")
-blunder_grouped = insample_df.groupby(blunder_groups)
-cv_scores = blunder_grouped.apply(lambda x: crossval_rfr(x))
-msg("SCORES:")
-msg(cv_scores)
+    msg("Doing RFR CV per blunder group")
+    blunder_grouped = insample_df.groupby(blunder_groups)
+    cv_scores = blunder_grouped.apply(lambda x: crossval_rfr(x))
+    msg("SCORES:")
+    msg(cv_scores)
 
-msg("blunder group errors vs mean-value")
-lads = blunder_grouped.apply(lambda x: np.mean(abs(x['elo'] - np.mean(x['elo']))))
-msg(lads)
+    msg("blunder group errors vs mean-value")
+    lads = blunder_grouped.apply(lambda x: np.mean(abs(x['elo'] - np.mean(x['elo']))))
+    msg(lads)
 
 crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)
 crossval_X = crossval_df[features_to_use]
@@ -144,16 +149,17 @@ cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scori
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 
-msg("per-blundergroup results:")
-#for bcv in blunder_cv_results:
-#    msg("here: %s" % bcv)
-concat_df = concat(blunder_cv_results, axis=1)
-concat_df['LAD from RFR on whole dataset'] = concat_df.mean(axis=1)
-msg("full dataframe cross-validation, per blundergroup:\n%s" % concat_df)
+if do_blunder_groups:
+    msg("per-blundergroup results:")
+    #for bcv in blunder_cv_results:
+    #    msg("here: %s" % bcv)
+    concat_df = concat(blunder_cv_results, axis=1)
+    concat_df['LAD from RFR on whole dataset'] = concat_df.mean(axis=1)
+    msg("full dataframe cross-validation, per blundergroup:\n%s" % concat_df)
 
-concat_df = concat([concat_df.mean(axis=1), cv_scores, lads], axis=1)
-concat_df.columns = ['single RFR', 'RFR per blundergroup', 'mean-value benchmark']
-msg("everything together:\n%s" % concat_df)
+    concat_df = concat([concat_df.mean(axis=1), cv_scores, lads], axis=1)
+    concat_df.columns = ['single RFR', 'RFR per blundergroup', 'mean-value benchmark']
+    msg("everything together:\n%s" % concat_df)
 
 
 fitting_df = sample_df(insample_df, FITTING_N)

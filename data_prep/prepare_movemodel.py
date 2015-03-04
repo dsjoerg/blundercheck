@@ -31,6 +31,9 @@ columns = [
     'side',
     'gamenum',
     'timecontrols',
+    'white_material',
+    'black_material',
+    'game_phase',
 ]
 
 

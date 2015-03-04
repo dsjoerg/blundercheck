@@ -79,6 +79,14 @@ RUN extract_movescores_from_gz.py /data/$CLUSTER_INPUT_FILE > /data/movescores.c
 ADD data_prep/make_eheaders.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 
+# get the previous movescores, they were computed bakwards with hash,
+# suggesting how much that computational depth matters
+RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
+
+ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/
+ADD data_prep/show_one_game.py $BLUNDERCHECK_DIR/data_prep/
+ADD data.pgn.eloscored /data/
+
 ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
@@ -88,31 +96,19 @@ RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 ADD modeling/fit_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 
-ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/
-ADD data_prep/show_one_game.py $BLUNDERCHECK_DIR/data_prep/
-
 ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN show_movemodel.py /data/movemodel.p
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
-# get the previous movescores, do they help?
-RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
-
-# TODO move this Stockfish build up
-RUN cd /usr/src && git clone -b blundercheck git://github.com/dsjoerg/Stockfish.git && cd Stockfish/src && make build ARCH=x86-64 && ln -sr stockfish /usr/local/bin
+# compute material aggregates / features here
 
 ADD modeling/fit_errorchunk_models.py $BLUNDERCHECK_DIR/modeling/
 #RUN fit_errorchunk_models.py 2 3 1000 15 100 /data/errorchunks/
 
-#ADD modeling/test_blundermodels.py $BLUNDERCHECK_DIR/modeling/
-#RUN test_blundermodels.py /data/blundermodel/
-
 ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
 #RUN compute_chunklikes.py /data/errorchunks/
-
-ADD data.pgn.eloscored /data/
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
@@ -132,5 +128,3 @@ ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 # variables, so we can look through em and understand our data
 ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 #RUN make_scatterplots.py /data/yy_df.p
-
-ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/

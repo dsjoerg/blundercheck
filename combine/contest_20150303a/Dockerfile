@@ -89,19 +89,19 @@ ADD data_prep/show_one_game.py $BLUNDERCHECK_DIR/data_prep/
 ADD data.pgn.eloscored /data/
 
 ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
-RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
+#RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/
-RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
+#RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 
 ADD modeling/fit_movemodel.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
+#RUN fit_movemodel.py /data/movedata.p /data/movemodel.p
 
 ADD modeling/show_movemodel.py $BLUNDERCHECK_DIR/modeling/
-RUN show_movemodel.py /data/movemodel.p
+#RUN show_movemodel.py /data/movemodel.p
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
-RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+#RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 # compute material aggregates / features here
 

@@ -81,6 +81,7 @@ RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 
 # get the previous movescores, they were computed bakwards with hash,
 # suggesting how much that computational depth matters
+ADD data_prep/extract_movescores.py $BLUNDERCHECK_DIR/data_prep/
 RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
 
 ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/

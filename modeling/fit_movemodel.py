@@ -19,7 +19,7 @@ CROSS_VALIDATION_N = 150000
 MIN_SAMPLES_LEAF = 300
 MIN_SAMPLES_SPLIT = 1000
 FITTING_N = 50000
-PREDICT_N = 400000
+PREDICT_N = 100000
 n_estimators = 200
 cv_groups = 3
 n_jobs = -1
@@ -32,7 +32,7 @@ n_jobs = -1
 # CROSS_VALIDATION_N = 7500
 
 # debugging 'Cannot allocate memory'
-n_jobs = 1
+n_jobs = 2
 
 
 if False:

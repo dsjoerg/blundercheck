@@ -144,8 +144,11 @@ msg("Starting full DF cross validation")
 begin_time = time.time()
 # using n_jobs=1 here because the parallelization of cross_val_score interferes with
 # our gross hack of stashing info about blundergroups into a global variable as a side effect
-cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring=group_scorer, fit_params={'sample_weight': crossval_weights})
-#cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+
+if do_blunder_groups:
+    cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=1, scoring=group_scorer, fit_params={'sample_weight': crossval_weights})
+else:
+    cvs = cross_val_score(rfr, crossval_X, crossval_y, cv=cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
 msg("Cross validation took %f seconds with %i threads, %i records, %i estimators and %i CV groups" % ((time.time() - begin_time), n_jobs, len(crossval_X), n_estimators, cv_groups))
 msg("Results: %f, %s" % (np.mean(cvs), str(cvs)))
 

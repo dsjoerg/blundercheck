@@ -111,10 +111,10 @@ ADD data_prep/make_material_aggregates.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_material_aggregates.py /data/moves.csv > /data/material.csv
 
 ADD modeling/fit_errorchunk_models.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_errorchunk_models.py 2 3 1000 15 100 /data/errorchunks/
+#RUN fit_errorchunk_models.py 2 3 1000 15 100 /data/errorchunks/
 
 ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
-RUN compute_chunklikes.py /data/errorchunks/
+#RUN compute_chunklikes.py /data/errorchunks/
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/

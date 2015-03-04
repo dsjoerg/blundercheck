@@ -107,7 +107,8 @@ RUN compute_moveaggs.py /data/movedata.p
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
-# compute material aggregates / features here
+ADD data_prep/make_material_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
+RUN make_material_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 ADD modeling/fit_errorchunk_models.py $BLUNDERCHECK_DIR/modeling/
 #RUN fit_errorchunk_models.py 2 3 1000 15 100 /data/errorchunks/

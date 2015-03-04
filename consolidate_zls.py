@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, json, zlib, string
+import sys, os, json, zlib, string, gzip
 
 all_items = []
 

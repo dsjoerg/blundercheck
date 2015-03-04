@@ -44,9 +44,6 @@ RUN pip install -e git+git@github.com:dsjoerg/scikit-learn@0.15.X#egg=scikit-lea
 RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
 
-# CONFIGURE INPUT
-ENV CLUSTER_INPUT_FILE 20150303.json.zl
-
 # ipython hooray
 RUN pip install "ipython[notebook]"
 EXPOSE 8888
@@ -57,21 +54,27 @@ ENV PEM_FILE /key.pem
 ENV PASSWORD Dont make this your default
 ENV USE_HTTP 0
 
+# CONFIGURE INPUT
+ENV CLUSTER_INPUT_FILE 20150303.json.gz
 
 # COPY DATA IN FROM THE OUTSIDE WORLD
 RUN mkdir /data
 RUN wget -O - https://s3.amazonaws.com/bc-runoutputs/20150203.json.zl > /data/20150203.json.zl
 RUN wget -O - https://s3.amazonaws.com/bc-runoutputs/$CLUSTER_INPUT_FILE > /data/$CLUSTER_INPUT_FILE
 RUN wget -O /data/data.pgn https://s3.amazonaws.com/bc-games/kaggle/data.pgn
+RUN wget -O /data/ct-201234.cn50k.pgn https://s3.amazonaws.com/bc-games/first/ct-201234.cn50k.pgn
 RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfish.csv
 ADD timecontrol.csv /data/
+
+# MAKE data.pgn hold all 100k matches
+RUN cat /data/ct-201234.cn50k.pgn >> /data/data.pgn
 
 ENV BLUNDERCHECK_DIR /home/beaker/src/src/blundercheck
 ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
 ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
 
-ADD data_prep/extract_movescores.py $BLUNDERCHECK_DIR/data_prep/
-RUN extract_movescores.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
+ADD data_prep/extract_movescores_from_gz.py $BLUNDERCHECK_DIR/data_prep/
+RUN extract_movescores_from_gz.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
 
 ADD data_prep/make_eheaders.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p

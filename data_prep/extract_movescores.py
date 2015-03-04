@@ -2,7 +2,7 @@
 
 import sys, json, zlib, csv
 
-big_fd = open(sys.argv[1], 'r')
+big_fd = open(sys.argv[1], 'rb')
 big_str = big_fd.read()
 big_json = json.loads(zlib.decompress(big_str))
 

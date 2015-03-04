@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, json, zlib, csv
+import sys, json, gzip, csv
 import cPickle as pickle
 
 def compute_movegains(positionscores):
@@ -37,9 +37,7 @@ def movenum_to_side(movenum):
     else:
         return -1
 
-big_fd = open(sys.argv[1], 'r')
-big_str = big_fd.read()
-big_json = json.loads(zlib.decompress(big_str))
+big_fd = open(sys.argv[1], 'rb')
 
 eheaders_filename = '/data/eheaders.p'
 eheaders_file = open(eheaders_filename, 'r')
@@ -47,20 +45,11 @@ eheaders = pickle.load(eheaders_file)
 elos = eheaders['elos']
 timecontrols = eheaders['timecontrols']
 
-prepare_little_zl = False
-
-if prepare_little_zl:
-    little_json = big_json[0:100]
-    littlestr = json.dumps(little_json)
-    littlezl = zlib.compress(littlestr)
-    littlefd = open('./little.json.zl', 'wb')
-    littlefd.write(littlezl)
-
 csvwriter = csv.writer(sys.stdout)
 
 gamenums_seen = set()
-for game in big_json:
-
+for line in big_fd:
+    game = json.loads(line)
     gamenum = int(game['event'])
     # handle each game only once !!
     if gamenum in gamenums_seen:
@@ -83,5 +72,6 @@ for game in big_json:
         move_info.append(side)
         move_info.append(gamenum)
         move_info.append(timecontrols[gamenum])
+        move_info.append(game['material_stats'][gamenum])
         csvwriter.writerow(move_info)
 

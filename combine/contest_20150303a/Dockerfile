@@ -75,14 +75,14 @@ ADD data.pgn.eloscored /data/
 # make data.pgn hold all 100k matches
 RUN cat /data/ct-201234.cn50k.pgn >> /data/data.pgn
 
+ADD data_prep/make_eheaders.py $BLUNDERCHECK_DIR/data_prep/
+RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
+
 ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/extract_movescores_from_gz.py $BLUNDERCHECK_DIR/data_prep/
 RUN extract_movescores_from_gz.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
-
-ADD data_prep/make_eheaders.py $BLUNDERCHECK_DIR/data_prep/
-RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 
 # get the previous movescores, they were computed backwards with hash,
 # suggesting how much that computational depth matters

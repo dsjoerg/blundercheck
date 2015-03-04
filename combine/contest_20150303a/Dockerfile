@@ -55,7 +55,10 @@ ENV PASSWORD Dont make this your default
 ENV USE_HTTP 0
 
 # CONFIGURE INPUT
-ENV CLUSTER_INPUT_FILE 20150303.json.gz
+ENV CLUSTER_INPUT_FILE 20150304.json.gz
+ENV BLUNDERCHECK_DIR /home/beaker/src/src/blundercheck
+ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
+ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
 
 # COPY DATA IN FROM THE OUTSIDE WORLD
 RUN mkdir /data
@@ -65,13 +68,15 @@ RUN wget -O /data/data.pgn https://s3.amazonaws.com/bc-games/kaggle/data.pgn
 RUN wget -O /data/ct-201234.cn50k.pgn https://s3.amazonaws.com/bc-games/first/ct-201234.cn50k.pgn
 RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfish.csv
 ADD timecontrol.csv /data/
+ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/
+ADD data_prep/show_one_game.py $BLUNDERCHECK_DIR/data_prep/
+ADD data.pgn.eloscored /data/
 
-# MAKE data.pgn hold all 100k matches
+# make data.pgn hold all 100k matches
 RUN cat /data/ct-201234.cn50k.pgn >> /data/data.pgn
 
-ENV BLUNDERCHECK_DIR /home/beaker/src/src/blundercheck
-ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
-ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
+ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
+RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/extract_movescores_from_gz.py $BLUNDERCHECK_DIR/data_prep/
 RUN extract_movescores_from_gz.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
@@ -83,13 +88,6 @@ RUN make_eheaders.py /data/data.pgn > /data/eheaders.p
 # suggesting how much that computational depth matters
 ADD data_prep/extract_movescores.py $BLUNDERCHECK_DIR/data_prep/
 RUN extract_movescores.py /data/20150203.json.zl > /data/20150203_movescores.csv
-
-ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/
-ADD data_prep/show_one_game.py $BLUNDERCHECK_DIR/data_prep/
-ADD data.pgn.eloscored /data/
-
-ADD data_prep/make_moves_csv.py $BLUNDERCHECK_DIR/data_prep/
-#RUN make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 
 ADD data_prep/prepare_movemodel.py $BLUNDERCHECK_DIR/data_prep/
 #RUN cat /data/moves.csv | prepare_movemodel.py /data/movedata.p

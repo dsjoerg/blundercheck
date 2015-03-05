@@ -189,6 +189,9 @@ yy_df.fillna(yy_df.mean(numeric_only=True), inplace=True)
 yy_df.fillna(False, inplace=True)
 yy_df['elo'] = yy_elo
 
+# stupid patch for some stupid opening feature that got assigned to False by fillna ?!!?!?!?
+yy_df.loc[yy_df['opening_feature'] == False,'opening_feature'] = 'rare'
+
 msg("Hi! Writing yy_df to disk")
 yy_df.to_pickle(sys.argv[2])
 

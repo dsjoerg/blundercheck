@@ -3,9 +3,7 @@
 import sys, time, code
 import numpy as np
 import cPickle as pickle
-from pandas import DataFrame
-from pandas import read_pickle
-from pandas import get_dummies
+from pandas import DataFrame, read_pickle, get_dummies, cut
 import statsmodels.formula.api as sm
 from sklearn.externals import joblib
 from sklearn.linear_model import LinearRegression
@@ -39,7 +37,6 @@ msg("Getting subset ready.")
 # TODO save the dummies along with yy_df
 categorical_features = ['opening_feature']
 dummies = get_dummies(yy_df[categorical_features])
-shell()
 
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')][:-1]
 elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')][:-1])
@@ -120,6 +117,14 @@ yy_df['ols_error'] = (yy_df['ols_prediction'] - yy_df['elo']).abs()
 yy_df['training'] = (yy_df['gamenum'] % 3)
 insample_scores = yy_df.groupby('training')['ols_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
+
+msg("Error summary by ELO:")
+elo_centuries = cut(yy_df['elo'], 20)
+print yy_df.groupby(elo_centuries)['ols_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
+
+msg("Error summary by gamenum:")
+gamenum_centuries = cut(yy_df['gamenum'], 20)
+print yy_df.groupby(gamenum_centuries)['ols_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
 
 msg("Writing yy_df back out with ols predictions inside")
 yy_df.to_pickle(sys.argv[1])

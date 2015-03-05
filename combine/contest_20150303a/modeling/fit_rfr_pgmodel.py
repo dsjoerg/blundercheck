@@ -14,9 +14,14 @@ import pygraphviz as pgv
 from StringIO import StringIO
 from djeval import *
 
-n_estimators = 10
+n_estimators = 200
 n_cv_groups = 3
 n_jobs = -1
+msl = 10
+mss = 50
+multiplier = 1
+msl = msl * multiplier
+mss = mss * multiplier
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
@@ -40,7 +45,7 @@ for f in excluded_features:
 
 print 'Features are: %s' % features
 
-rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=10, min_samples_split=50, verbose=1)
+rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
 
 do_sklearn_cv = False
 if do_sklearn_cv:
@@ -71,7 +76,7 @@ if do_semimanual_cv:
     print("INS:", ins, np.mean(ins))
     print("OUTS:", outs, np.mean(outs))
 
-do_manual_cv = True
+do_manual_cv = False
 if do_manual_cv:
     for test_m in [0,1,2]:
         in_df = train[(train['gamenum'] % 3) != test_m]
@@ -119,13 +124,14 @@ for eventnum in np.arange(25001,50001):
 
 for row in yy_df[yy_df['elo'].isnull()][['gamenum', 'side', 'rfr_prediction']].values:
   eventnum = row[0]
-  side = row[1]
-  if side == 1:
-    sideindex = 0
-  else:
-    sideindex = 1
-  prediction = row[2]
-  predictions[eventnum][sideindex] = prediction
+  if eventnum >= 25001 and eventnum <= 50000:
+      side = row[1]
+      if side == 1:
+        sideindex = 0
+      else:
+        sideindex = 1
+      prediction = row[2]
+      predictions[eventnum][sideindex] = prediction
 
 submission = open('/data/submission_rfr.csv', 'w')
 submission.write('Event,WhiteElo,BlackElo\n')

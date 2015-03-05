@@ -2,7 +2,7 @@
 
 import boto.sqs
 from boto.sqs.message import Message
-import sys
+import sys, os
 
 conn = boto.sqs.connect_to_region("us-east-1")
 q = conn.get_queue('numbers')

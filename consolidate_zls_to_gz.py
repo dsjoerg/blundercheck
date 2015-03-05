@@ -9,6 +9,8 @@ outfd = gzip.open(sys.argv[4], 'wb')
 LOW_GAMENUM=int(sys.argv[2])
 HIGH_GAMENUM=int(sys.argv[3])
 
+expected_gamenums = set(range(LOW_GAMENUM, HIGH_GAMENUM+1))
+
 i = 0
 for fname in os.listdir(sys.argv[1]):
         sys.stdout.flush()
@@ -18,6 +20,7 @@ for fname in os.listdir(sys.argv[1]):
         theitems = json.loads(thestr)
         for item in theitems:
                 if (int(item['event']) >= LOW_GAMENUM) and (int(item['event']) <= HIGH_GAMENUM):
+                        expected_gamenums.discard(int(item['event']))
                         outfd.write(json.dumps(item) + '\n')
         if i % 50 == 0:
                 sys.stdout.write('.')
@@ -27,4 +30,4 @@ for fname in os.listdir(sys.argv[1]):
 outfd.close()
 
 print "There were %i files" % (i)
-
+print "The following %i expected gamenums were not found: %s" % (len(expected_gamenums), expected_gamenums)

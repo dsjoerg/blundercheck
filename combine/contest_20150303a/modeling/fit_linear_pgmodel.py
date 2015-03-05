@@ -39,6 +39,7 @@ msg("Getting subset ready.")
 # TODO save the dummies along with yy_df
 categorical_features = ['opening_feature']
 dummies = get_dummies(yy_df[categorical_features])
+shell()
 
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')][:-1]
 elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')][:-1])

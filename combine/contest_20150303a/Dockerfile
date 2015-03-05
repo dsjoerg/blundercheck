@@ -121,11 +121,11 @@ ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
 RUN prepare_pgmodel.py /data/yy_df.p
 
 ADD data_prep/show_pgdata.py $BLUNDERCHECK_DIR/data_prep/
-RUN show_pgdata.py /data/yy_df.p
+#RUN show_pgdata.py /data/yy_df.p
 
 # read in yy_df, train a linear model, dump some stats about it
 ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_linear_pgmodel.py /data/yy_df.p
+#RUN fit_linear_pgmodel.py /data/yy_df.p
 
 ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 #RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p

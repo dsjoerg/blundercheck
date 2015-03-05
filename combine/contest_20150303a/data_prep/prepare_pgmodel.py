@@ -432,7 +432,7 @@ yy_df['gamelength_clipped'] = yy_df['gamelength'].clip(20,200)
 
 msg("Hi! Computing dummy variables")
 categorical_features = ['opening_feature', 'timecontrols']
-dummies = get_dummies(yy_df[categorical_features])
+dummies = get_dummies(yy_df[categorical_features]).astype(np.int8)
 
 yy_df = yy_df.join(dummies)
 

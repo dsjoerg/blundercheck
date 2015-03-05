@@ -96,7 +96,7 @@ columns = [
 ]
 material_df = read_csv(material_path, sep=' ', engine='c', header=None, names=columns, index_col=False)
 material_df = material_df.set_index(['gamenum'])
-material_df = material_df.reindex(range(0, NUM_GAMES+1))
+material_df = material_df.reindex(range(1, NUM_GAMES+1))
 material_df = material_df.fillna(material_df.mean())
 material_cols = list(material_df.columns.values)
 

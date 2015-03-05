@@ -7,6 +7,7 @@ import csv, code
 import cPickle as pickle
 from sklearn.externals import joblib
 
+GAMELIMIT=500000000
 NUM_GAMES=100000
 
 def shell():
@@ -159,8 +160,8 @@ for row in rows.values():
   lead_established = False
   position_scores = []
 
-#  if gamenum > 501:
-#    break
+  if gamenum > GAMELIMIT:
+    break
 
   if gamenum % 500 == 0:
     msg("hi doing gamenum %i" % gamenum)
@@ -274,6 +275,8 @@ mega_df = mega_df.fillna(mega_df.mean())
 begin_time = time.time()
 
 for gamenum in range(1, NUM_GAMES + 1):
+  if gamenum > GAMELIMIT:
+    break
   if gamenum % 500 == 0:
     msg("hi doing gamenum %i" % gamenum)
   for side in [-1, 1]:

@@ -24,7 +24,7 @@ column_dtypes = {
     'depths_agreeing': np.int16,
     'deepest_agree': np.int16,
     'num_bestmoves': np.int16,
-    'num_bestmove_changes': np.int16
+    'num_bestmove_changes': np.int16,
     'bestmove_depths_agreeing': np.int16,
     'deepest_change': np.int16,
     'elo': np.int16,

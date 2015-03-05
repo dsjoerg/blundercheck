@@ -61,7 +61,7 @@ categorical_features = [
     'timecontrols'
 ]
 
-print moves_df.shape
+print 'SHAPE', moves_df.shape
 print moves_df.memory_usage(index=True).sum()
 print moves_df.memory_usage(index=True)
 

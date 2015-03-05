@@ -62,7 +62,7 @@ dummy_features = []
 for index, cf in enumerate(categorical_features):
   dummies = get_dummies(moves_df[cf], prefix=cf)
   dummy_features.extend(dummies.columns.values)
-  moves_df = moves_df.join(dummies)
+  moves_df = moves_df.join(dummies, copy=False)
 
 moves_df.to_pickle(sys.argv[1])
 

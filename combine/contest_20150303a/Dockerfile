@@ -55,7 +55,7 @@ ENV PASSWORD Dont make this your default
 ENV USE_HTTP 0
 
 # CONFIGURE INPUT
-ENV CLUSTER_INPUT_FILE 20150304.json.gz
+ENV CLUSTER_INPUT_FILE 20150305.json.gz
 ENV BLUNDERCHECK_DIR /home/beaker/src/src/blundercheck
 ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
 ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
@@ -65,7 +65,7 @@ RUN mkdir /data
 RUN wget -O - https://s3.amazonaws.com/bc-runoutputs/20150203.json.zl > /data/20150203.json.zl
 RUN wget -O - https://s3.amazonaws.com/bc-runoutputs/$CLUSTER_INPUT_FILE > /data/$CLUSTER_INPUT_FILE
 RUN wget -O /data/data.pgn https://s3.amazonaws.com/bc-games/kaggle/data.pgn
-RUN wget -O /data/ct-201234.cn50k.pgn https://s3.amazonaws.com/bc-games/first/ct-201234.cn50k.pgn
+RUN wget -O /data/ct-201234.csn50k.pgn https://s3.amazonaws.com/bc-games/first/ct-201234.csn50k.pgn
 RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfish.csv
 ADD timecontrol.csv /data/
 ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/
@@ -119,6 +119,9 @@ ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
 # run through movescores and compute some stats
 ADD data_prep/crunch_movescores.py $BLUNDERCHECK_DIR/data_prep/
 RUN crunch_movescores.py /data/crunched.csv 999999
+
+#TODO move this up
+RUN wget -O /data/data.pgn.eloscored https://s3.amazonaws.com/bc-games/first/data100k.pgn.eloscored
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/

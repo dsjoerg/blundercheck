@@ -9,6 +9,7 @@ from pandas import concat
 from pandas import read_pickle
 from pandas import cut
 from pandas import concat
+from pandas import set_option
 from sklearn.externals import joblib
 from sklearn.cross_validation import cross_val_score
 from sklearn.ensemble import RandomForestRegressor
@@ -18,7 +19,9 @@ from djeval import *
 msg("Hi, reading moves.")
 moves_df = read_pickle(sys.argv[1])
 
+
 print 'SHAPE', moves_df.shape
+set_option('display.max_rows', None)
 print moves_df.memory_usage(index=True).sum()
 print moves_df.memory_usage(index=True)
 

@@ -4,16 +4,21 @@ import sys, os, json, zlib, string, gzip
 
 # thanks to http://stackoverflow.com/questions/20449625/python-compressing-a-series-of-json-objects-while-maintaining-serial-reading
 
-outfd = gzip.open('../big.json.gz', 'wb')
+outfd = gzip.open(sys.argv[4], 'wb')
+
+LOW_GAMENUM=int(sys.argv[2])
+HIGH_GAMENUM=int(sys.argv[3])
 
 i = 0
-for fname in os.listdir('.'):
-        fd = open(fname, 'r')
+for fname in os.listdir(sys.argv[1]):
+        sys.stdout.flush()
+        fd = open(sys.argv[1] + '/' + fname, 'r')
         thestr = zlib.decompress(fd.read())
         thestr = string.replace(thestr, '}, ]', '} ]')
         theitems = json.loads(thestr)
         for item in theitems:
-                outfd.write(json.dumps(item) + '\n')
+                if (int(item['event']) >= LOW_GAMENUM) and (int(item['event']) <= HIGH_GAMENUM):
+                        outfd.write(json.dumps(item) + '\n')
         if i % 50 == 0:
                 sys.stdout.write('.')
                 sys.stdout.flush()

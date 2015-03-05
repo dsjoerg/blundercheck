@@ -8,12 +8,13 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.cross_validation import cross_val_score
 from sklearn.externals import joblib
 from sklearn.metrics import mean_absolute_error
+from sklearn.cross_validation import KFold
 from sklearn import tree
 import pygraphviz as pgv
 from StringIO import StringIO
 from djeval import *
 
-n_estimators = 200
+n_estimators = 10
 n_cv_groups = 3
 n_jobs = -1
 
@@ -24,37 +25,63 @@ msg("Getting subset ready.")
 train = yy_df[yy_df.elo.notnull()]
 
 features = list(yy_df.columns.values)
-categorical_features = ['opening_feature', 'timecontrols']
+categorical_features = ['opening_feature']
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
 elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')])
 
-excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'timecontrols_standard', 'gamenum']
+excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'gamenum', 'rfr_prediction', 'rfr_error', 'index']
 excluded_features.extend(categorical_features)
 #excluded_features.extend(elorange_cols)
 for f in excluded_features:
-    features.remove(f)
+    if f in features:
+        features.remove(f)
+    else:
+        print 'Tried to remove %s but it wasnt there' % f
 
+print 'Features are: %s' % features
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=10, min_samples_split=50, verbose=1)
 
-use_sklearn_cv = True
-if use_sklearn_cv:
+do_sklearn_cv = False
+if do_sklearn_cv:
     X = train[features].values
     y = train['elo']
     msg("CROSS VALIDATING")
     cvs = cross_val_score(rfr, X, y, cv=n_cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
-    print cvs
+    print cvs, np.mean(cvs)
     sys.stdout.flush()
-else:
-    for train_m,test_m in [[1,2],[1,1]]:
-        in_df = train[(train['gamenum'] % 3) == train_m]
+
+do_semimanual_cv = True
+if do_semimanual_cv:
+    msg("fold")
+    kf = KFold(train.shape[0], n_folds=n_cv_groups, shuffle=True)
+    ins = []
+    outs = []
+    for train_index, test_index in kf:
+            msg("fit")
+            foo = rfr.fit(train.iloc[train_index][features], train.iloc[train_index]['elo'])
+            msg("pred")
+            in_mae = mean_absolute_error(rfr.predict(train.iloc[train_index][features]), train.iloc[train_index]['elo'])
+            msg("pred")
+            out_mae = mean_absolute_error(rfr.predict(train.iloc[test_index][features]), train.iloc[test_index]['elo'])
+            print in_mae, out_mae
+            sys.stdout.flush()
+            ins.append(in_mae)
+            outs.append(out_mae)
+    print("INS:", ins, np.mean(ins))
+    print("OUTS:", outs, np.mean(outs))
+
+do_manual_cv = True
+if do_manual_cv:
+    for test_m in [0,1,2]:
+        in_df = train[(train['gamenum'] % 3) != test_m]
         out_df = train[(train['gamenum'] % 3) == test_m]
         X = in_df[features].values
         y = in_df['elo']
-        msg("fitting using group %i" % train_m)
+        msg("fitting using all but group %i" % test_m)
         rfr.fit(X, y)
         pred = rfr.predict(out_df[features].values)
-        msg("group %i MAE using model fit on group %i is %f" % (test_m, train_m, np.mean((pred - out_df['elo']).abs())))
+        msg("group %i MAE using model fit on other groups is %f" % (test_m, np.mean((pred - out_df['elo']).abs())))
         
 
 X = train[features].values
@@ -75,6 +102,10 @@ print insample_scores
 msg("Error summary by ELO:")
 elo_centuries = cut(yy_df['elo'], 20)
 print yy_df.groupby(elo_centuries)['rfr_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
+
+msg("Error summary by gamenum:")
+gamenum_centuries = cut(yy_df['gamenum'], 20)
+print yy_df.groupby(gamenum_centuries)['rfr_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
 
 msg("Writing yy_df back out with predictions inside")
 yy_df.to_pickle(sys.argv[1])

@@ -67,10 +67,10 @@ RUN wget -O - https://s3.amazonaws.com/bc-runoutputs/$CLUSTER_INPUT_FILE > /data
 RUN wget -O /data/data.pgn https://s3.amazonaws.com/bc-games/kaggle/data.pgn
 RUN wget -O /data/ct-201234.csn50k.pgn https://s3.amazonaws.com/bc-games/first/ct-201234.csn50k.pgn
 RUN wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfish.csv
+RUN wget -O /data/data.pgn.eloscored https://s3.amazonaws.com/bc-games/first/data100k.pgn.eloscored
 ADD timecontrol.csv /data/
 ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/
 ADD data_prep/show_one_game.py $BLUNDERCHECK_DIR/data_prep/
-ADD data.pgn.eloscored /data/
 
 # make data.pgn hold all 100k matches
 RUN cat /data/ct-201234.cn50k.pgn >> /data/data.pgn

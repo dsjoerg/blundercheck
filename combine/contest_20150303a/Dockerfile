@@ -73,7 +73,7 @@ ADD data_prep/show_a_game.py $BLUNDERCHECK_DIR/data_prep/
 ADD data_prep/show_one_game.py $BLUNDERCHECK_DIR/data_prep/
 
 # make data.pgn hold all 100k matches
-RUN cat /data/ct-201234.cn50k.pgn >> /data/data.pgn
+RUN cat /data/ct-201234.csn50k.pgn >> /data/data.pgn
 
 ADD data_prep/make_eheaders.py $BLUNDERCHECK_DIR/data_prep/
 RUN make_eheaders.py /data/data.pgn > /data/eheaders.p

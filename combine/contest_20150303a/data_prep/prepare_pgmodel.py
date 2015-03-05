@@ -270,7 +270,7 @@ if do_elochunk:
     supplemental_dfs.append(ch_agg_df)
 
 mega_df = concat(supplemental_dfs, axis=1)
-full_index = pandas.MultiIndex.from_product([range(0,NUM_GAMES + 1), [1,-1]], names=['gamenum', 'side'])
+full_index = pandas.MultiIndex.from_product([range(1,NUM_GAMES + 1), [1,-1]], names=['gamenum', 'side'])
 mega_df = mega_df.reindex(full_index)
 mega_df = mega_df.fillna(mega_df.mean())
 

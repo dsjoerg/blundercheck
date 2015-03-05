@@ -6,4 +6,6 @@ docker build -t dsjoerg/scoreserver combine/$name/scoreserver && \
 docker tag -f dsjoerg/scoreserver tutum.co/dsjoerg/scoreserver && \
 docker push tutum.co/dsjoerg/scoreserver
 
+docker images | grep scoreserver
+
 /usr/local/bin/boot2docker ssh sudo ntpclient -s -h pool.ntp.org

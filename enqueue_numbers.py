@@ -14,8 +14,11 @@ if len(sys.argv) > 1 and sys.argv[1]:
     q.write(m)
     exit()
 
+FIRST_NUM=int(os.environ['FIRST_NUM'])
+LAST_NUM=int(os.environ['LAST_NUM'])
+
 batch = []
-for game_num in range(1,100001):
+for game_num in range(FIRST_NUM,LAST_NUM+1):
 
     m.set_body(str(game_num))
     batch.append((game_num, m.get_body_encoded(), 0))

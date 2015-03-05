@@ -116,19 +116,23 @@ ADD modeling/fit_errorchunk_models.py $BLUNDERCHECK_DIR/modeling/
 ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
 #RUN compute_chunklikes.py /data/errorchunks/
 
+# run through movescores and compute some stats
+ADD data_prep/crunch_movescores.py $BLUNDERCHECK_DIR/data_prep/
+RUN crunch_movescores.py /data/crunched.csv 999999
+
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
-#RUN prepare_pgmodel.py /data/yy_df.p
+RUN prepare_pgmodel.py /data/crunched.csv /data/yy_df.p
 
 ADD data_prep/show_pgdata.py $BLUNDERCHECK_DIR/data_prep/
-#RUN show_pgdata.py /data/yy_df.p
+RUN show_pgdata.py /data/yy_df.p
 
 # read in yy_df, train a linear model, dump some stats about it
 ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-#RUN fit_linear_pgmodel.py /data/yy_df.p
+RUN fit_linear_pgmodel.py /data/yy_df.p
 
 ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-#RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
+RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
 
 # create histograms of each variable and scatterplots of every pair of
 # variables, so we can look through em and understand our data

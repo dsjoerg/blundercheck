@@ -43,9 +43,11 @@ conn = boto.sqs.connect_to_region("us-east-1")
 in_queuename = 'numbers'
 out_queuename = 'results'
 
-# we have three minutes to complete processing of a game, or else
+# we have this many second to complete processing of a game, or else
 # another node may pick up the work and do it as well.
-visibility_timeout = 180
+#
+# at two seconds per move, that covers a 200 move game.
+visibility_timeout = 400
 
 # max permitted wait time.
 wait_time_seconds = 20

@@ -36,9 +36,9 @@ column_dtypes = {
     'game_phase': np.int16,
 }
 
-columns = column_dtype.keys()
+columns = column_dtypes.keys()
 
-moves_df = read_csv(sys.stdin, engine='c', header=None, names=columns, dtypes=column_dtypes, index_col=False)
+moves_df = read_csv(sys.stdin, engine='c', header=None, names=columns, dtype=column_dtypes, index_col=False)
 
 print 'SHAPE', moves_df.shape
 print moves_df.memory_usage(index=True).sum()

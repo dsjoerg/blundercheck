@@ -118,10 +118,10 @@ ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
-RUN prepare_pgmodel.py /data/yy_df.p
+#RUN prepare_pgmodel.py /data/yy_df.p
 
 ADD data_prep/show_pgdata.py $BLUNDERCHECK_DIR/data_prep/
-RUN show_pgdata.py /data/yy_df.p
+#RUN show_pgdata.py /data/yy_df.p
 
 # read in yy_df, train a linear model, dump some stats about it
 ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/

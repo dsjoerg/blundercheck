@@ -5,38 +5,38 @@ import cPickle as pickle
 from pandas import *
 
 column_dtypes = {
-    'halfply': np.int32,
-    'moverscore': np.int32,
-    'movergain': np.int32,
-    'prevgain': np.int32,
-    'move_piece': np.dtype('a1'),
+    'halfply': np.float32,
+    'moverscore': np.float32,
+    'movergain': np.float32,
+    'prevgain': np.float32,
+    'move_piece': str,
     'move_dir': np.dtype('a2'),
     'move_dist': np.int8,
     'move_is_capture': bool,
     'move_is_check': bool,
-    'bestmove_piece': np.dtype('a1'),
+    'bestmove_piece': str,
     'bestmove_dir': np.dtype('a2'),
     'bestmove_dist': np.int8,
     'bestmove_is_capture': bool,
     'bestmove_is_check': bool,
-    'depth': np.int16,
-    'seldepth': np.int16,
-    'depths_agreeing': np.int16,
-    'deepest_agree': np.int16,
-    'num_bestmoves': np.int16,
-    'num_bestmove_changes': np.int16,
-    'bestmove_depths_agreeing': np.int16,
-    'deepest_change': np.int16,
-    'elo': np.int16,
+    'depth': np.float16,
+    'seldepth': np.float16,
+    'depths_agreeing': np.float16,
+    'deepest_agree': np.float16,
+    'num_bestmoves': np.float16,
+    'num_bestmove_changes': np.float16,
+    'bestmove_depths_agreeing': np.float16,
+    'deepest_change': np.float16,
+    'elo': np.float16,
     'side': np.int8,
-    'gamenum': np.int32,
+    'gamenum': np.float32,
     'timecontrols': object,
-    'white_material': np.int16,
-    'black_material': np.int16,
-    'game_phase': np.int16,
+    'white_material': np.float16,
+    'black_material': np.float16,
+    'game_phase': np.float16,
 }
 
-columns = column_dtypes.keys()
+columns = ['halfply','moverscore','movergain','prevgain','move_piece','move_dir','move_dist','move_is_capture','move_is_check','bestmove_piece','bestmove_dir','bestmove_dist','bestmove_is_capture','bestmove_is_check','depth','seldepth','depths_agreeing','deepest_agree','num_bestmoves','num_bestmove_changes','bestmove_depths_agreeing','deepest_change','elo','side','gamenum','timecontrols','white_material','black_material','game_phase']
 
 moves_df = read_csv(sys.stdin, engine='c', header=None, names=columns, dtype=column_dtypes, index_col=False)
 

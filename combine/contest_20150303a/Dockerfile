@@ -102,13 +102,13 @@ ADD modeling/use_movemodel.py $BLUNDERCHECK_DIR/modeling/
 RUN use_movemodel.py /data/movedata.p /data/movemodel.p
 
 ADD modeling/compute_moveaggs.py $BLUNDERCHECK_DIR/modeling/
-RUN compute_moveaggs.py /data/movedata.p
+#RUN compute_moveaggs.py /data/movedata.p
 
 ADD data_prep/make_depth_aggregates_csv.py $BLUNDERCHECK_DIR/data_prep/
-RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
+#RUN make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 
 ADD data_prep/make_material_aggregates.py $BLUNDERCHECK_DIR/data_prep/
-RUN make_material_aggregates.py /data/moves.csv > /data/material.csv
+#RUN make_material_aggregates.py /data/moves.csv > /data/material.csv
 
 ADD modeling/fit_errorchunk_models.py $BLUNDERCHECK_DIR/modeling/
 #RUN fit_errorchunk_models.py 2 3 1000 15 100 /data/errorchunks/
@@ -118,14 +118,14 @@ ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
-RUN prepare_pgmodel.py /data/yy_df.p
+#RUN prepare_pgmodel.py /data/yy_df.p
 
 ADD data_prep/show_pgdata.py $BLUNDERCHECK_DIR/data_prep/
-RUN show_pgdata.py /data/yy_df.p
+#RUN show_pgdata.py /data/yy_df.p
 
 # read in yy_df, train a linear model, dump some stats about it
 ADD modeling/fit_linear_pgmodel.py $BLUNDERCHECK_DIR/modeling/
-RUN fit_linear_pgmodel.py /data/yy_df.p
+#RUN fit_linear_pgmodel.py /data/yy_df.p
 
 ADD modeling/fit_rfr_pgmodel.py $BLUNDERCHECK_DIR/modeling/
 #RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p

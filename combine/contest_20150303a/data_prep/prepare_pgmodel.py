@@ -68,7 +68,7 @@ depthstats_df = read_csv(depthstats_path, sep=' ', engine='c', header=None, name
 depthstats_df = depthstats_df.set_index(['gamenum', 'side'])
 
 msg("Hi! Reading material")
-depthstats_path = '/data/material.csv'
+material_path = '/data/material.csv'
 columns = [
 'gamenum',
 'material_break_0',
@@ -91,8 +91,9 @@ columns = [
 'mean_acwsa_8',
 'mean_acwsa_9',
 ]
-depthstats_df = read_csv(depthstats_path, sep=' ', engine='c', header=None, names=columns, index_col=False)
-depthstats_df = depthstats_df.set_index(['gamenum', 'side'])
+material_df = read_csv(material_path, sep=' ', engine='c', header=None, names=columns, index_col=False)
+material_df = material_df.set_index(['gamenum'])
+material_cols = list(material_df.columns.values)
 
 msg("Hi! Reading moveaggs")
 move_aggs = joblib.load('/data/move_aggs.p')
@@ -338,7 +339,8 @@ for gamenum in range(1, 50001):
                 pos_ffts[gamenum][1],
                 )
 
-    list_for_tuple = []
+    pg_tuple = pg_tuple + tuple(material_df.loc[gamenum].values)
+
     for pg in [playergame, opponent_playergame]:
         pg_tuple = pg_tuple + tuple(mega_df.loc[pg].values)
 
@@ -364,6 +366,8 @@ yy_columns = ['gamenum', 'side', 'elo', 'meanerror', 'blunderrate', 'perfectrate
               'stdevpos', 'final_elo', 'final_ply', 'final_num_games',
               'pos_fft_1',
               ]
+
+yy_columns.extend(material_cols)
 
 for player_prefix in ["", "opponent_"]:
     moveelo_features = [(player_prefix + "moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]

@@ -7,6 +7,8 @@ import csv, code
 import cPickle as pickle
 from sklearn.externals import joblib
 
+NUM_GAMES=100000
+
 def shell():
     vars = globals()
     vars.update(locals())
@@ -140,7 +142,7 @@ def was_matecreated(prev, next):
 def was_matedestroyed(prev, next):
   return (prev > 1000 and next < 500)
 
-# Takes 24 seconds, currently
+# Takes 24 seconds for 50k games, currently
 msg("Hi! Running through movescores")
 for row in rows.values():
 
@@ -265,13 +267,13 @@ if do_elochunk:
     supplemental_dfs.append(ch_agg_df)
 
 mega_df = concat(supplemental_dfs, axis=1)
-full_index = pandas.MultiIndex.from_product([range(0,50001), [1,-1]], names=['gamenum', 'side'])
+full_index = pandas.MultiIndex.from_product([range(0,NUM_GAMES + 1), [1,-1]], names=['gamenum', 'side'])
 mega_df = mega_df.reindex(full_index)
 mega_df = mega_df.fillna(mega_df.mean())
 
 begin_time = time.time()
 
-for gamenum in range(1, 50001):
+for gamenum in range(1, NUM_GAMES + 1):
   if gamenum % 500 == 0:
     msg("hi doing gamenum %i" % gamenum)
   for side in [-1, 1]:

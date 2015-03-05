@@ -69,7 +69,7 @@ print moves_df.memory_usage(index=True)
 
 dummy_features = []
 for index, cf in enumerate(categorical_features):
-  dummies = get_dummies(moves_df[cf], prefix=cf)
+  dummies = get_dummies(moves_df[cf], prefix=cf).astype(np.int8)
   dummy_features.extend(dummies.columns.values)
   moves_df = moves_df.join(dummies)
 

@@ -39,6 +39,9 @@ columns = [
 
 moves_df = read_csv(sys.stdin, engine='c', header=None, names=columns, index_col=False)
 
+print moves_df.memory_usage(index=True).sum()
+print moves_df.memory_usage(index=True)
+
 # for the purposes of modeling we dont care about east-west differences
 for colname in ['move_dir', 'bestmove_dir']:
     moves_df[colname].replace('NE', 'NW', inplace=True)
@@ -58,11 +61,14 @@ categorical_features = [
     'timecontrols'
 ]
 
+print moves_df.memory_usage(index=True).sum()
+print moves_df.memory_usage(index=True)
+
 dummy_features = []
 for index, cf in enumerate(categorical_features):
   dummies = get_dummies(moves_df[cf], prefix=cf)
   dummy_features.extend(dummies.columns.values)
-  moves_df = moves_df.join(dummies, copy=False)
+  moves_df = moves_df.join(dummies)
 
 moves_df.to_pickle(sys.argv[1])
 

@@ -14,12 +14,12 @@ import pygraphviz as pgv
 from StringIO import StringIO
 from djeval import *
 
-n_estimators = 2
+n_estimators = 200
 n_cv_groups = 3
 n_jobs = -1
 msl = 10
 mss = 50
-multiplier = 100
+multiplier = 1
 msl = msl * multiplier
 mss = mss * multiplier
 

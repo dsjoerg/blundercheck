@@ -113,9 +113,9 @@ eloscored10_cols = [
     'final_num_games',
     'final_elo_stdev',
 ]
-eloscored10_cols[1:] = [x + '_elo4' for x in eloscored10_cols[1:]]
+eloscored10_cols[1:] = [x + '_elo10' for x in eloscored10_cols[1:]]
 eloscored10_df = read_csv('/data/data.pgn.eloscored10', sep=',', engine='c', header=None, names=eloscored10_cols, index_col=False)
-eloscored10_df = eloscored4_df.set_index(['gamenum'])
+eloscored10_df = eloscored10_df.set_index(['gamenum'])
 
 msg("Hi! Reading moveaggs")
 move_aggs = joblib.load('/data/move_aggs.p')

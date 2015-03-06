@@ -101,7 +101,7 @@ eloscored4_cols = [
     'final_num_games',
     'final_elo_stdev',
 ]
-eloscored4_cols = [x + '_elo4' for x in eloscored4_cols]
+eloscored4_cols[1:] = [x + '_elo4' for x in eloscored4_cols[1:]]
 eloscored4_df = read_csv('/data/data.pgn.eloscored4', sep=',', engine='c', header=None, names=eloscored4_cols, index_col=False)
 eloscored4_df = eloscored4_df.set_index(['gamenum'])
 
@@ -113,7 +113,7 @@ eloscored10_cols = [
     'final_num_games',
     'final_elo_stdev',
 ]
-eloscored10_cols = [x + '_elo4' for x in eloscored10_cols]
+eloscored10_cols[1:] = [x + '_elo4' for x in eloscored10_cols[1:]]
 eloscored10_df = read_csv('/data/data.pgn.eloscored10', sep=',', engine='c', header=None, names=eloscored10_cols, index_col=False)
 eloscored10_df = eloscored4_df.set_index(['gamenum'])
 

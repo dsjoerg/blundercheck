@@ -93,6 +93,17 @@ eloscored_cols = [
 eloscored_df = read_csv('/data/data.pgn.eloscored', sep=',', engine='c', header=None, names=eloscored_cols, index_col=False)
 eloscored_df = eloscored_df.set_index(['gamenum'])
 
+msg("Reading ELOscored data")
+eloscored4_cols = [
+    'gamenum',
+    'final_elo',
+    'final_ply',
+    'final_num_games',
+    'final_elo_stdev',
+]
+eloscored4_df = read_csv('/data/data.pgn.eloscored4', sep=',', engine='c', header=None, names=eloscored4_cols, index_col=False)
+eloscored4_df = eloscored4_df.set_index(['gamenum'])
+
 msg("Hi! Reading moveaggs")
 move_aggs = joblib.load('/data/move_aggs.p')
 move_aggs.fillna(move_aggs.mean(), inplace=True)
@@ -126,6 +137,7 @@ if do_elochunk:
 mega_df = concat(supplemental_dfs, axis=1)
 mega_df = mega_df.join(material_df, how='outer')
 mega_df = mega_df.join(eloscored_df, how='outer')
+mega_df = mega_df.join(eloscored4_df, how='outer', rsuffix='_elo4')
 
 yy_df = mega_df
 msg("hi, columns are %s" % yy_df.columns)

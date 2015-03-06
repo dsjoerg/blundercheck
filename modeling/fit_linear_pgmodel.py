@@ -72,6 +72,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
 formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games "
 formula_rhs = formula_rhs + " + pos_fft_1 "
 formula_rhs = formula_rhs + " + " + " + ".join(material_features)
+formula_rhs = formula_rhs + " + final_elo_elo4 + final_ply_elo4 + final_num_games_elo4 + final_elo_stdev_elo4"
 
 ols_cols = []
 ols_cols.extend(['side', 'nmerror', 'gameoutcome', 'drawn_game', 'gamelength', 'meanecho'])

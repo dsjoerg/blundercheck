@@ -121,6 +121,7 @@ ADD data_prep/crunch_movescores.py $BLUNDERCHECK_DIR/data_prep/
 RUN crunch_movescores.py /data/crunched.csv 999999
 
 RUN wget -O /data/data.pgn.eloscored https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos
+RUN wget -O /data/data.pgn.eloscored4 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.4
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/
@@ -141,6 +142,7 @@ RUN fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
 ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 #RUN make_scatterplots.py /data/yy_df.p
 
+# enhance entry with known ELOs, then mask it for split submission
 RUN wget -O /data/data25k.pgn.elos https://s3.amazonaws.com/bc-games/data25k.pgn.elos
 RUN wget -O /data/certain_elos https://s3.amazonaws.com/bc-games/certain_elos
 ADD data_prep/enhance_entry.py $BLUNDERCHECK_DIR/data_prep/

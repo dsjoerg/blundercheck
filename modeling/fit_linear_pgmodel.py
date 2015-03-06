@@ -28,8 +28,7 @@ yy_df = read_pickle(sys.argv[1])
 
 msg("Getting subset ready.")
 train = yy_df[yy_df.elo.notnull()]
-train = train[train['gamenum'] < 25001]
-
+train = train.loc[:25000]
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature']

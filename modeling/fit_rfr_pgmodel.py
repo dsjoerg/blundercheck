@@ -28,14 +28,18 @@ yy_df = read_pickle(sys.argv[1])
 
 msg("Getting subset ready.")
 train = yy_df[yy_df.elo.notnull()]
+train = train[train['gamenum'] < 25001]
+#train = train.loc[:25000]
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature']
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
 elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')])
+material_features = ['material_break_0', 'material_break_1', 'material_break_2', 'material_break_3', 'material_break_4', 'opening_length', 'midgame_length', 'endgame_length', 'mean_acwsa', 'mean_acwsa_0', 'mean_acwsa_1', 'mean_acwsa_2', 'mean_acwsa_3', 'mean_acwsa_4', 'mean_acwsa_5', 'mean_acwsa_6', 'mean_acwsa_7', 'mean_acwsa_8', 'mean_acwsa_9']
 
 excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'gamenum', 'rfr_prediction', 'rfr_error', 'index']
 excluded_features.extend(categorical_features)
+#excluded_features.extend(material_features)
 #excluded_features.extend(elorange_cols)
 for f in excluded_features:
     if f in features:

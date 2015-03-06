@@ -151,3 +151,6 @@ ADD data_prep/masked_entry.py $BLUNDERCHECK_DIR/data_prep/
 RUN enhance_entry.py /data/data25k.pgn.elos /data/certain_elos /data/submission_rfr.csv > /data/submission_enhanced.csv
 RUN masked_entry.py 25001 37500 < /data/submission_enhanced.csv > /data/submission_1H.csv
 RUN masked_entry.py 37501 50001 < /data/submission_enhanced.csv > /data/submission_2H.csv
+
+ADD modeling/blend_models.py $BLUNDERCHECK_DIR/modeling/
+RUN blend_models.py /data/yy_df.p

@@ -89,8 +89,11 @@ eloscored_cols = [
     'final_elo',
     'final_ply',
     'final_num_games',
+    'final_elo_stdev',
+    'elopath_min',
+    'elopath_max',
 ]
-eloscored_df = read_csv('/data/data.pgn.eloscored', sep=',', engine='c', header=None, names=eloscored_cols, index_col=False)
+eloscored_df = read_csv('/data/data.pgn.eloscored21', sep=',', engine='c', header=None, names=eloscored_cols, index_col=False)
 eloscored_df = eloscored_df.set_index(['gamenum'])
 
 msg("Reading ELOscored data 4")

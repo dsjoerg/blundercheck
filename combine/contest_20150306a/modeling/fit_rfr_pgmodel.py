@@ -40,7 +40,7 @@ material_features = ['material_break_0', 'material_break_1', 'material_break_2',
 
 excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'gamenum', 'rfr_prediction', 'rfr_error', 'index']
 excluded_features.extend(categorical_features)
-excluded_features.extend(dummies)
+#excluded_features.extend(dummies)
 #excluded_features.extend(material_features)
 #excluded_features.extend(elorange_cols)
 for f in excluded_features:

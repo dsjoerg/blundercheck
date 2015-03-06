@@ -122,6 +122,7 @@ RUN crunch_movescores.py /data/crunched.csv 999999
 
 RUN wget -O /data/data.pgn.eloscored https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos
 RUN wget -O /data/data.pgn.eloscored4 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.4
+RUN wget -O /data/data.pgn.eloscored10 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.10
 
 # prepare playergame data
 ADD data_prep/prepare_pgmodel.py $BLUNDERCHECK_DIR/data_prep/

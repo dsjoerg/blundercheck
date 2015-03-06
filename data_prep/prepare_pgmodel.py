@@ -93,7 +93,7 @@ eloscored_cols = [
 eloscored_df = read_csv('/data/data.pgn.eloscored', sep=',', engine='c', header=None, names=eloscored_cols, index_col=False)
 eloscored_df = eloscored_df.set_index(['gamenum'])
 
-msg("Reading ELOscored data")
+msg("Reading ELOscored data 4")
 eloscored4_cols = [
     'gamenum',
     'final_elo',
@@ -104,6 +104,18 @@ eloscored4_cols = [
 eloscored4_cols = [x + '_elo4' for x in eloscored4_cols]
 eloscored4_df = read_csv('/data/data.pgn.eloscored4', sep=',', engine='c', header=None, names=eloscored4_cols, index_col=False)
 eloscored4_df = eloscored4_df.set_index(['gamenum'])
+
+msg("Reading ELOscored data 10")
+eloscored10_cols = [
+    'gamenum',
+    'final_elo',
+    'final_ply',
+    'final_num_games',
+    'final_elo_stdev',
+]
+eloscored10_cols = [x + '_elo4' for x in eloscored10_cols]
+eloscored10_df = read_csv('/data/data.pgn.eloscored10', sep=',', engine='c', header=None, names=eloscored10_cols, index_col=False)
+eloscored10_df = eloscored4_df.set_index(['gamenum'])
 
 msg("Hi! Reading moveaggs")
 move_aggs = joblib.load('/data/move_aggs.p')
@@ -139,6 +151,7 @@ mega_df = concat(supplemental_dfs, axis=1)
 mega_df = mega_df.join(material_df, how='outer')
 mega_df = mega_df.join(eloscored_df, how='outer')
 mega_df = mega_df.join(eloscored4_df, how='outer')
+mega_df = mega_df.join(eloscored10_df, how='outer')
 
 yy_df = mega_df
 msg("hi, columns are %s" % yy_df.columns)

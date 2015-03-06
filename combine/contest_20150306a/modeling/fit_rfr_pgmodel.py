@@ -14,12 +14,12 @@ import pygraphviz as pgv
 from StringIO import StringIO
 from djeval import *
 
-n_estimators = 200
+n_estimators = 2
 n_cv_groups = 3
 n_jobs = -1
 msl = 10
 mss = 50
-multiplier = 1
+multiplier = 100
 msl = msl * multiplier
 mss = mss * multiplier
 
@@ -75,7 +75,13 @@ if do_semimanual_cv:
             msg("pred")
             in_mae = mean_absolute_error(rfr.predict(train.iloc[train_index][features]), train.iloc[train_index]['elo'])
             msg("pred")
-            out_mae = mean_absolute_error(rfr.predict(train.iloc[test_index][features]), train.iloc[test_index]['elo'])
+            out_preds = rfr.predict(train.iloc[test_index][features])
+            out_mae = mean_absolute_error(out_preds, train.iloc[test_index]['elo'])
+            for blend in np.arange(0, 1.01, 0.1):
+                blended_prediction = (blend * train.iloc[train_index]['ols_prediction']) + ((1.0 - blend) * out_preds)
+                blended_score = mean_absolute_error(blended_prediction, train.iloc[test_index]['elo'])
+                print blend, blended_score
+
             print in_mae, out_mae
             sys.stdout.flush()
             ins.append(in_mae)

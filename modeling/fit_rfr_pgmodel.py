@@ -78,7 +78,7 @@ if do_semimanual_cv:
             out_preds = rfr.predict(train.iloc[test_index][features])
             out_mae = mean_absolute_error(out_preds, train.iloc[test_index]['elo'])
             for blend in np.arange(0, 1.01, 0.1):
-                blended_prediction = (blend * train.iloc[train_index]['ols_prediction']) + ((1.0 - blend) * out_preds)
+                blended_prediction = (blend * train.iloc[test_index]['ols_prediction']) + ((1.0 - blend) * out_preds)
                 blended_score = mean_absolute_error(blended_prediction, train.iloc[test_index]['elo'])
                 print blend, blended_score
 

@@ -1,130 +1,158 @@
 #!/usr/bin/env python
 
-import sys, time, code
+import sys, time
 import numpy as np
 import cPickle as pickle
-from pandas import DataFrame, read_pickle, get_dummies, cut
-import statsmodels.formula.api as sm
+from pandas import *
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.cross_validation import cross_val_score
 from sklearn.externals import joblib
-from sklearn.linear_model import LinearRegression
-
+from sklearn.metrics import mean_absolute_error
+from sklearn.cross_validation import KFold
+from sklearn import tree
+import pygraphviz as pgv
+from StringIO import StringIO
 from djeval import *
 
-def shell():
-    vars = globals()
-    vars.update(locals())
-    shell = code.InteractiveConsole(vars)
-    shell.interact()
-
-
-def fix_colname(cn):
-    return cn.translate(None, ' ()[],')
-
+n_estimators = 200
+n_cv_groups = 3
+n_jobs = -1
+msl = 10
+mss = 50
+multiplier = 1
+msl = msl * multiplier
+mss = mss * multiplier
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
 
-# clean up column names
-colnames = list(yy_df.columns.values)
-colnames = [fix_colname(cn) for cn in colnames]
-yy_df.columns = colnames
-
-# change the gamenum and side from being part of the index to being normal columns
-yy_df.reset_index(inplace=True)
-
 msg("Getting subset ready.")
+train = yy_df[yy_df.elo.notnull()]
+train = train[train['gamenum'] < 25001]
 
-# TODO save the dummies along with yy_df
+
+features = list(yy_df.columns.values)
 categorical_features = ['opening_feature']
-dummies = get_dummies(yy_df[categorical_features])
+elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
+elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')])
+material_features = ['material_break_0', 'material_break_1', 'material_break_2', 'material_break_3', 'material_break_4', 'opening_length', 'midgame_length', 'endgame_length', 'mean_acwsa', 'mean_acwsa_0', 'mean_acwsa_1', 'mean_acwsa_2', 'mean_acwsa_3', 'mean_acwsa_4', 'mean_acwsa_5', 'mean_acwsa_6', 'mean_acwsa_7', 'mean_acwsa_8', 'mean_acwsa_9']
 
-elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')][:-1]
-elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')][:-1])
+excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'gamenum', 'rfr_prediction', 'rfr_error', 'index']
+excluded_features.extend(categorical_features)
+#excluded_features.extend(material_features)
+#excluded_features.extend(elorange_cols)
+for f in excluded_features:
+    if f in features:
+        features.remove(f)
+    else:
+        print 'Tried to remove %s but it wasnt there' % f
 
-# TODO save the moveelo_features along with yy_df
-moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+print 'Features are: %s' % features
 
-new_depth_cols = ['mean_num_bestmoves', 'mean_num_bestmove_changes', 'mean_bestmove_depths_agreeing', 'mean_deepest_change', 'mean_deepest_change_ratio']
-stdev_cols = ['stdeverror', 'opponent_stdeverror', 'stdevpos']
+rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
 
-train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
+do_sklearn_cv = False
+if do_sklearn_cv:
+    X = train[features].values
+    y = train['elo']
+    msg("CROSS VALIDATING")
+    cvs = cross_val_score(rfr, X, y, cv=n_cv_groups, n_jobs=n_jobs, scoring='mean_absolute_error')
+    print cvs, np.mean(cvs)
+    sys.stdout.flush()
 
-chain_validating = False
-if chain_validating:
-    # TODO rewrite this like [::3] ?
-    train = train[train['gamenum'] % 3 == 0]
+do_semimanual_cv = True
+if do_semimanual_cv:
+    msg("fold")
+    kf = KFold(train.shape[0], n_folds=n_cv_groups, shuffle=True)
+    ins = []
+    outs = []
+    for train_index, test_index in kf:
+            msg("fit")
+            foo = rfr.fit(train.iloc[train_index][features], train.iloc[train_index]['elo'])
+            msg("pred")
+            in_mae = mean_absolute_error(rfr.predict(train.iloc[train_index][features]), train.iloc[train_index]['elo'])
+            msg("pred")
+            out_mae = mean_absolute_error(rfr.predict(train.iloc[test_index][features]), train.iloc[test_index]['elo'])
+            print in_mae, out_mae
+            sys.stdout.flush()
+            ins.append(in_mae)
+            outs.append(out_mae)
+    print("INS:", ins, np.mean(ins))
+    print("OUTS:", outs, np.mean(outs))
 
-formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"
-formula_rhs = formula_rhs + " + opponent_nmerror + opponent_noblunders"
-formula_rhs = formula_rhs + " + min_nmerror + early_lead"
-formula_rhs = formula_rhs + " + q_error_one + q_error_two"
-formula_rhs = formula_rhs + " + opponent_q_error_one"
-formula_rhs = formula_rhs + " + mean_depth_clipped + mean_seldepth"
-formula_rhs = formula_rhs + " + mean_depths_agreeing_ratio + mean_deepest_agree_ratio"
-formula_rhs = formula_rhs + " + opponent_mean_depths_agreeing_ratio + opponent_mean_deepest_agree_ratio"
-formula_rhs = formula_rhs + " + pct_sanemoves"
-formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
-formula_rhs = formula_rhs + " + moveelo_weighted"
-formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
-formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
-formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games "
-formula_rhs = formula_rhs + " + pos_fft_1 "
+do_manual_cv = False
+if do_manual_cv:
+    for test_m in [0,1,2]:
+        in_df = train[(train['gamenum'] % 3) != test_m]
+        out_df = train[(train['gamenum'] % 3) == test_m]
+        X = in_df[features].values
+        y = in_df['elo']
+        msg("fitting using all but group %i" % test_m)
+        rfr.fit(X, y)
+        pred = rfr.predict(out_df[features].values)
+        msg("group %i MAE using model fit on other groups is %f" % (test_m, np.mean((pred - out_df['elo']).abs())))
+        
 
-ols_cols = []
-ols_cols.extend(['side', 'nmerror', 'gameoutcome', 'drawn_game', 'gamelength', 'meanecho'])
-ols_cols.extend(['opponent_nmerror', 'opponent_noblunders'])
-ols_cols.extend(['min_nmerror', 'early_lead'])
-ols_cols.extend(['q_error_one', 'q_error_two'])
-ols_cols.append('opponent_q_error_one')
-ols_cols.extend(['mean_depth_clipped','mean_seldepth'])
-ols_cols.extend(['mean_depths_agreeing_ratio', 'mean_deepest_agree_ratio'])
-ols_cols.extend(['opponent_mean_depths_agreeing_ratio', 'opponent_mean_deepest_agree_ratio'])
-ols_cols.append('pct_sanemoves')
-ols_cols.extend(dummies.columns.values)
-ols_cols.append('moveelo_weighted')
-ols_cols.extend(new_depth_cols)
-ols_cols.extend(stdev_cols)
-ols_cols.extend(['final_elo','final_ply','final_num_games'])
-ols_cols.append('pos_fft_1')
-
-# do these really not help?!
-#ols_cols.extend(" + " + " + ".join(elorange_cols)
-
-# Never mind these, they didnt help much
-#ols_cols.extend(" + " + " + ".join(moveelo_features)
-
-# hey lets just use the elorange columns and see how they do
-#formula_rhs = " + ".join(elorange_cols)
-
-formula = "elo ~ " + formula_rhs
+X = train[features].values
+y = train['elo']
 
 msg("Fitting!")
+rfr.fit(X, y)
 
-do_statsmodels=True
-if do_statsmodels:
-    ols = sm.ols(formula=formula, data=train).fit()
-    print ols.summary()
-    msg("Making predictions for all playergames")
-    yy_df['ols_prediction'] = ols.predict(yy_df)
-else:
-    ols_lr = LinearRegression()
-    X = train[ols_cols]
-    y = train['elo']
-    ols_lr.fit(X,y)
-    yy_df['ols_prediction'] = ols_lr.predict(X)
+msg("Saving model")
+joblib.dump([rfr, features], sys.argv[2])
 
-yy_df['ols_error'] = (yy_df['ols_prediction'] - yy_df['elo']).abs()
-yy_df['training'] = (yy_df['gamenum'] % 3)
-insample_scores = yy_df.groupby('training')['ols_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
+msg("Making predictions for all playergames")
+yy_df['rfr_prediction'] = rfr.predict(yy_df[features].values)
+yy_df['rfr_error'] = (yy_df['rfr_prediction'] - yy_df['elo']).abs()
+insample_scores = yy_df.groupby('training')['rfr_error'].agg({'mean' : np.mean, 'median' : np.median, 'stdev': np.std})
 print insample_scores
 
 msg("Error summary by ELO:")
 elo_centuries = cut(yy_df['elo'], 20)
-print yy_df.groupby(elo_centuries)['ols_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
+print yy_df.groupby(elo_centuries)['rfr_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
 
 msg("Error summary by gamenum:")
 gamenum_centuries = cut(yy_df['gamenum'], 20)
-print yy_df.groupby(gamenum_centuries)['ols_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
+print yy_df.groupby(gamenum_centuries)['rfr_error'].agg({'sum': np.sum, 'count': len, 'mean': np.mean})
 
-msg("Writing yy_df back out with ols predictions inside")
+msg("Writing yy_df back out with predictions inside")
 yy_df.to_pickle(sys.argv[1])
+
+msg("Preparing Kaggle submission")
+# map from eventnum to whiteelo,blackelo array
+
+predictions = {}
+for eventnum in np.arange(25001,50001):
+  predictions[eventnum] = [0,0]
+
+for row in yy_df[yy_df['elo'].isnull()][['gamenum', 'side', 'rfr_prediction']].values:
+  eventnum = row[0]
+  if eventnum >= 25001 and eventnum <= 50000:
+      side = row[1]
+      if side == 1:
+        sideindex = 0
+      else:
+        sideindex = 1
+      prediction = row[2]
+      predictions[eventnum][sideindex] = prediction
+
+submission = open('/data/submission_rfr.csv', 'w')
+submission.write('Event,WhiteElo,BlackElo\n')
+for eventnum in np.arange(25001,50001):
+  submission.write('%i,%i,%i\n' % (eventnum, predictions[eventnum][0], predictions[eventnum][1]))
+submission.close()
+
+print "Feature importances:"
+print DataFrame([rfr.feature_importances_, features]).transpose().sort([0], ascending=False)
+
+print "There are %i trees." % len(rfr.estimators_)
+
+dot_data = StringIO()
+tree.export_graphviz(rfr.estimators_[0].tree_, out_file=dot_data, feature_names=features)
+
+B=pgv.AGraph(dot_data.getvalue())
+B.layout('dot')
+B.draw('/data/rfr.png') # draw png
+
+print "Wrote first tree to /data/rfr.png"

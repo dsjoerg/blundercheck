@@ -120,7 +120,7 @@ ADD modeling/compute_chunklikes.py $BLUNDERCHECK_DIR/modeling/
 ADD data_prep/crunch_movescores.py $BLUNDERCHECK_DIR/data_prep/
 RUN crunch_movescores.py /data/crunched.csv 999999
 
-RUN wget -O /data/data.pgn.eloscored https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos
+RUN wget -O /data/data.pgn.eloscored21 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.21
 RUN wget -O /data/data.pgn.eloscored4 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.4
 RUN wget -O /data/data.pgn.eloscored10 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.10
 

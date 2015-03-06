@@ -143,8 +143,8 @@ ADD data_prep/make_scatterplots.py $BLUNDERCHECK_DIR/data_prep/
 
 RUN wget -O /data/data25k.pgn.elos https://s3.amazonaws.com/bc-games/data25k.pgn.elos
 RUN wget -O /data/certain_elos https://s3.amazonaws.com/bc-games/certain_elos
-ADD enhance_entry.py $BLUNDERCHECK_DIR/data_prep/
-ADD masked_entry.py $BLUNDERCHECK_DIR/data_prep/
+ADD data_prep/enhance_entry.py $BLUNDERCHECK_DIR/data_prep/
+ADD data_prep/masked_entry.py $BLUNDERCHECK_DIR/data_prep/
 RUN enhance_entry.py /data/data25k.pgn.elos /data/certain_elos /data/submission_rfr.csv > /data/submission_enhanced.csv
 RUN masked_entry.py 25001 37500 < /data/submission_enhanced.csv > /data/submission_1H.csv
 RUN masked_entry.py 37501 50001 < /data/submission_enhanced.csv > /data/submission_2H.csv

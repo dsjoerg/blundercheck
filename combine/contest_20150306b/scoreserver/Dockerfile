@@ -37,7 +37,9 @@ ADD config/boto.cfg /etc/boto.cfg
 
 CMD python /src/blundercheck/scoreserver_launcher.py
 
-RUN echo '123456'
-RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
+#RUN echo '123456'
+#RUN pip install -e git+git://github.com/dsjoerg/pystockfish#egg=pystockfish
 RUN echo 'hi01'
 RUN pip install -e git+git@github.com:dsjoerg/blundercheck#egg=blundercheck
+
+ENV PYTHONPATH /root/src/pystockfish

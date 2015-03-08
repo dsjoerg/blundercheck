@@ -31,6 +31,10 @@ msg("Hi! Reading crunched movescores from %s" % sys.argv[1])
 crunched_path = sys.argv[1]
 crunched_df = read_csv(crunched_path, sep=',', engine='c', index_col=['gamenum', 'side'])
 
+msg("Hi! Reading GB scores from %s" % sys.argv[2])
+gb_path = sys.argv[2]
+gb_df = read_csv(gb_path, sep=',', engine='c', index_col=['gamenum'])
+
 
 msg("Hi! Reading depthstats")
 depthstats_path = '/data/depthstats.csv'
@@ -155,6 +159,7 @@ mega_df = mega_df.join(material_df, how='outer')
 mega_df = mega_df.join(eloscored_df, how='outer')
 mega_df = mega_df.join(eloscored4_df, how='outer')
 mega_df = mega_df.join(eloscored10_df, how='outer')
+mega_df = mega_df.join(gb_df, how='outer')
 
 yy_df = mega_df
 msg("hi, columns are %s" % yy_df.columns)
@@ -222,7 +227,7 @@ yy_df['elo'] = yy_elo
 yy_df.loc[yy_df['opening_feature'] == False,'opening_feature'] = 'rare'
 
 msg("Hi! Writing yy_df to disk")
-yy_df.to_pickle(sys.argv[2])
+yy_df.to_pickle(sys.argv[3])
 
 msg("Column counts are:")
 counts = yy_df.count(axis=0)

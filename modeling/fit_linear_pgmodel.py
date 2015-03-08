@@ -41,6 +41,8 @@ dummies = get_dummies(yy_df[categorical_features])
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')][:-1]
 elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')][:-1])
 
+gb_cols = [colname for colname in colnames if colname.startswith('gb_')]
+
 # TODO save the moveelo_features along with yy_df
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
 
@@ -74,6 +76,7 @@ formula_rhs = formula_rhs + " + pos_fft_1 "
 formula_rhs = formula_rhs + " + " + " + ".join(material_features)
 formula_rhs = formula_rhs + " + final_elo_elo4 + final_ply_elo4 + final_num_games_elo4 + final_elo_stdev_elo4"
 formula_rhs = formula_rhs + " + final_elo_elo10 + final_ply_elo10 + final_num_games_elo10 + final_elo_stdev_elo10"
+formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
 
 ols_cols = []
 ols_cols.extend(['side', 'nmerror', 'gameoutcome', 'drawn_game', 'gamelength', 'meanecho'])

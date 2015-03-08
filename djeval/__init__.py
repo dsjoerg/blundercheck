@@ -3,6 +3,8 @@ import time
 import urllib
 from chess import *
 
+NUM_GB_DEPTHS = 18
+
 def shell():
     vars = globals()
     vars.update(locals())
@@ -75,6 +77,13 @@ def features(board, move):
               is_check]
     return result
 
+
+def fix_score(score):
+    if score is None:
+        return 32768
+    return score
+
+
 def score_node(engine, node):
     """
     Returns the score, in centipawns for white,
@@ -87,11 +96,7 @@ def score_node(engine, node):
 
     engine.setfen(node.board().fen())
     bestmove = engine.bestmove()
-    score_cp = bestmove['score_cp']
-    if score_cp is not None:
-        score_cp_for_white = score_cp
-    else:
-        score_cp_for_white = 32768
+    score_cp_for_white = fix_score(bestmove['score_cp'])
 
     if node.board().turn == BLACK:
         score_cp_for_white = -1 * score_cp_for_white
@@ -104,12 +109,56 @@ def score_node(engine, node):
     return (score_cp_for_white, move_object)
 
 
+def guid_bratko_score(infos):
+    """
+Guid, M. and Bratko, I. Computer Analysis of World Chess Champions. ICGA
+Journal, Vol. 29, No. 2, pp. 65-73, 2006. [GB06]
+
+    difficulty := 0;
+    for depth 2 to 12 do
+      if (depth > 2) and (previous best move not equals current best move) then
+        difficulty += |best move evaluation - second best move evaluation|
+      end if
+    end for
+    """
+    difficulty = 0
+    difficulty_12 = 0
+    difficulties = [0]*(NUM_GB_DEPTHS+1)
+    
+    max_depth = infos[-1][0]
+
+    # make a dictionary mapping from (depth, multipv) to info
+    infodict = dict([[(info[0], info[-1]), info] for info in infos])
+
+    prev_bestmove = infodict[(2, 1)][-2]
+    for depth in range(3, max_depth + 1):
+        if ((depth, 1) in infodict) and ((depth, 2) in infodict):
+            bestmove = infodict[(depth, 1)][-2]
+            if (prev_bestmove != bestmove):
+                best_score = fix_score(infodict[(depth, 1)][2])
+                secondbest_score = fix_score(infodict[(depth, 2)][2])
+                bestmove_advantage = abs(best_score - secondbest_score)
+                if bestmove_advantage > 200:
+                    bestmove_advantage = 200
+                difficulty += bestmove_advantage
+                if depth < NUM_GB_DEPTHS:
+                    difficulties[depth] += bestmove_advantage
+                else:
+                    difficulties[NUM_GB_DEPTHS] += bestmove_advantage
+#                print "At depth %i, difficulty increased to %i" % (depth, difficulty)
+                if depth <= 12:
+                    difficulty_12 += bestmove_advantage
+                prev_bestmove = bestmove
+
+    return difficulty, difficulty_12, difficulties
+    
+
 def score_node_and_move(engine, node):
     """
 
     Returns [depth, seldepth, score, nodes, best_move,
     depths_agreeing, deepest_agree, white_material, black_material,
-    game_phase]
+    game_phase, gb_complexity, gb_complexity_12]
     
     depth = deepest depth that the engine was able to search all branches.
             due to hashing from previous searches it may not be strictly
@@ -142,6 +191,9 @@ def score_node_and_move(engine, node):
     white_material = standard-scored material value of current position, for white
     black_material = standard-scored material value of current position, for black
     game_phase = game phase using Stockfish criteria. midgame=128, endgame=0
+    
+    gb_complexity = guid-bratko complexity score, using all depths
+    gb_complexity_12 = guid-bratko complexity score, using no more than 12 depths
 
     """
 
@@ -159,7 +211,10 @@ def score_node_and_move(engine, node):
 
     infos = result['infos']
 
-    if len(infos) == 0:
+    # get the infos for the best line
+    pv1_infos = [info for info in infos if info[-1] == 1]
+
+    if len(pv1_infos) == 0:
         print "No infos! result=%s" % str(result)
         depth = 0
         seldepth = 0
@@ -171,16 +226,15 @@ def score_node_and_move(engine, node):
         num_bestmove_changes = 0
         bestmove_depths_agreeing = 0
         deepest_change = 0
+        gb_complexity = 0
+        gb_complexity_12 = 0
+        gb_complexities = [0] * (NUM_GB_DEPTHS+1)
     else:
-        depth = infos[-1][0]
-        seldepth = infos[-1][1]
-        nodes = infos[-1][3]
+        depth = pv1_infos[-1][0]
+        seldepth = pv1_infos[-1][1]
+        nodes = pv1_infos[-1][3]
 
-        score_cp = infos[-1][2]
-        if score_cp is not None:
-            score_cp_for_white = score_cp
-        else:
-            score_cp_for_white = 32768
+        score_cp_for_white = fix_score(pv1_infos[-1][2])
 
         if node.board().turn == BLACK:
             score_cp_for_white = -1 * score_cp_for_white
@@ -188,11 +242,11 @@ def score_node_and_move(engine, node):
 #        print "infos=%s" % str(infos)
 #        print "amu=%s. bestmoves at various depths %s" % (actual_move_uci, str([i[4] for i in infos]))
 
-        agreeing_depths = [i[0] for i in infos if i[4] == actual_move_uci]
+        agreeing_depths = [i[0] for i in pv1_infos if i[4] == actual_move_uci]
         depths_agreeing = len(agreeing_depths)
         deepest_agree = agreeing_depths[-1] if depths_agreeing > 0 else 0
         
-        bestmoves = [i[4] for i in infos]
+        bestmoves = [i[4] for i in pv1_infos]
         bestmoves.append(best_move_uci)
         num_bestmoves = len(set(bestmoves))
 
@@ -203,12 +257,13 @@ def score_node_and_move(engine, node):
         else:
             deepest_change = 0
 
-        bestmove_agreeing_depths = [i[0] for i in infos if i[4] == best_move_uci]
+        bestmove_agreeing_depths = [i[0] for i in pv1_infos if i[4] == best_move_uci]
         bestmove_depths_agreeing = len(bestmove_agreeing_depths)
-        
+        gb_complexity, gb_complexity_12, gb_complexities = guid_bratko_score(infos)
 
     result = [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change]
     result.extend(material_info)
+    result.extend([gb_complexity, gb_complexity_12, gb_complexities])
 
     return result
 
@@ -311,6 +366,9 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
     outstruct['best_move_features'] = []
     outstruct['depth_stats'] = []
     outstruct['material_stats'] = []
+    outstruct['gb'] = []
+    outstruct['gb12'] = []
+    outstruct['gbN'] = [0] * (NUM_GB_DEPTHS+1)
 
     was_bestmove = []
 
@@ -341,6 +399,8 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
 
         # clear the hash before each move eval so that depth stats are clean
         engine.put('setoption name Clear Hash')
+#        engine.debug = True
+        engine.put('setoption name multipv value 2')
 
         scoreresult = score_node_and_move(engine, prev_node)
         prev_score_white = scoreresult[2]
@@ -364,6 +424,10 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         depth_stats.extend(scoreresult[5:11])
         outstruct['depth_stats'].insert(0, depth_stats)
         outstruct['material_stats'].insert(0, scoreresult[11:14])
+        outstruct['gb'].insert(0, scoreresult[14])
+        outstruct['gb12'].insert(0, scoreresult[15])
+        for i in range(0,NUM_GB_DEPTHS+1):
+            outstruct['gbN'][i] += scoreresult[16][i]
 
         was_bestmove.insert(0, prev_best_move == node.move)
 

@@ -18,6 +18,9 @@ DEBUG = ('DEBUG' in os.environ)
 MIN_ITEMS_PER_KEY = 100
 NUM_ITEMS_PER_KEY = 1000
 
+if 'MIN_ITEMS_PER_KEY' in os.environ:
+    MIN_ITEMS_PER_KEY = int(os.environ['MIN_ITEMS_PER_KEY'])
+
 movetime = None
 if 'MOVETIME' in os.environ:
     movetime = int(os.environ['MOVETIME'])

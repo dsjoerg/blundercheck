@@ -41,7 +41,8 @@ dummies = get_dummies(yy_df[categorical_features])
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')][:-1]
 elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opponent_elochunk_')][:-1])
 
-gb_cols = [colname for colname in colnames if colname.startswith('gb_')]
+#gb_cols = [colname for colname in colnames if colname.startswith('gb_')]
+gb_cols = ['gb_mean', 'gb_mean_permove', 'gb_num_15', 'gb_permove_15']
 
 # TODO save the moveelo_features along with yy_df
 moveelo_features = [("moveelo_" + x) for x in ['mean', 'median', '25', '10', 'min', 'max', 'stdev']]

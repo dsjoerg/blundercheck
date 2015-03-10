@@ -30,11 +30,24 @@ yy_df = read_pickle(sys.argv[1])
 msg("Getting subset ready.")
 train = yy_df[yy_df.elo.notnull()]
 
+elo_kde = KernelDensity(kernel='gaussian', bandwidth=10).fit(train['elo'])
+print "KDE fun:"
+print elo_kde.score_samples(arange(1000,2800,100))
+
+upper_50k = train[train['gamenum'] > 50000]
+upper_kde = KernelDensity(kernel='gaussian', bandwidth=10).fit(upper_50k['elo'])
+print "upper 50k KDE:"
+print upper_kde.score_samples(arange(1000,2800,100))
+
+upper_weights = elo_kde.score_samples(train['elo']) / upper_kde.score_samples(train['elo'])
+upper_weights.loc[:25000] = 1.
+msg("Weight distribution: %s" % upper_weights.loc[25000:].describe())
+
 use_only_25k = False
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 #train = train.loc[:25000]
-train['weight'] = np.ones(train.shape[0])
+train['weight'] = train['
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature']
@@ -114,8 +127,8 @@ if do_breadth_cv:
             sys.stdout.flush()
             ins.append(in_mae)
             outs.append(out_mae)
-    print("INS:", ins, np.mean(ins))
-    print("OUTS:", outs, np.mean(outs))
+    msg("INS: %s %f" % (ins, np.mean(ins)))
+    msg("OUTS: %s %f" % (outs, np.mean(outs)))
 
 do_manual_cv = False
 if do_manual_cv:

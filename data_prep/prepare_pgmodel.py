@@ -137,6 +137,7 @@ do_elochunk = True
 if do_elochunk:
     ch_agg_df = joblib.load('/data/chunk_aggs.p')
     ch_agg_df.index = ch_agg_df.index.droplevel('elo')
+    ch_agg_df.columns = ['elochunk_' + x for x in ch_agg_df.columns]
 
 
 msg("Hi! Setting up playergame rows")
@@ -192,6 +193,8 @@ yy_df['gamelength_clipped'] = yy_df['gamelength'].clip(20,200)
 
 # prepare opponent_df with selected info about opponent
 opponent_columns = ['meanerror', 'blunderrate', 'perfectrate', 'grit', 'meanecho', 'mate_created', 'mate_destroyed', 'q_error_one', 'q_error_two', 'stdeverror', 'elo', 'any_grit', 'noblunders', 'nmerror', 'mean_depths_agreeing_ratio', 'mean_deepest_agree_ratio']
+if do_elochunk:
+    opponent_columns.extend(elorange_cols)
 opponent_df = yy_df[opponent_columns]
 opponent_df = opponent_df.reset_index()
 opponent_df['side'] = opponent_df['side'] * -1

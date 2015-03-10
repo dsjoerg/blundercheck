@@ -133,7 +133,7 @@ wmove_aggs = joblib.load('/data/wmove_aggs.p')
 wmove_aggs.fillna(wmove_aggs.mean(), inplace=True)
 wmove_aggs.rename(columns={'elo_pred': 'moveelo_weighted'}, inplace=True)
 
-do_elochunk = False
+do_elochunk = True
 if do_elochunk:
     ch_agg_df = joblib.load('/data/chunk_aggs.p')
     ch_agg_df.index = ch_agg_df.index.droplevel('elo')

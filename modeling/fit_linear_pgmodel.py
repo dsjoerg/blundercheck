@@ -78,6 +78,7 @@ formula_rhs = formula_rhs + " + " + " + ".join(material_features)
 formula_rhs = formula_rhs + " + final_elo_elo4 + final_ply_elo4 + final_num_games_elo4 + final_elo_stdev_elo4"
 formula_rhs = formula_rhs + " + final_elo_elo10 + final_ply_elo10 + final_num_games_elo10 + final_elo_stdev_elo10"
 formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
+formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 ols_cols = []
 ols_cols.extend(['side', 'nmerror', 'gameoutcome', 'drawn_game', 'gamelength', 'meanecho'])
@@ -103,7 +104,7 @@ ols_cols.append('pos_fft_1')
 #ols_cols.extend(" + " + " + ".join(moveelo_features)
 
 # hey lets just use the elorange columns and see how they do
-formula_rhs = " + ".join(elorange_cols)
+#formula_rhs = " + ".join(elorange_cols)
 
 formula = "elo ~ " + formula_rhs
 

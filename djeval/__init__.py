@@ -1,9 +1,15 @@
-import sys
-import time
-import urllib
+import sys, time, urllib, code
 from chess import *
 
 NUM_GB_DEPTHS = 18
+
+INFO_DEPTH = 0
+INFO_SELDEPTH = 1
+INFO_SCORE = 2
+INFO_NODES = 3
+INFO_BESTMOVE = 4
+INFO_PVNUM = 5
+INFO_COMPTIME = 6
 
 def shell():
     vars = globals()
@@ -125,18 +131,18 @@ Journal, Vol. 29, No. 2, pp. 65-73, 2006. [GB06]
     difficulty_12 = 0
     difficulties = [0]*(NUM_GB_DEPTHS+1)
     
-    max_depth = infos[-1][0]
+    max_depth = infos[-1][INFO_DEPTH]
 
     # make a dictionary mapping from (depth, multipv) to info
-    infodict = dict([[(info[0], info[-1]), info] for info in infos])
+    infodict = dict([[(info[INFO_DEPTH], info[INFO_PVNUM]), info] for info in infos])
 
-    prev_bestmove = infodict[(2, 1)][-2]
+    prev_bestmove = infodict[(2, 1)][INFO_BESTMOVE]
     for depth in range(3, max_depth + 1):
         if ((depth, 1) in infodict) and ((depth, 2) in infodict):
-            bestmove = infodict[(depth, 1)][-2]
+            bestmove = infodict[(depth, 1)][INFO_BESTMOVE]
             if (prev_bestmove != bestmove):
-                best_score = fix_score(infodict[(depth, 1)][2])
-                secondbest_score = fix_score(infodict[(depth, 2)][2])
+                best_score = fix_score(infodict[(depth, 1)][INFO_SCORE])
+                secondbest_score = fix_score(infodict[(depth, 2)][INFO_SCORE])
                 bestmove_advantage = abs(best_score - secondbest_score)
                 if bestmove_advantage > 200:
                     bestmove_advantage = 200
@@ -151,14 +157,97 @@ Journal, Vol. 29, No. 2, pp. 65-73, 2006. [GB06]
                 prev_bestmove = bestmove
 
     return difficulty, difficulty_12, difficulties
-    
 
-def score_node_and_move(engine, node):
+
+def process_sf_infos(infos, node, material_info):
     """
-
     Returns [depth, seldepth, score, nodes, best_move,
     depths_agreeing, deepest_agree, white_material, black_material,
-    game_phase, gb_complexity, gb_complexity_12]
+    game_phase, gb_complexity, gb_complexity_12, gbN]
+    """
+
+    actual_move_uci = node.variation(0).move.uci() if node.variations else ""
+
+    # get the infos for the best line
+    pv1_infos = [info for info in infos if info[INFO_PVNUM] == 1]
+
+    # rather than take the best move from the last line that stockfish prints, we
+    # take the last completed depth with a timestamp.
+    #
+    # that means we are throwing away some computation each time, but it's the only
+    # way to get a consistent measure of the power of increasing depth/time
+    #
+    best_move_uci = pv1_infos[-1][INFO_BESTMOVE]
+    if best_move_uci != '(none)':
+        best_move_object = Move.from_uci(best_move_uci)
+    else:
+        best_move_object = None
+
+
+    if len(pv1_infos) == 0:
+        print "No infos! result=%s" % str(result)
+        depth = 0
+        seldepth = 0
+        nodes = 0
+        score_cp_for_white = 0
+        deepest_agree = 0
+        depths_agreeing = 0
+        num_bestmoves = 0
+        num_bestmove_changes = 0
+        bestmove_depths_agreeing = 0
+        deepest_change = 0
+        gb_complexity = 0
+        gb_complexity_12 = 0
+        gb_complexities = [0] * (NUM_GB_DEPTHS+1)
+    else:
+        depth = pv1_infos[-1][INFO_DEPTH]
+        seldepth = pv1_infos[-1][INFO_SELDEPTH]
+        nodes = pv1_infos[-1][INFO_NODES]
+
+        score_cp_for_white = fix_score(pv1_infos[-1][INFO_SCORE])
+
+        if node.board().turn == BLACK:
+            score_cp_for_white = -1 * score_cp_for_white
+
+#        print "infos=%s" % str(infos)
+#        print "amu=%s. bestmoves at various depths %s" % (actual_move_uci, str([i[4] for i in infos]))
+
+        agreeing_depths = [i[0] for i in pv1_infos if i[INFO_BESTMOVE] == actual_move_uci]
+        depths_agreeing = len(agreeing_depths)
+        deepest_agree = agreeing_depths[-1] if depths_agreeing > 0 else 0
+        
+        bestmoves = [i[INFO_BESTMOVE] for i in pv1_infos]
+        bestmoves.append(best_move_uci)
+        num_bestmoves = len(set(bestmoves))
+
+        bestmove_changes = [i for i in range(0,len(bestmoves)-1) if bestmoves[i] != bestmoves[i+1]]
+        num_bestmove_changes = len(bestmove_changes)
+        if num_bestmove_changes > 0:
+            deepest_change = bestmove_changes[-1] + 1
+        else:
+            deepest_change = 0
+
+        bestmove_agreeing_depths = [i[INFO_DEPTH] for i in pv1_infos if i[INFO_BESTMOVE] == best_move_uci]
+        bestmove_depths_agreeing = len(bestmove_agreeing_depths)
+        gb_complexity, gb_complexity_12, gb_complexities = guid_bratko_score(infos)
+
+    retval = [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change]
+    retval.extend(material_info)
+    retval.extend([gb_complexity, gb_complexity_12, gb_complexities])
+
+    return retval
+
+    
+
+def score_node_and_move(engine, node, analysis_times):
+    """
+
+    Returns [[depth, seldepth, score, nodes, best_move,
+    depths_agreeing, deepest_agree, white_material, black_material,
+    game_phase, gb_complexity, gb_complexity_12, gbN], ...]
+
+    One for each of the analysis_times.
+
     
     depth = deepest depth that the engine was able to search all branches.
             due to hashing from previous searches it may not be strictly
@@ -192,8 +281,9 @@ def score_node_and_move(engine, node):
     black_material = standard-scored material value of current position, for black
     game_phase = game phase using Stockfish criteria. midgame=128, endgame=0
     
-    gb_complexity = guid-bratko complexity score, using all depths
-    gb_complexity_12 = guid-bratko complexity score, using no more than 12 depths
+    gb_complexity = guid-bratko complexity score for each move, using all depths
+    gb_complexity_12 = guid-bratko complexity score for each move, using no more than 12 depths
+    gbN = guid-bratko complexity score per depth, averaged across all moves
 
     """
 
@@ -201,77 +291,22 @@ def score_node_and_move(engine, node):
 
     result = engine.go_infos()
 
-    best_move_uci = result['move']
-    if best_move_uci != '(none)':
-        best_move_object = Move.from_uci(best_move_uci)
-    else:
-        best_move_object = None
-
-    actual_move_uci = node.variation(0).move.uci() if node.variations else ""
-
     infos = result['infos']
 
-    # get the infos for the best line
-    pv1_infos = [info for info in infos if info[-1] == 1]
+    retval = []
+    for analysis_time in analysis_times:
+        infos_for_analysis = [info for info in infos if info[INFO_COMPTIME] < analysis_time]
+#        print "There are %i infos for analysis at analysis_time %i" % (len(infos_for_analysis), analysis_time)
+#        print "They are: %s" % infos_for_analysis
+        retval.append(process_sf_infos(infos_for_analysis, node, material_info))
 
-    if len(pv1_infos) == 0:
-        print "No infos! result=%s" % str(result)
-        depth = 0
-        seldepth = 0
-        nodes = 0
-        score_cp_for_white = 0
-        deepest_agree = 0
-        depths_agreeing = 0
-        num_bestmoves = 0
-        num_bestmove_changes = 0
-        bestmove_depths_agreeing = 0
-        deepest_change = 0
-        gb_complexity = 0
-        gb_complexity_12 = 0
-        gb_complexities = [0] * (NUM_GB_DEPTHS+1)
-    else:
-        depth = pv1_infos[-1][0]
-        seldepth = pv1_infos[-1][1]
-        nodes = pv1_infos[-1][3]
-
-        score_cp_for_white = fix_score(pv1_infos[-1][2])
-
-        if node.board().turn == BLACK:
-            score_cp_for_white = -1 * score_cp_for_white
-
-#        print "infos=%s" % str(infos)
-#        print "amu=%s. bestmoves at various depths %s" % (actual_move_uci, str([i[4] for i in infos]))
-
-        agreeing_depths = [i[0] for i in pv1_infos if i[4] == actual_move_uci]
-        depths_agreeing = len(agreeing_depths)
-        deepest_agree = agreeing_depths[-1] if depths_agreeing > 0 else 0
-        
-        bestmoves = [i[4] for i in pv1_infos]
-        bestmoves.append(best_move_uci)
-        num_bestmoves = len(set(bestmoves))
-
-        bestmove_changes = [i for i in range(0,len(bestmoves)-1) if bestmoves[i] != bestmoves[i+1]]
-        num_bestmove_changes = len(bestmove_changes)
-        if num_bestmove_changes > 0:
-            deepest_change = bestmove_changes[-1] + 1
-        else:
-            deepest_change = 0
-
-        bestmove_agreeing_depths = [i[0] for i in pv1_infos if i[4] == best_move_uci]
-        bestmove_depths_agreeing = len(bestmove_agreeing_depths)
-        gb_complexity, gb_complexity_12, gb_complexities = guid_bratko_score(infos)
-
-    result = [depth, seldepth, score_cp_for_white, nodes, best_move_object, depths_agreeing, deepest_agree, num_bestmoves, num_bestmove_changes, bestmove_depths_agreeing, deepest_change]
-    result.extend(material_info)
-    result.extend([gb_complexity, gb_complexity_12, gb_complexities])
-
-    return result
+    return retval
 
 
 # Given a list of position scores, 
 def massage_position_scores(position_scores, was_bestmove):
 
-#    print "YOOOOO", position_scores
+#    print "YOOOOO", position_scores, was_bestmove
     massaged_scores = list(position_scores)
 
     bestmoves_plus = list(was_bestmove)
@@ -356,28 +391,30 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         movetime = engine.movetime
         engine.movetime = 1
 
+    analysis_times = [250, 500, 1000, 2000, 4000]
+
     begin_time = time.time()
 
     outstruct = {}
     outstruct['event'] = game.headers['Event']
-    outstruct['position_scores'] = []
-    outstruct['best_moves'] = []
-    outstruct['move_features'] = []
-    outstruct['best_move_features'] = []
-    outstruct['depth_stats'] = []
-    outstruct['material_stats'] = []
-    outstruct['gb'] = []
-    outstruct['gb12'] = []
-    outstruct['gbN'] = [0] * (NUM_GB_DEPTHS+1)
+    outstruct['position_scores'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['best_moves'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['move_features'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['best_move_features'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['depth_stats'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['material_stats'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['gb'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['gb12'] = [list() for _ in xrange(len(analysis_times))]
+    outstruct['gbN'] = [list([0] * (NUM_GB_DEPTHS+1)) for _ in xrange(len(analysis_times))]
 
-    was_bestmove = []
+    was_bestmove = [list() for _ in xrange(len(analysis_times))]
 
     node = game.end()
 
 
-    scoreresult = score_node_and_move(engine, node)
-    current_score_white = scoreresult[2]
-    best_move = scoreresult[4]
+    scoreresults = score_node_and_move(engine, node, analysis_times)
+    current_score_white = [scoreresult[2] for scoreresult in scoreresults]
+    best_move = [scoreresult[4] for scoreresult in scoreresults]
 
     while node.parent:
 
@@ -402,65 +439,69 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
 #        engine.debug = True
         engine.put('setoption name multipv value 2')
 
-        scoreresult = score_node_and_move(engine, prev_node)
-        prev_score_white = scoreresult[2]
-        prev_best_move = scoreresult[4]
-
-        score_loss = score_sign * (prev_score_white - current_score_white)
+        scoreresults = score_node_and_move(engine, prev_node, analysis_times)
+        prev_score_white = [scoreresult[2] for scoreresult in scoreresults]
+        prev_best_move = [scoreresult[4] for scoreresult in scoreresults]
 
         if debug:
-            thismove_analysis = '%2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (prev_node.board().fullmove_number, turn_indicator, prev_node.board().san(node.move), score_loss, prev_score_white, current_score_white, prev_node.board().san(prev_best_move), scoreresult[0], scoreresult[1], scoreresult[5], scoreresult[6])
-            print thismove_analysis
+            for i in range(0, len(prev_score_white)):
+                score_loss = score_sign * (prev_score_white[i] - current_score_white[i])
+                thismove_analysis = '%2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (prev_node.board().fullmove_number, turn_indicator, prev_node.board().san(node.move), score_loss, prev_score_white[i], current_score_white[i], prev_node.board().san(prev_best_move[i]), scoreresults[i][0], scoreresults[i][1], scoreresults[i][5], scoreresults[i][6])
+                print thismove_analysis
             #        print >>outfile, thismove_analysis
         else:
             print '.',
 
-        outstruct['position_scores'].insert(0, current_score_white)
-        outstruct['best_moves'].insert(0, prev_node.board().san(prev_best_move))
-        outstruct['move_features'].insert(0, features(prev_node.board(), node.move))
-        outstruct['best_move_features'].insert(0, features(prev_node.board(), prev_best_move))
+        for i in range(0, len(prev_score_white)):
+            outstruct['position_scores'][i].insert(0, current_score_white[i])
+#            print "i=%i, csw[i]=%s, o['p_s'][i]=%s" % (i, current_score_white[i], outstruct['position_scores'][i])
+            outstruct['best_moves'][i].insert(0, prev_node.board().san(prev_best_move[i]))
+            outstruct['move_features'][i].insert(0, features(prev_node.board(), node.move))
+            outstruct['best_move_features'][i].insert(0, features(prev_node.board(), prev_best_move[i]))
 
-        depth_stats = [scoreresult[0], scoreresult[1]]
-        depth_stats.extend(scoreresult[5:11])
-        outstruct['depth_stats'].insert(0, depth_stats)
-        outstruct['material_stats'].insert(0, scoreresult[11:14])
-        outstruct['gb'].insert(0, scoreresult[14])
-        outstruct['gb12'].insert(0, scoreresult[15])
-        for i in range(0,NUM_GB_DEPTHS+1):
-            outstruct['gbN'][i] += scoreresult[16][i]
+            depth_stats = [scoreresults[i][0], scoreresults[i][1]]
+            depth_stats.extend(scoreresults[i][5:11])
+            outstruct['depth_stats'][i].insert(0, depth_stats)
+            outstruct['material_stats'][i].insert(0, scoreresults[i][11:14])
+            outstruct['gb'][i].insert(0, scoreresults[i][14])
+            outstruct['gb12'][i].insert(0, scoreresults[i][15])
+            for j in range(0,NUM_GB_DEPTHS+1):
+                outstruct['gbN'][i][j] += scoreresults[i][16][j]
 
-        was_bestmove.insert(0, prev_best_move == node.move)
+            was_bestmove[i].insert(0, prev_best_move[i] == node.move)
 
         node = prev_node
         current_score_white = prev_score_white
         best_move = prev_best_move
 
 
-    outstruct['position_scores'].insert(0, current_score_white)
-    outstruct['massaged_position_scores'] = massage_position_scores(outstruct['position_scores'], was_bestmove)
-    mps = outstruct['massaged_position_scores']
+    outstruct['massaged_position_scores'] = []
+    for i in range(0, len(prev_score_white)):
+        outstruct['position_scores'][i].insert(0, current_score_white[i])
+        outstruct['massaged_position_scores'].append(massage_position_scores(outstruct['position_scores'][i], was_bestmove[i]))
+        mps = outstruct['massaged_position_scores'][i]
 
-    node = game
+        node = game
 
-#    print "YO", len(mps)
-    if debug:
-        score_index = 0
-        while node.variations:
+    #    print "YO", len(mps)
+        if debug:
+            score_index = 0
+            while node.variations:
 
-            turn_indicator = '.'
-            score_sign = 1
-            if node.board().turn == BLACK:
-                turn_indicator = '...'
-                score_sign = score_sign * -1
+                turn_indicator = '.'
+                score_sign = 1
+                if node.board().turn == BLACK:
+                    turn_indicator = '...'
+                    score_sign = score_sign * -1
 
-            next_node = node.variation(0)
-            score_loss = score_sign * (mps[score_index] - mps[score_index + 1])
+                next_node = node.variation(0)
+                score_loss = score_sign * (mps[score_index] - mps[score_index + 1])
 
-            thismove_analysis = '%2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, mps[score_index], mps[score_index+1], outstruct['best_moves'][score_index], outstruct['depth_stats'][score_index][0], outstruct['depth_stats'][score_index][1], outstruct['depth_stats'][score_index][2], outstruct['depth_stats'][score_index][3])
-            print thismove_analysis
+                thismove_analysis = '%2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, mps[score_index], mps[score_index+1], outstruct['best_moves'][i][score_index], outstruct['depth_stats'][i][score_index][0], outstruct['depth_stats'][i][score_index][1], outstruct['depth_stats'][i][score_index][2], outstruct['depth_stats'][i][score_index][3])
+                print thismove_analysis
 
-            node = next_node
-            score_index = score_index + 1
+                node = next_node
+                score_index = score_index + 1
 
 
 #    print outstruct['position_scores']

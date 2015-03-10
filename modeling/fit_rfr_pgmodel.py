@@ -47,7 +47,12 @@ use_only_25k = False
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 #train = train.loc[:25000]
-train['weight'] = train['
+
+adjust_weights = True
+if adjust_weights:
+    train['weight'] = upper_weights
+else:
+    train['weight'] = np.ones(train.shape[0])
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature']

@@ -62,7 +62,6 @@ categorical_features = [
     'bestmove_dir',
     'move_piece',
     'bestmove_piece',
-    'timecontrols'
 ]
 
 print 'SHAPE', moves_df.shape

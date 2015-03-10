@@ -33,6 +33,7 @@ use_only_25k = True
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 #train = train.loc[:25000]
+train['weight'] = np.ones(train.shape[0])
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature']
@@ -100,7 +101,7 @@ if do_breadth_cv:
     outs = []
     for train_index, test_index in kf:
             msg("fit")
-            foo = rfr.fit(train.iloc[train_index][features], train.iloc[train_index]['elo'])
+            foo = rfr.fit(train.iloc[train_index][features], train.iloc[train_index]['elo'], sample_weight=train.iloc[train_index]['weight'])
             msg("pred")
             in_mae = mean_absolute_error(rfr.predict(train.iloc[train_index][features]), train.iloc[train_index]['elo'])
             msg("pred")

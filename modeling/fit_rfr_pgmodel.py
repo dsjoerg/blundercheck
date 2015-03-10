@@ -9,6 +9,7 @@ from sklearn.cross_validation import cross_val_score
 from sklearn.externals import joblib
 from sklearn.metrics import mean_absolute_error
 from sklearn.cross_validation import KFold
+from sklearn.neighbors import KernelDensity
 from sklearn import tree
 import pygraphviz as pgv
 from StringIO import StringIO
@@ -29,7 +30,7 @@ yy_df = read_pickle(sys.argv[1])
 msg("Getting subset ready.")
 train = yy_df[yy_df.elo.notnull()]
 
-use_only_25k = True
+use_only_25k = False
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 #train = train.loc[:25000]

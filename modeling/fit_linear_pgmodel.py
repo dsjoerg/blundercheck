@@ -53,7 +53,7 @@ material_features = ['material_break_0', 'mean_acwsa']
 
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
-use_only_25k = True
+use_only_25k = False
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 

@@ -41,7 +41,7 @@ if False:
     MIN_SAMPLES_SPLIT = inflation * MIN_SAMPLES_SPLIT
     FITTING_N = inflation * FITTING_N
 
-just_testing = False
+just_testing = True
 if just_testing:
     CROSS_VALIDATION_N = 1500
     n_estimators = 2

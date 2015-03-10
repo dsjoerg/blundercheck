@@ -34,9 +34,11 @@ column_dtypes = {
     'white_material': np.float16,
     'black_material': np.float16,
     'game_phase': np.float16,
+    'gb': np.float32,
+    'gb12': np.float32,
 }
 
-columns = ['halfply','moverscore','movergain','prevgain','move_piece','move_dir','move_dist','move_is_capture','move_is_check','bestmove_piece','bestmove_dir','bestmove_dist','bestmove_is_capture','bestmove_is_check','depth','seldepth','depths_agreeing','deepest_agree','num_bestmoves','num_bestmove_changes','bestmove_depths_agreeing','deepest_change','elo','side','gamenum','timecontrols','white_material','black_material','game_phase']
+columns = ['halfply','moverscore','movergain','prevgain','move_piece','move_dir','move_dist','move_is_capture','move_is_check','bestmove_piece','bestmove_dir','bestmove_dist','bestmove_is_capture','bestmove_is_check','depth','seldepth','depths_agreeing','deepest_agree','num_bestmoves','num_bestmove_changes','bestmove_depths_agreeing','deepest_change','elo','side','gamenum','white_material','black_material','game_phase','gb','gb12']
 
 moves_df = read_csv(sys.stdin, engine='c', header=None, names=columns, dtype=column_dtypes, index_col=False)
 

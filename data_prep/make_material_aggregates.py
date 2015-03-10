@@ -84,7 +84,6 @@ columns = [
 'elo',
 'side',
 'gamenum',
-'timecontrol',
 'white_material',
 'black_material',
 'game_phase',

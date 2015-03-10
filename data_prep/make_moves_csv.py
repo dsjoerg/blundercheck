@@ -71,7 +71,8 @@ for line in big_fd:
         move_info.append(elo)
         move_info.append(side)
         move_info.append(gamenum)
-        move_info.append(timecontrols[gamenum])
         move_info.extend(game['material_stats'][movenum])
+        move_info.extend(game['gb'][movenum])
+        move_info.extend(game['gb12'][movenum])
         csvwriter.writerow(move_info)
 

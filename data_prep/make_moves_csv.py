@@ -47,6 +47,8 @@ timecontrols = eheaders['timecontrols']
 
 csvwriter = csv.writer(sys.stdout)
 
+do_gb=False
+
 gamenums_seen = set()
 for line in big_fd:
     game = json.loads(line)
@@ -72,7 +74,8 @@ for line in big_fd:
         move_info.append(side)
         move_info.append(gamenum)
         move_info.extend(game['material_stats'][movenum])
-        move_info.append(game['gb'][movenum])
-        move_info.append(game['gb12'][movenum])
+        if do_gb:
+            move_info.append(game['gb'][movenum])
+            move_info.append(game['gb12'][movenum])
         csvwriter.writerow(move_info)
 

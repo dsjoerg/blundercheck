@@ -116,9 +116,11 @@ formula = "elo ~ " + formula_rhs
 
 msg("Fitting!")
 
+weights = np.ones(train.shape[0])
+
 do_statsmodels=True
 if do_statsmodels:
-    ols = sm.ols(formula=formula, data=train).fit()
+    ols = sm.wls(formula=formula, data=train, weights=weights).fit()
     print ols.summary()
     msg("Making predictions for all playergames")
     yy_df['ols_prediction'] = ols.predict(yy_df)

@@ -61,7 +61,7 @@ for index, cf in enumerate(categorical_features):
   dummies = get_dummies(train_df[cf], prefix=cf)
   dummy_features.extend(dummies.columns.values)
 
-features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change', 'bestmove_dist', 'prevgain']
+features = ['side', 'halfply', 'moverscore', 'bestmove_is_capture', 'bestmove_is_check', 'depth', 'seldepth', 'num_bestmoves', 'num_bestmove_changes', 'bestmove_depths_agreeing', 'deepest_change', 'bestmove_dist', 'prevgain', 'gb', 'gb12']
 features.extend(dummy_features)
 
 joblib.dump([elo_bins, chunk_bounds, features], blundermodel_dir + 'groups.p')

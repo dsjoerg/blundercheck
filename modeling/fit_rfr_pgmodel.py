@@ -30,29 +30,39 @@ yy_df = read_pickle(sys.argv[1])
 msg("Getting subset ready.")
 train = yy_df[yy_df.elo.notnull()]
 
-elo_kde = KernelDensity(kernel='gaussian', bandwidth=10).fit(train['elo'])
-print "KDE fun:"
-print elo_kde.score_samples(np.arange(1000,2800,100))
+lower25 = train[train['gamenum'] < 25001]
+upper_50k = train[train['gamenum'] > 50000]
+
+elo_centuries, elobins = cut(lower25['elo'], 25, retbins=True)
+histthing = lower25.groupby(elo_centuries)['elo'].agg({'count': len})
+histthing['lower'] = elobins[:-1]
+histthing['upper'] = elobins[1:]
+histthing['freq'] = histthing['count'] / sum(histthing['count'] )
+
+elo_centuries = cut(upper50k['elo'], bins=elobins)
+upperthing = upper50k.groupby(elo_centuries)['elo'].agg({'count': len})
+upperthing['up_freq'] = upperthing['count'] / sum(upperthing['count'] )
+
+freqs = histthing.join(upperthing['up_freq'])
+freqs['localweight'] = freqs['freq'] / freqs['up_freq']
+
+elo_centuries = cut(train['elo'], bins=elobins)
+elo_centuries.fillna('(1019.14, 1095.4]', inplace=True)
+train['weight'] = freqs.lookup(elo_centuries, ['localweight']*elo_centuries.shape[0])
+train[train['gamenum'] <= 25000]['weight'] = 1.
+
+adjust_weights = True
+if not adjust_weights:
+    train['weight'] = np.ones(train.shape[0])
 
 upper_50k = train[train['gamenum'] > 50000]
-upper_kde = KernelDensity(kernel='gaussian', bandwidth=10).fit(upper_50k['elo'])
-print "upper 50k KDE:"
-print upper_kde.score_samples(arange(1000,2800,100))
-
-upper_weights = elo_kde.score_samples(train['elo']) / upper_kde.score_samples(train['elo'])
-upper_weights.loc[:25000] = 1.
-msg("Weight distribution: %s" % upper_weights.loc[25000:].describe())
+elo_centuries = cut(upper_50k['elo'], 20)
+msg("Upper weights are: %s" % upper_50k.groupby(elo_centuries)['weight'].agg({'sum': np.sum, 'count': len, 'mean': np.mean}))
 
 use_only_25k = False
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 #train = train.loc[:25000]
-
-adjust_weights = True
-if adjust_weights:
-    train['weight'] = upper_weights
-else:
-    train['weight'] = np.ones(train.shape[0])
 
 features = list(yy_df.columns.values)
 categorical_features = ['opening_feature']

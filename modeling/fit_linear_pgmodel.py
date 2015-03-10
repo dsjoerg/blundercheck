@@ -69,16 +69,19 @@ formula_rhs = formula_rhs + " + mean_depths_agreeing_ratio + mean_deepest_agree_
 formula_rhs = formula_rhs + " + opponent_mean_depths_agreeing_ratio + opponent_mean_deepest_agree_ratio"
 formula_rhs = formula_rhs + " + pct_sanemoves"
 formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
-formula_rhs = formula_rhs + " + moveelo_weighted"
 formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
 formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
 formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games + final_elo_stdev + elopath_min + elopath_max"
 formula_rhs = formula_rhs + " + pos_fft_1 "
-formula_rhs = formula_rhs + " + " + " + ".join(material_features)
 formula_rhs = formula_rhs + " + final_elo_elo4 + final_ply_elo4 + final_num_games_elo4 + final_elo_stdev_elo4"
 formula_rhs = formula_rhs + " + final_elo_elo10 + final_ply_elo10 + final_num_games_elo10 + final_elo_stdev_elo10"
-formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
-formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
+
+experimenting_with_breadth = True
+if not experimenting_with_breadth:
+    formula_rhs = formula_rhs + " + moveelo_weighted"
+    formula_rhs = formula_rhs + " + " + " + ".join(material_features)
+    formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
+    formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 ols_cols = []
 ols_cols.extend(['side', 'nmerror', 'gameoutcome', 'drawn_game', 'gamelength', 'meanecho'])

@@ -77,5 +77,8 @@ for line in big_fd:
         if do_gb:
             move_info.append(game['gb'][movenum])
             move_info.append(game['gb12'][movenum])
+        else:
+            move_info.append(0)
+            move_info.append(0)
         csvwriter.writerow(move_info)
 

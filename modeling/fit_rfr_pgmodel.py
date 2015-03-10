@@ -101,7 +101,7 @@ if do_breadth_cv:
     outs = []
     for train_index, test_index in kf:
             msg("fit")
-            foo = rfr.fit(train.iloc[train_index][features], train.iloc[train_index]['elo'], sample_weight=train.iloc[train_index]['weight'])
+            foo = rfr.fit(train.iloc[train_index][features], train.iloc[train_index]['elo'], sample_weight=train.iloc[train_index]['weight'].values)
             msg("pred")
             in_mae = mean_absolute_error(rfr.predict(train.iloc[train_index][features]), train.iloc[train_index]['elo'])
             msg("pred")

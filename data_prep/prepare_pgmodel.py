@@ -31,10 +31,11 @@ msg("Hi! Reading crunched movescores from %s" % sys.argv[1])
 crunched_path = sys.argv[1]
 crunched_df = read_csv(crunched_path, sep=',', engine='c', index_col=['gamenum', 'side'])
 
-msg("Hi! Reading GB scores from %s" % sys.argv[2])
-gb_path = sys.argv[2]
-gb_df = read_csv(gb_path, sep=',', engine='c', index_col=['gamenum'])
-
+do_gb = False
+if do_gb:
+    msg("Hi! Reading GB scores from %s" % sys.argv[2])
+    gb_path = sys.argv[2]
+    gb_df = read_csv(gb_path, sep=',', engine='c', index_col=['gamenum'])
 
 msg("Hi! Reading depthstats")
 depthstats_path = '/data/depthstats.csv'
@@ -58,34 +59,36 @@ depthstats_df = depthstats_df.set_index(['gamenum', 'side'])
 # we have the gamelength column in another df, drop it here to avoid conflicts
 depthstats_df.drop('gamelength', axis=1, inplace=True)
 
-msg("Hi! Reading material")
-material_path = '/data/material.csv'
-columns = [
-'gamenum',
-'material_break_0',
-'material_break_1',
-'material_break_2',
-'material_break_3',
-'material_break_4',
-'opening_length',
-'midgame_length',
-'endgame_length',
-'mean_acwsa',
-'mean_acwsa_0',
-'mean_acwsa_1',
-'mean_acwsa_2',
-'mean_acwsa_3',
-'mean_acwsa_4',
-'mean_acwsa_5',
-'mean_acwsa_6',
-'mean_acwsa_7',
-'mean_acwsa_8',
-'mean_acwsa_9',
-]
-material_df = read_csv(material_path, sep=' ', engine='c', header=None, names=columns, index_col=False)
-material_df = material_df.set_index(['gamenum'])
-material_df = material_df.reindex(range(1, NUM_GAMES+1))
-material_df = material_df.fillna(material_df.mean())
+do_material = False
+if do_material:
+    msg("Hi! Reading material")
+    material_path = '/data/material.csv'
+    columns = [
+    'gamenum',
+    'material_break_0',
+    'material_break_1',
+    'material_break_2',
+    'material_break_3',
+    'material_break_4',
+    'opening_length',
+    'midgame_length',
+    'endgame_length',
+    'mean_acwsa',
+    'mean_acwsa_0',
+    'mean_acwsa_1',
+    'mean_acwsa_2',
+    'mean_acwsa_3',
+    'mean_acwsa_4',
+    'mean_acwsa_5',
+    'mean_acwsa_6',
+    'mean_acwsa_7',
+    'mean_acwsa_8',
+    'mean_acwsa_9',
+    ]
+    material_df = read_csv(material_path, sep=' ', engine='c', header=None, names=columns, index_col=False)
+    material_df = material_df.set_index(['gamenum'])
+    material_df = material_df.reindex(range(1, NUM_GAMES+1))
+    material_df = material_df.fillna(material_df.mean())
 
 msg("Reading ELOscored data")
 eloscored_cols = [
@@ -124,16 +127,19 @@ eloscored10_cols[1:] = [x + '_elo10' for x in eloscored10_cols[1:]]
 eloscored10_df = read_csv('/data/data.pgn.eloscored10', sep=',', engine='c', header=None, names=eloscored10_cols, index_col=False)
 eloscored10_df = eloscored10_df.set_index(['gamenum'])
 
-msg("Hi! Reading moveaggs")
-move_aggs = joblib.load('/data/move_aggs.p')
-move_aggs.fillna(move_aggs.mean(), inplace=True)
+do_movemodel=False
+if do_movemodel:
+    msg("Hi! Reading moveaggs")
+    move_aggs = joblib.load('/data/move_aggs.p')
+    move_aggs.fillna(move_aggs.mean(), inplace=True)
+    move_aggs = move_aggs[['mean', 'median', '25', '10', 'min', 'max', 'stdev']]
+    msg("Hi! Reading wmoveaggs")
+    wmove_aggs = joblib.load('/data/wmove_aggs.p')
+    wmove_aggs.fillna(wmove_aggs.mean(), inplace=True)
+    wmove_aggs.rename(columns={'elo_pred': 'moveelo_weighted'}, inplace=True)
+    wmove_aggs = wmove_aggs['moveelo_weighted']
 
-msg("Hi! Reading wmoveaggs")
-wmove_aggs = joblib.load('/data/wmove_aggs.p')
-wmove_aggs.fillna(wmove_aggs.mean(), inplace=True)
-wmove_aggs.rename(columns={'elo_pred': 'moveelo_weighted'}, inplace=True)
-
-do_elochunk = True
+do_elochunk = False
 if do_elochunk:
     ch_agg_df = joblib.load('/data/chunk_aggs.p')
     ch_agg_df.index = ch_agg_df.index.droplevel('elo')
@@ -152,15 +158,19 @@ elo_df = DataFrame(elo_rows, columns=['gamenum','side','elo'])
 elo_df.set_index(['gamenum','side'], inplace=True)
 
 msg('Joining DFs')
-supplemental_dfs = [move_aggs[['mean', 'median', '25', '10', 'min', 'max', 'stdev']], wmove_aggs['moveelo_weighted'], depthstats_df, elo_df, crunched_df]
+supplemental_dfs = [depthstats_df, elo_df, crunched_df]
+if do_movemodel:
+    supplemental_dfs.extend([move_aggs, wmove_aggs)
 if do_elochunk:
     supplemental_dfs.append(ch_agg_df)
 mega_df = concat(supplemental_dfs, axis=1)
-mega_df = mega_df.join(material_df, how='outer')
+if do_material:
+    mega_df = mega_df.join(material_df, how='outer')
 mega_df = mega_df.join(eloscored_df, how='outer')
 mega_df = mega_df.join(eloscored4_df, how='outer')
 mega_df = mega_df.join(eloscored10_df, how='outer')
-mega_df = mega_df.join(gb_df, how='outer')
+if do_gb:
+    mega_df = mega_df.join(gb_df, how='outer')
 
 yy_df = mega_df
 msg("hi, columns are %s" % yy_df.columns)

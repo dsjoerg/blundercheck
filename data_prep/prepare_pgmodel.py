@@ -160,7 +160,7 @@ elo_df.set_index(['gamenum','side'], inplace=True)
 msg('Joining DFs')
 supplemental_dfs = [depthstats_df, elo_df, crunched_df]
 if do_movemodel:
-    supplemental_dfs.extend([move_aggs, wmove_aggs)
+    supplemental_dfs.extend([move_aggs, wmove_aggs])
 if do_elochunk:
     supplemental_dfs.append(ch_agg_df)
 mega_df = concat(supplemental_dfs, axis=1)

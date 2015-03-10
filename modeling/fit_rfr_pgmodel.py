@@ -39,8 +39,8 @@ histthing['lower'] = elobins[:-1]
 histthing['upper'] = elobins[1:]
 histthing['freq'] = histthing['count'] / sum(histthing['count'] )
 
-elo_centuries = cut(upper50k['elo'], bins=elobins)
-upperthing = upper50k.groupby(elo_centuries)['elo'].agg({'count': len})
+elo_centuries = cut(upper_50k['elo'], bins=elobins)
+upperthing = upper_50k.groupby(elo_centuries)['elo'].agg({'count': len})
 upperthing['up_freq'] = upperthing['count'] / sum(upperthing['count'] )
 
 freqs = histthing.join(upperthing['up_freq'])

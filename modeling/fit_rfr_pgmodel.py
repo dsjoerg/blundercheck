@@ -32,7 +32,7 @@ train = yy_df[yy_df.elo.notnull()]
 
 elo_kde = KernelDensity(kernel='gaussian', bandwidth=10).fit(train['elo'])
 print "KDE fun:"
-print elo_kde.score_samples(arange(1000,2800,100))
+print elo_kde.score_samples(np.arange(1000,2800,100))
 
 upper_50k = train[train['gamenum'] > 50000]
 upper_kde = KernelDensity(kernel='gaussian', bandwidth=10).fit(upper_50k['elo'])

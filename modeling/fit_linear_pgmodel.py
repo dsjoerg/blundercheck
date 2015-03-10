@@ -103,7 +103,7 @@ ols_cols.append('pos_fft_1')
 #ols_cols.extend(" + " + " + ".join(moveelo_features)
 
 # hey lets just use the elorange columns and see how they do
-#formula_rhs = " + ".join(elorange_cols)
+formula_rhs = " + ".join(elorange_cols)
 
 formula = "elo ~ " + formula_rhs
 

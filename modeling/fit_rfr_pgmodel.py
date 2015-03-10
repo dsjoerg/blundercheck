@@ -66,7 +66,7 @@ if do_sklearn_cv:
     print cvs, np.mean(cvs)
     sys.stdout.flush()
 
-do_semimanual_cv = True
+do_semimanual_cv = False
 if do_semimanual_cv:
     msg("fold")
     kf = KFold(train.shape[0], n_folds=n_cv_groups, shuffle=True)
@@ -85,6 +85,29 @@ if do_semimanual_cv:
                 blended_score = mean_absolute_error(blended_prediction, train.iloc[test_index]['elo'])
                 print blend, blended_score
 
+            print in_mae, out_mae
+            sys.stdout.flush()
+            ins.append(in_mae)
+            outs.append(out_mae)
+    print("INS:", ins, np.mean(ins))
+    print("OUTS:", outs, np.mean(outs))
+
+do_breadth_cv = True
+if do_breadth_cv:
+    msg("breadthfold")
+    kf = KFold(train.shape[0], n_folds=n_cv_groups, shuffle=True)
+    ins = []
+    outs = []
+    for train_index, test_index in kf:
+            msg("fit")
+            foo = rfr.fit(train.iloc[train_index][features], train.iloc[train_index]['elo'])
+            msg("pred")
+            in_mae = mean_absolute_error(rfr.predict(train.iloc[train_index][features]), train.iloc[train_index]['elo'])
+            msg("pred")
+            out_in_25k = train.iloc[test_index]
+            out_in_25k = out_in_25k[out_in_25k['gamenum'] < 25001]
+            out_preds = rfr.predict(out_in_25k[features])
+            out_mae = mean_absolute_error(out_preds, out_in_25k['elo'])
             print in_mae, out_mae
             sys.stdout.flush()
             ins.append(in_mae)

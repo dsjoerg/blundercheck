@@ -7,8 +7,7 @@ import csv, code
 import cPickle as pickle
 from sklearn.externals import joblib
 
-GAMELIMIT=60000
-NUM_GAMES=100000
+NUM_GAMES=25000
 
 
 def shell():
@@ -31,7 +30,7 @@ msg("Hi! Reading crunched movescores from %s" % sys.argv[1])
 crunched_path = sys.argv[1]
 crunched_df = read_csv(crunched_path, sep=',', engine='c', index_col=['gamenum', 'side'])
 
-do_gb = False
+do_gb = True
 if do_gb:
     msg("Hi! Reading GB scores from %s" % sys.argv[2])
     gb_path = sys.argv[2]
@@ -59,7 +58,7 @@ depthstats_df = depthstats_df.set_index(['gamenum', 'side'])
 # we have the gamelength column in another df, drop it here to avoid conflicts
 depthstats_df.drop('gamelength', axis=1, inplace=True)
 
-do_material = False
+do_material = True
 if do_material:
     msg("Hi! Reading material")
     material_path = '/data/material.csv'
@@ -127,7 +126,7 @@ eloscored10_cols[1:] = [x + '_elo10' for x in eloscored10_cols[1:]]
 eloscored10_df = read_csv('/data/data.pgn.eloscored10', sep=',', engine='c', header=None, names=eloscored10_cols, index_col=False)
 eloscored10_df = eloscored10_df.set_index(['gamenum'])
 
-do_movemodel=False
+do_movemodel=True
 if do_movemodel:
     msg("Hi! Reading moveaggs")
     move_aggs = joblib.load('/data/move_aggs.p')
@@ -139,7 +138,7 @@ if do_movemodel:
     wmove_aggs.rename(columns={'elo_pred': 'moveelo_weighted'}, inplace=True)
     wmove_aggs = wmove_aggs['moveelo_weighted']
 
-do_elochunk = False
+do_elochunk = True
 if do_elochunk:
     ch_agg_df = joblib.load('/data/chunk_aggs.p')
     ch_agg_df.index = ch_agg_df.index.droplevel('elo')

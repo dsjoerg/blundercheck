@@ -11,10 +11,12 @@ result_side['1-0'] = 1
 result_side['0-1'] = -1
 timecontrol = {}
 
-with open('/data/timecontrol.csv', 'r') as timecontrol_fd:
-  tcreader = csv.reader(timecontrol_fd)
-  for row in tcreader:
-    timecontrol[int(row[0])] = row[1]
+use_timecontrol_file=False
+if use_timecontrol_file:
+  with open('/data/timecontrol.csv', 'r') as timecontrol_fd:
+    tcreader = csv.reader(timecontrol_fd)
+    for row in tcreader:
+      timecontrol[int(row[0])] = row[1]
 
 def get_timecontrol(gamenum):
 #  if gamenum in timecontrol:

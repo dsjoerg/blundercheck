@@ -53,7 +53,7 @@ material_features = ['material_break_0', 'mean_acwsa']
 
 train = yy_df[yy_df.meanerror.notnull() & yy_df.elo.notnull()]
 
-use_only_25k = False
+use_only_25k = True
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 
@@ -79,35 +79,12 @@ formula_rhs = formula_rhs + " + pos_fft_1 "
 formula_rhs = formula_rhs + " + final_elo_elo4 + final_ply_elo4 + final_num_games_elo4 + final_elo_stdev_elo4"
 formula_rhs = formula_rhs + " + final_elo_elo10 + final_ply_elo10 + final_num_games_elo10 + final_elo_stdev_elo10"
 
-experimenting_with_breadth = True
+experimenting_with_breadth = False
 if not experimenting_with_breadth:
     formula_rhs = formula_rhs + " + moveelo_weighted"
     formula_rhs = formula_rhs + " + " + " + ".join(material_features)
     formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
     formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
-
-ols_cols = []
-ols_cols.extend(['side', 'nmerror', 'gameoutcome', 'drawn_game', 'gamelength', 'meanecho'])
-ols_cols.extend(['opponent_nmerror', 'opponent_noblunders'])
-ols_cols.extend(['min_nmerror', 'early_lead'])
-ols_cols.extend(['q_error_one', 'q_error_two'])
-ols_cols.append('opponent_q_error_one')
-ols_cols.extend(['mean_depth_clipped','mean_seldepth'])
-ols_cols.extend(['mean_depths_agreeing_ratio', 'mean_deepest_agree_ratio'])
-ols_cols.extend(['opponent_mean_depths_agreeing_ratio', 'opponent_mean_deepest_agree_ratio'])
-ols_cols.append('pct_sanemoves')
-ols_cols.extend(dummies.columns.values)
-ols_cols.append('moveelo_weighted')
-ols_cols.extend(new_depth_cols)
-ols_cols.extend(stdev_cols)
-ols_cols.extend(['final_elo','final_ply','final_num_games'])
-ols_cols.append('pos_fft_1')
-
-# do these really not help?!
-#ols_cols.extend(" + " + " + ".join(elorange_cols)
-
-# Never mind these, they didnt help much
-#ols_cols.extend(" + " + " + ".join(moveelo_features)
 
 # hey lets just use the elorange columns and see how they do
 #formula_rhs = " + ".join(elorange_cols)

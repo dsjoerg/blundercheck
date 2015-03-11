@@ -31,7 +31,7 @@ n_jobs = -1
 # CROSS_VALIDATION_N = 7500
 
 # debugging 'Cannot allocate memory'
-n_jobs = 1
+#n_jobs = 1
 
 
 if False:
@@ -130,7 +130,8 @@ if do_blunder_groups:
 
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=MIN_SAMPLES_LEAF, min_samples_split=MIN_SAMPLES_SPLIT, verbose=1)
 
-# Results: -221.781702, [-221.24820221 -222.91541283 -221.18149079]
+# with guid-bratko:
+# Results: -208.337044, [-207.53574677 -208.8714032  -208.60398141]
 do_crossval = True
 if do_crossval:
     crossval_df = sample_df(insample_df, CROSS_VALIDATION_N)

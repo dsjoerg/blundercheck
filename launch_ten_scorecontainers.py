@@ -13,7 +13,7 @@ def msg(str):
 
 envvars = []
 envvars.append({"key": "NUM_SCORESERVERS", "value": str(SCORESERVERS_PER_CONTAINER)})
-envvars.append({"key": "MOVETIME", "value": "2000"})
+envvars.append({"key": "MOVETIME", "value": "16000"})
 envvars.append({"key": "THREADS", "value": "1"})
 envvars.append({"key": "HASH", "value": "1000"})
 

@@ -11,6 +11,8 @@ INFO_BESTMOVE = 4
 INFO_PVNUM = 5
 INFO_COMPTIME = 6
 
+ANALYSIS_TIME_USEBEST = 999999
+
 def shell():
     vars = globals()
     vars.update(locals())
@@ -159,7 +161,7 @@ Journal, Vol. 29, No. 2, pp. 65-73, 2006. [GB06]
     return difficulty, difficulty_12, difficulties
 
 
-def process_sf_infos(infos, node, material_info):
+def process_sf_infos(infos, node, material_info, best_move_uci):
     """
     Returns [depth, seldepth, score, nodes, best_move,
     depths_agreeing, deepest_agree, white_material, black_material,
@@ -171,18 +173,19 @@ def process_sf_infos(infos, node, material_info):
     # get the infos for the best line
     pv1_infos = [info for info in infos if info[INFO_PVNUM] == 1]
 
-    # rather than take the best move from the last line that stockfish prints, we
-    # take the last completed depth with a timestamp.
-    #
-    # that means we are throwing away some computation each time, but it's the only
-    # way to get a consistent measure of the power of increasing depth/time
-    #
-    best_move_uci = pv1_infos[-1][INFO_BESTMOVE]
+    if best_move_uci is None:
+        # rather than take the best move from the last line that stockfish prints, we
+        # take the last completed depth with a timestamp.
+        #
+        # that means we are throwing away some computation each time, but it's the only
+        # way to get a consistent measure of the power of increasing depth/time
+        #
+        best_move_uci = pv1_infos[-1][INFO_BESTMOVE]
+
     if best_move_uci != '(none)':
         best_move_object = Move.from_uci(best_move_uci)
     else:
         best_move_object = None
-
 
     if len(pv1_infos) == 0:
         print "No infos! result=%s" % str(result)
@@ -296,9 +299,15 @@ def score_node_and_move(engine, node, analysis_times):
     retval = []
     for analysis_time in analysis_times:
         infos_for_analysis = [info for info in infos if info[INFO_COMPTIME] < analysis_time]
+
+        if analysis_time == ANALYSIS_TIME_USEBEST:
+            best_move_uci = result['move']
+        else:
+            best_move_uci = None
+
 #        print "There are %i infos for analysis at analysis_time %i" % (len(infos_for_analysis), analysis_time)
 #        print "They are: %s" % infos_for_analysis
-        retval.append(process_sf_infos(infos_for_analysis, node, material_info))
+        retval.append(process_sf_infos(infos_for_analysis, node, material_info, best_move_uci))
 
     return retval
 
@@ -385,13 +394,13 @@ def do_it(engine, game=None, debug=False):
 
 def do_it_backwards(engine, game=None, debug=False, movenum=None):
 
-    msg("Hi! Analyzing %s BACKWARDS" % game.headers['Event'])
+    msg("Yo yo yo! Analyzing %s BACKWARDS" % game.headers['Event'])
 
     if movenum:
         movetime = engine.movetime
         engine.movetime = 1
 
-    analysis_times = [250, 500, 1000, 2000, 4000]
+    analysis_times = [2000, 4000, 8000, ANALYSIS_TIME_USEBEST]
 
     begin_time = time.time()
 
@@ -437,7 +446,7 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         # clear the hash before each move eval so that depth stats are clean
         engine.put('setoption name Clear Hash')
 #        engine.debug = True
-        engine.put('setoption name multipv value 2')
+#        engine.put('setoption name multipv value 2')
 
         scoreresults = score_node_and_move(engine, prev_node, analysis_times)
         prev_score_white = [scoreresult[2] for scoreresult in scoreresults]

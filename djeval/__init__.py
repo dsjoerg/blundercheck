@@ -173,26 +173,17 @@ def process_sf_infos(infos, node, material_info, best_move_uci):
     # get the infos for the best line
     pv1_infos = [info for info in infos if info[INFO_PVNUM] == 1]
 
-    if best_move_uci is None:
-        # rather than take the best move from the last line that stockfish prints, we
-        # take the last completed depth with a timestamp.
-        #
-        # that means we are throwing away some computation each time, but it's the only
-        # way to get a consistent measure of the power of increasing depth/time
-        #
-        best_move_uci = pv1_infos[-1][INFO_BESTMOVE]
-
-    if best_move_uci != '(none)':
-        best_move_object = Move.from_uci(best_move_uci)
-    else:
-        best_move_object = None
-
     if len(pv1_infos) == 0:
-        print "No infos! result=%s" % str(result)
+        print "No infos!"
         depth = 0
         seldepth = 0
         nodes = 0
-        score_cp_for_white = 0
+        if node.board().turn == WHITE:
+            print "white mated, white has no move to make, white has neg Inf score"
+            score_cp_for_white = -32768
+        else:
+            print "blacks mated, no move to make, white has Inf score"
+            score_cp_for_white = 32768
         deepest_agree = 0
         depths_agreeing = 0
         num_bestmoves = 0
@@ -202,7 +193,23 @@ def process_sf_infos(infos, node, material_info, best_move_uci):
         gb_complexity = 0
         gb_complexity_12 = 0
         gb_complexities = [0] * (NUM_GB_DEPTHS+1)
+        best_move_object = None
     else:
+        if best_move_uci is None:
+            # rather than take the best move from the last line that stockfish prints, we
+            # take the last completed depth with a timestamp.
+            #
+            # that means we are throwing away some computation each time, but it's the only
+            # way to get a consistent measure of the power of increasing depth/time
+            #
+            best_move_uci = pv1_infos[-1][INFO_BESTMOVE]
+
+        if best_move_uci != '(none)':
+            best_move_object = Move.from_uci(best_move_uci)
+        else:
+            best_move_object = None
+
+
         depth = pv1_infos[-1][INFO_DEPTH]
         seldepth = pv1_infos[-1][INFO_SELDEPTH]
         nodes = pv1_infos[-1][INFO_NODES]
@@ -394,7 +401,7 @@ def do_it(engine, game=None, debug=False):
 
 def do_it_backwards(engine, game=None, debug=False, movenum=None):
 
-    msg("Yo yo yo! Analyzing %s BACKWARDS" % game.headers['Event'])
+    msg("Yo ho ho! Analyzing %s BACKWARDS" % game.headers['Event'])
 
     if movenum:
         movetime = engine.movetime

@@ -17,6 +17,7 @@ for fname in os.listdir(sys.argv[1]):
         fd = open(sys.argv[1] + '/' + fname, 'r')
         thestr = zlib.decompress(fd.read())
         thestr = string.replace(thestr, '}, ]', '} ]')
+        thestr = string.replace(thestr, '},]', '} ]')
         theitems = json.loads(thestr)
         for item in theitems:
                 if (int(item['event']) >= LOW_GAMENUM) and (int(item['event']) <= HIGH_GAMENUM):

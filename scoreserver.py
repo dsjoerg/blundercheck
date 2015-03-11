@@ -50,7 +50,7 @@ out_queuename = 'results'
 # another node may pick up the work and do it as well.
 #
 # leave enough time to process a 300 halfply game
-visibility_timeout = (300 * MOVETIME) / 1000
+visibility_timeout = (300 * movetime) / 1000
 
 # max permitted wait time.
 wait_time_seconds = 20

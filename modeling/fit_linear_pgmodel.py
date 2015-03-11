@@ -57,9 +57,8 @@ use_only_25k = True
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 
-chain_validating = False
+chain_validating = True
 if chain_validating:
-    # TODO rewrite this like [::3] ?
     train = train[train['gamenum'] % 3 == 0]
 
 formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"

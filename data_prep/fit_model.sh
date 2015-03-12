@@ -39,7 +39,7 @@ make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 make_material_aggregates.py /data/moves.csv > /data/material.csv
 #fit_errorchunk_models.py 2 3 1000 15 100 /data/errorchunks/
 #compute_chunklikes.py /data/errorchunks/
-crunch_movescores.py /data/crunched.csv 50000
+crunch_movescores.py /data/crunched.csv $NUMGAMES
 prepare_pgmodel.py /data/crunched.csv /data/gb.csv /data/yy_df.p
 show_pgdata.py /data/yy_df.p
 # standardize /data/yy_df.p

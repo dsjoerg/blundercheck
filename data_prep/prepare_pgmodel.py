@@ -30,7 +30,7 @@ msg("Hi! Reading crunched movescores from %s" % sys.argv[1])
 crunched_path = sys.argv[1]
 crunched_df = read_csv(crunched_path, sep=',', engine='c', index_col=['gamenum', 'side'])
 
-do_gb = True
+do_gb = False
 if do_gb:
     msg("Hi! Reading GB scores from %s" % sys.argv[2])
     gb_path = sys.argv[2]

@@ -23,12 +23,14 @@ def fix_colname(cn):
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
-yy_df.drop('level_0', axis=1, inplace=True)
 
 # clean up column names
 colnames = list(yy_df.columns.values)
 colnames = [fix_colname(cn) for cn in colnames]
 yy_df.columns = colnames
+
+if 'level_0' in colname:
+    yy_df.drop('level_0', axis=1, inplace=True)
 
 # change the gamenum and side from being part of the index to being normal columns
 yy_df.reset_index(inplace=True)

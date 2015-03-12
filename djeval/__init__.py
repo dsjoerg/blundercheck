@@ -462,8 +462,9 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         if debug:
             for i in range(0, len(prev_score_white)):
                 score_loss = score_sign * (prev_score_white[i] - current_score_white[i])
-                thismove_analysis = '%2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (prev_node.board().fullmove_number, turn_indicator, prev_node.board().san(node.move), score_loss, prev_score_white[i], current_score_white[i], prev_node.board().san(prev_best_move[i]), scoreresults[i][0], scoreresults[i][1], scoreresults[i][5], scoreresults[i][6])
+                thismove_analysis = '%s: %2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (game.headers['Event'], prev_node.board().fullmove_number, turn_indicator, prev_node.board().san(node.move), score_loss, prev_score_white[i], current_score_white[i], prev_node.board().san(prev_best_move[i]), scoreresults[i][0], scoreresults[i][1], scoreresults[i][5], scoreresults[i][6])
                 print thismove_analysis
+                sys.stdout.flush()
             #        print >>outfile, thismove_analysis
         else:
             print '.',
@@ -513,8 +514,9 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
                 next_node = node.variation(0)
                 score_loss = score_sign * (mps[score_index] - mps[score_index + 1])
 
-                thismove_analysis = '%2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, mps[score_index], mps[score_index+1], outstruct['best_moves'][i][score_index], outstruct['depth_stats'][i][score_index][0], outstruct['depth_stats'][i][score_index][1], outstruct['depth_stats'][i][score_index][2], outstruct['depth_stats'][i][score_index][3])
+                thismove_analysis = '%s: %2d%-3s %6s loss:%5.0f (%+5.0f -> %+5.0f) (best move: %s) (depth %i, seldepth %i) (%i depths agree, deepest %i)' % (game.headers['Event'], node.board().fullmove_number, turn_indicator, node.board().san(next_node.move), score_loss, mps[score_index], mps[score_index+1], outstruct['best_moves'][i][score_index], outstruct['depth_stats'][i][score_index][0], outstruct['depth_stats'][i][score_index][1], outstruct['depth_stats'][i][score_index][2], outstruct['depth_stats'][i][score_index][3])
                 print thismove_analysis
+                sys.stdout.flush()
 
                 node = next_node
                 score_index = score_index + 1

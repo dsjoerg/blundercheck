@@ -1,5 +1,9 @@
 #!/bin/bash
 
+RESULTDIR=$(date +%Y%m%d%H%M%S)-$HOSTNAME
+mkdir /data/results-$RESULTDIR
+
+
 wget -O /data/data.pgn https://s3.amazonaws.com/bc-games/kaggle/data.pgn
 wget -O /data/stockfish.csv https://s3.amazonaws.com/bc-games/first/stockfish.csv
 wget -O - https://s3.amazonaws.com/bc-runoutputs/$CLUSTER_INPUT_FILE > /data/$CLUSTER_INPUT_FILE
@@ -40,13 +44,13 @@ prepare_pgmodel.py /data/crunched.csv /data/gb.csv /data/yy_df.p
 show_pgdata.py /data/yy_df.p
 # standardize /data/yy_df.p
 fit_linear_pgmodel.py /data/yy_df.p
-fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p
+fit_rfr_pgmodel.py /data/yy_df.p /data/rfr_pgmodel.p | tee /data/results-$RESULTDIR/rfr.stdout
 #make_scatterplots.py /data/yy_df.p
 enhance_entry.py /data/data25k.pgn.elos /data/certain_elos /data/submission_rfr.csv > /data/submission_enhanced.csv
 masked_entry.py 25001 37500 < /data/submission_enhanced.csv > /data/submission_1H.csv
 masked_entry.py 37501 50001 < /data/submission_enhanced.csv > /data/submission_2H.csv
-RESULTDIR=$(date +%Y%m%d%H%M%S)
-mkdir /data/results-$RESULTDIR
+
 cp /data/submission*.csv /data/results-$RESULTDIR
+printenv > /data/results-$RESULTDIR/env.txt
 aws s3 mb s3://bc-runoutputs/results-$RESULTDIR
 aws s3 sync /data/results-$RESULTDIR s3://bc-runoutputs/results-$RESULTDIR

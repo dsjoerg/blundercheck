@@ -7,7 +7,7 @@ import csv, code
 import cPickle as pickle
 from sklearn.externals import joblib
 
-NUM_GAMES=25000
+NUM_GAMES=50000
 
 
 def shell():

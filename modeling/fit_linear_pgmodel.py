@@ -6,7 +6,7 @@ import cPickle as pickle
 from pandas import DataFrame, read_pickle, get_dummies, cut
 import statsmodels.formula.api as sm
 from sklearn.externals import joblib
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge, RidgeCV, LassoCV
 
 from djeval import *
 
@@ -23,6 +23,7 @@ def fix_colname(cn):
 
 msg("Hi, reading yy_df.")
 yy_df = read_pickle(sys.argv[1])
+yy_df.drop('level_0', axis=1, inplace=True)
 
 # clean up column names
 colnames = list(yy_df.columns.values)
@@ -61,24 +62,49 @@ chain_validating = False
 if chain_validating:
     train = train[train['gamenum'] % 3 == 0]
 
-formula_rhs = "side + nmerror + gameoutcome + drawn_game + gamelength + meanecho"
-formula_rhs = formula_rhs + " + opponent_nmerror + opponent_noblunders"
-formula_rhs = formula_rhs + " + min_nmerror + early_lead"
-formula_rhs = formula_rhs + " + q_error_one + q_error_two"
-formula_rhs = formula_rhs + " + opponent_q_error_one"
-formula_rhs = formula_rhs + " + mean_depth_clipped + mean_seldepth"
-formula_rhs = formula_rhs + " + mean_depths_agreeing_ratio + mean_deepest_agree_ratio"
-formula_rhs = formula_rhs + " + opponent_mean_depths_agreeing_ratio + opponent_mean_deepest_agree_ratio"
-formula_rhs = formula_rhs + " + pct_sanemoves"
-formula_rhs = formula_rhs + " + " + " + ".join(dummies.columns.values)
-formula_rhs = formula_rhs + " + " + " + ".join(new_depth_cols)
-formula_rhs = formula_rhs + " + " + " + ".join(stdev_cols)
-formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games + final_elo_stdev + elopath_min + elopath_max"
-formula_rhs = formula_rhs + " + pos_fft_1 "
-formula_rhs = formula_rhs + " + final_elo_elo4 + final_ply_elo4 + final_num_games_elo4 + final_elo_stdev_elo4"
-formula_rhs = formula_rhs + " + final_elo_elo10 + final_ply_elo10 + final_num_games_elo10 + final_elo_stdev_elo10"
-formula_rhs = formula_rhs + " + moveelo_weighted"
-formula_rhs = formula_rhs + " + " + " + ".join(material_features)
+rhs_cols = [
+'side',
+'nmerror',
+'gameoutcome',
+'drawn_game',
+'gamelength',
+'meanecho',
+'opponent_nmerror',
+'opponent_noblunders',
+'min_nmerror',
+'early_lead',
+'q_error_one',
+'q_error_two',
+'opponent_q_error_one',
+'mean_depth_clipped',
+'mean_seldepth',
+'mean_depths_agreeing_ratio',
+'mean_deepest_agree_ratio',
+'opponent_mean_depths_agreeing_ratio',
+'opponent_mean_deepest_agree_ratio',
+'pct_sanemoves',
+'final_elo',
+'final_ply',
+'final_num_games',
+'final_elo_stdev',
+'elopath_min',
+'elopath_max',
+'pos_fft_1',
+'final_elo_elo4',
+'final_ply_elo4',
+'final_num_games_elo4',
+'final_elo_stdev_elo4',
+'final_elo_elo10',
+'final_ply_elo10',
+'final_num_games_elo10',
+'final_elo_stdev_elo10',
+'moveelo_weighted',
+]
+
+rhs_cols.extend(dummies.columns.values)
+rhs_cols.extend(new_depth_cols)
+rhs_cols.extend(stdev_cols)
+rhs_cols.extend(material_features)
 
 if False:
     formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
@@ -87,7 +113,7 @@ if False:
 # hey lets just use the elorange columns and see how they do
 #formula_rhs = " + ".join(elorange_cols)
 
-formula = "elo ~ " + formula_rhs
+formula = "elo ~ " + " + ".join(rhs_cols)
 
 msg("Fitting!")
 
@@ -100,8 +126,8 @@ if do_statsmodels:
     msg("Making predictions for all playergames")
     yy_df['ols_prediction'] = ols.predict(yy_df)
 else:
-    ols_lr = LinearRegression()
-    X = train[ols_cols]
+    ols_lr = LassoCV(n_jobs=-1, verbose=True)
+    X = train[rhs_cols]
     y = train['elo']
     ols_lr.fit(X,y)
     yy_df['ols_prediction'] = ols_lr.predict(X)

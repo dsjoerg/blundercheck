@@ -57,7 +57,7 @@ use_only_25k = True
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 
-chain_validating = True
+chain_validating = False
 if chain_validating:
     train = train[train['gamenum'] % 3 == 0]
 
@@ -77,11 +77,10 @@ formula_rhs = formula_rhs + " + final_elo + final_ply + final_num_games + final_
 formula_rhs = formula_rhs + " + pos_fft_1 "
 formula_rhs = formula_rhs + " + final_elo_elo4 + final_ply_elo4 + final_num_games_elo4 + final_elo_stdev_elo4"
 formula_rhs = formula_rhs + " + final_elo_elo10 + final_ply_elo10 + final_num_games_elo10 + final_elo_stdev_elo10"
+formula_rhs = formula_rhs + " + moveelo_weighted"
+formula_rhs = formula_rhs + " + " + " + ".join(material_features)
 
-experimenting_with_breadth = False
-if not experimenting_with_breadth:
-    formula_rhs = formula_rhs + " + moveelo_weighted"
-    formula_rhs = formula_rhs + " + " + " + ".join(material_features)
+if False:
     formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
     formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 

@@ -122,7 +122,7 @@ if do_semimanual_cv:
     print("INS:", ins, np.mean(ins))
     print("OUTS:", outs, np.mean(outs))
 
-do_breadth_cv = False
+do_breadth_cv = True
 if do_breadth_cv:
     msg("breadthfold")
     kf = KFold(train.shape[0], n_folds=n_cv_groups, shuffle=True)
@@ -145,7 +145,7 @@ if do_breadth_cv:
     msg("INS: %s %f" % (ins, np.mean(ins)))
     msg("OUTS: %s %f" % (outs, np.mean(outs)))
 
-do_manual_cv = True
+do_manual_cv = False
 if do_manual_cv:
     for test_m in [0,1,2]:
         in_df = train[(train['gamenum'] % 3) != test_m]

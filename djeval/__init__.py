@@ -453,7 +453,7 @@ def do_it_backwards(engine, game=None, debug=False, movenum=None):
         # clear the hash before each move eval so that depth stats are clean
         engine.put('setoption name Clear Hash')
 #        engine.debug = True
-#        engine.put('setoption name multipv value 2')
+        engine.put('setoption name multipv value 2')
 
         scoreresults = score_node_and_move(engine, prev_node, analysis_times)
         prev_score_white = [scoreresult[2] for scoreresult in scoreresults]

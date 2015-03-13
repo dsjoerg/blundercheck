@@ -118,10 +118,10 @@ if DO_GOLEM:
     rhs_cols.extend(golem_cols)
 
 if DO_GB:
-    formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
+    rhs_cols.extend(gb_cols)
 
 if DO_ERRORCHUNK:
-    formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
+    rhs_cols.extend(elorange_cols)
 
 # hey lets just use the elorange columns and see how they do
 #formula_rhs = " + ".join(elorange_cols)

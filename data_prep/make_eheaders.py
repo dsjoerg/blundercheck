@@ -36,6 +36,8 @@ def compute_maps():
     if 'Event' not in headers:
       continue
     event_num = int(headers['Event'])
+    if (event_num % 1000) == 0:
+      print 'make_eheaders reading game #%i' % event_num
     if 'WhiteElo' in headers:
       elos[(event_num, 1)] = int(headers['WhiteElo'])
     if 'BlackElo' in headers:

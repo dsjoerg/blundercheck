@@ -3,7 +3,7 @@
 from pandas  import *
 from numpy  import *
 from djeval import *
-import csv, code
+import csv, code, os
 import cPickle as pickle
 from sklearn.externals import joblib
 

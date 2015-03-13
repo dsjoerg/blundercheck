@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, time
+import sys, time, os
 import numpy as np
 import cPickle as pickle
 from pandas import *
@@ -85,6 +85,8 @@ excluded_features.extend(categorical_features)
 if not DO_ERRORCHUNK:
     excluded_features.extend(elorange_cols)
 
+if not DO_GB:
+    excluded_features.extend(
 
 for f in excluded_features:
     if f in features:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, time, code
+import sys, time, code, os
 import numpy as np
 import cPickle as pickle
 from pandas import DataFrame, read_pickle, get_dummies, cut

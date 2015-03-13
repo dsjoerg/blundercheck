@@ -37,6 +37,10 @@ def was_matedestroyed(prev, next):
 # START
 ##############################
 
+msg("Hi! Reading timecontrols")
+tc_path = '/data/timecontrols.txt'
+tc_df = read_csv(tc_path, sep=',', engine='c', columns=['gamenum','timecontrol'], index_col=['gamenum'])
+
 yy_df = read_pickle('/data/yy_df.p')
 min_elo = int(sys.argv[2])
 max_elo = int(sys.argv[3])

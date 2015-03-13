@@ -72,6 +72,23 @@ if use_only_25k:
 features = list(yy_df.columns.values)
 print 'Available columns are: %s' % features
 
+golem_cols = [
+'final_elo',
+'final_ply',
+'final_num_games',
+'final_elo_stdev',
+'elopath_min',
+'elopath_max',
+'final_elo_elo4',
+'final_ply_elo4',
+'final_num_games_elo4',
+'final_elo_stdev_elo4',
+'final_elo_elo10',
+'final_ply_elo10',
+'final_num_games_elo10',
+'final_elo_stdev_elo10',
+]    
+
 categorical_features = ['opening_feature']
 dummies = get_dummies(yy_df[categorical_features])
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
@@ -91,6 +108,9 @@ if not DO_GB:
     gb_cols = [colname for colname in features if colname.startswith('gb_')]
     excluded_features.extend(gb_cols)
 
+if not DO_GOLEM:
+    excluded_features.extend(golem_cols)
+
 print 'Excluded columns are: %s' % excluded_features
 for f in excluded_features:
     if f in features:
@@ -99,6 +119,7 @@ for f in excluded_features:
         print 'Tried to remove %s but it wasnt there' % f
 
 print 'Included features are: %s' % features
+sys.stdout.flush()
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
 
 do_sklearn_cv = False

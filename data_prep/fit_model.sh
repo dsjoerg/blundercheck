@@ -24,6 +24,9 @@ wget -O /data/certain_elos https://s3.amazonaws.com/bc-games/certain_elos
 wget -O /data/gb1-25.gz https://s3.amazonaws.com/bc-runoutputs/20150308.25k.gz
 wget -O /data/gb25-50.gz https://s3.amazonaws.com/bc-runoutputs/20150313-k2550.gz
 
+# timecontrol for the 25k, not used in modeling, but strictly in
+# show_one.py and other diagnostic tools
+wget -O /data/timecontrols.txt https://s3.amazonaws.com/bc-runinputs/timecontrols.txt
 
 ######## NOT CURRENTLY USED STUFF ########
 # an old run that had good depth (and caching?)

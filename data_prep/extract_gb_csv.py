@@ -11,7 +11,10 @@ def shell():
     shell.interact()
 
 NUM_GB_DEPTHS = 18
-TIMESLICE = int(os.environ['TIMESLICE'])
+
+# hardcoding 3 now because we just want the best G-B data possible
+TIMESLICE = 3
+
 GUIDBRATKO = bool(int(os.environ['GUIDBRATKO']))
 
 # one extra for the sum, 3 less for the leading zeros

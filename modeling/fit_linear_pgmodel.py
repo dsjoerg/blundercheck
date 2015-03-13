@@ -29,7 +29,7 @@ colnames = list(yy_df.columns.values)
 colnames = [fix_colname(cn) for cn in colnames]
 yy_df.columns = colnames
 
-if 'level_0' in colname:
+if 'level_0' in colnames:
     yy_df.drop('level_0', axis=1, inplace=True)
 
 # change the gamenum and side from being part of the index to being normal columns

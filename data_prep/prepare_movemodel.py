@@ -43,8 +43,8 @@ columns = ['halfply','moverscore','movergain','prevgain','move_piece','move_dir'
 moves_df = read_csv(sys.stdin, engine='c', header=None, names=columns, dtype=column_dtypes, index_col=False)
 
 print 'SHAPE', moves_df.shape
-print moves_df.memory_usage(index=True).sum()
-print moves_df.memory_usage(index=True)
+#print moves_df.memory_usage(index=True).sum()
+#print moves_df.memory_usage(index=True)
 
 # for the purposes of modeling we dont care about east-west differences
 for colname in ['move_dir', 'bestmove_dir']:
@@ -65,14 +65,24 @@ categorical_features = [
 ]
 
 print 'SHAPE', moves_df.shape
-print moves_df.memory_usage(index=True).sum()
-print moves_df.memory_usage(index=True)
+#print moves_df.memory_usage(index=True).sum()
+#print moves_df.memory_usage(index=True)
 
 dummy_features = []
 for index, cf in enumerate(categorical_features):
   dummies = get_dummies(moves_df[cf], prefix=cf).astype(np.int8)
   dummy_features.extend(dummies.columns.values)
   moves_df = moves_df.join(dummies)
+
+counts = moves_df.count(axis=0)
+print "moves_df columns with some NAs:"
+print np.max(counts) - counts[counts != np.max(counts)]
+
+# fill in NAs with the column mean
+moves_elo = moves_df['elo'].copy(True)
+moves_df.fillna(moves_df.mean(numeric_only=True), inplace=True)
+moves_df.fillna(False, inplace=True)
+moves_df['elo'] = moves_elo
 
 moves_df.to_pickle(sys.argv[1])
 

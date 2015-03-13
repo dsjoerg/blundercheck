@@ -122,12 +122,17 @@ for row in csvreader:
     num_bestmove_changes.append(int(row['num_bestmove_changes']))
     bestmove_depths_agreeing.append(int(row['bestmove_depths_agreeing']))
     deepest_change.append(int(row['deepest_change']))
-    deepest_change_ratio.append(float(row['deepest_change']) / float(row['depth']))
 
     seldepths.append(int(row['seldepth']))
     side = int(row['side'])
-    depths_agreeing_ratio[side].append(float(row['depths_agreeing']) / float(row['depth']))
-    deepest_agree_ratio[side].append(float(row['deepest_agree']) / float(row['depth']))
+    if float(row['depth']) > 0:
+        deepest_change_ratio.append(float(row['deepest_change']) / float(row['depth']))
+        depths_agreeing_ratio[side].append(float(row['depths_agreeing']) / float(row['depth']))
+        deepest_agree_ratio[side].append(float(row['deepest_agree']) / float(row['depth']))
+    else:
+        sys.stderr.write("row with 0 depth, weird: %s" % row)
+        sys.stderr.flush()
+        
     rownum = rownum + 1
 #    if rownum % 20000 == 0:
 #        msg('row %i\n' % rownum)

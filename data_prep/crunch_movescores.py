@@ -107,7 +107,11 @@ for row in rows.values():
 
   strscores = row[1].split(' ')
   side = 1
-  last_equity = int(strscores[0])
+  try:
+      last_equity = int(strscores[0])
+  except ValueError:
+      sys.stderr.write('Couldnt parse row, skipping: %s\n' % row)
+      next
   last_gain = 0
   movenum = 0
   num_moves_while_losing = 0

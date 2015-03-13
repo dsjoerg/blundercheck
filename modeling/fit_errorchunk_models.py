@@ -17,6 +17,8 @@ NUM_ESTIMATORS = int(sys.argv[3])
 LOW_BOUND = float(sys.argv[4])
 HIGH_BOUND = float(sys.argv[5])
 
+CHAIN_VALIDATE = bool(os.environ['CHAIN_VALIDATE'])
+
 n_cv_groups = 2
 
 def shell():
@@ -44,8 +46,7 @@ moves_df = read_pickle('/data/movedata.p')
 moves_df['clipped_movergain'] = moves_df['movergain'].clip(-1e9,0)
 train_df = moves_df[moves_df['elo'].notnull()]
 
-chain_validating = True
-if chain_validating:
+if CHAIN_VALIDATE:
     train_df = train_df[train_df['gamenum'] % 3 == 0]
 
 msg('Looking at %i moves' % train_df.shape[0])

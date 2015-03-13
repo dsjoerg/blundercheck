@@ -15,11 +15,16 @@ import pygraphviz as pgv
 from StringIO import StringIO
 from djeval import *
 
-n_estimators = 200
+DO_GB = bool(os.environ['DO_GB'])
+DO_GOLEM = bool(os.environ['DO_GOLEM'])
+DO_ERRORCHUNK = bool(os.environ['DO_ERRORCHUNK'])
+CHAIN_VALIDATE = bool(os.environ['CHAIN_VALIDATE'])
+
+n_estimators = int(os.environ['PG_RFR_N_ESTIMATORS'])
 n_cv_groups = 3
 n_jobs = -1
-msl = 10
-mss = 50
+msl = int(os.environ['PG_RFR_MSL'])
+mss = int(os.environ['PG_RFR_MSS'])
 multiplier = 1
 msl = msl * multiplier
 mss = mss * multiplier
@@ -72,11 +77,15 @@ elorange_cols.extend([x for x in list(yy_df.columns.values) if x.startswith('opp
 material_features = ['material_break_0', 'material_break_1', 'material_break_2', 'material_break_3', 'material_break_4', 'opening_length', 'midgame_length', 'endgame_length', 'mean_acwsa', 'mean_acwsa_0', 'mean_acwsa_1', 'mean_acwsa_2', 'mean_acwsa_3', 'mean_acwsa_4', 'mean_acwsa_5', 'mean_acwsa_6', 'mean_acwsa_7', 'mean_acwsa_8', 'mean_acwsa_9']
 
 excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'gamenum', 'rfr_prediction', 'rfr_error', 'index', 'level_0']
-#excluded_features.append('ols_prediction')
 excluded_features.extend(categorical_features)
+#excluded_features.append('ols_prediction')
 #excluded_features.extend(dummies)
 #excluded_features.extend(material_features)
-#excluded_features.extend(elorange_cols)
+
+if not DO_ERRORCHUNK:
+    excluded_features.extend(elorange_cols)
+
+
 for f in excluded_features:
     if f in features:
         features.remove(f)
@@ -145,8 +154,7 @@ if do_breadth_cv:
     msg("INS: %s %f" % (ins, np.mean(ins)))
     msg("OUTS: %s %f" % (outs, np.mean(outs)))
 
-do_manual_cv = False
-if do_manual_cv:
+if CHAIN_VALIDATE:
     for test_m in [0,1,2]:
         in_df = train[(train['gamenum'] % 3) != test_m]
         out_df = train[(train['gamenum'] % 3) == test_m]

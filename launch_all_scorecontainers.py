@@ -16,7 +16,7 @@ envvars = []
 envvars.append({"key": "NUM_SCORESERVERS", "value": str(SCORESERVERS_PER_CONTAINER)})
 envvars.append({"key": "DEBUG", "value": "1"})
 envvars.append({"key": "MIN_ITEMS_PER_KEY", "value": "200000"})
-envvars.append({"key": "MOVETIME", "value": "16000"})
+envvars.append({"key": "MOVETIME", "value": "2000"})
 envvars.append({"key": "THREADS", "value": "1"})
 envvars.append({"key": "HASH", "value": "1000"})
 

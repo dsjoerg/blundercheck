@@ -9,6 +9,11 @@ from sklearn.externals import joblib
 
 NUM_GAMES=50000
 
+DO_GB = bool(os.environ['DO_GB'])
+DO_GOLEM = bool(os.environ['DO_GOLEM'])
+DO_ERRORCHUNK = bool(os.environ['DO_ERRORCHUNK'])
+CHAIN_VALIDATE = bool(os.environ['CHAIN_VALIDATE'])
+
 
 def shell():
     vars = globals()
@@ -30,8 +35,7 @@ msg("Hi! Reading crunched movescores from %s" % sys.argv[1])
 crunched_path = sys.argv[1]
 crunched_df = read_csv(crunched_path, sep=',', engine='c', index_col=['gamenum', 'side'])
 
-do_gb = False
-if do_gb:
+if DO_GB:
     msg("Hi! Reading GB scores from %s" % sys.argv[2])
     gb_path = sys.argv[2]
     gb_df = read_csv(gb_path, sep=',', engine='c', index_col=['gamenum'])
@@ -138,18 +142,15 @@ if do_movemodel:
     wmove_aggs.rename(columns={'elo_pred': 'moveelo_weighted'}, inplace=True)
     wmove_aggs = wmove_aggs['moveelo_weighted']
 
-do_elochunk = False
-if do_elochunk:
+if DO_ERRORCHUNK:
     ch_agg_df = joblib.load('/data/chunk_aggs.p')
     ch_agg_df.index = ch_agg_df.index.droplevel('elo')
     ch_agg_df.columns = ['elochunk_' + x for x in ch_agg_df.columns]
+    elorange_cols = list(ch_agg_df.columns.values)
+    msg("elorange cols are %s" % elorange_cols)
 
 
 msg("Hi! Setting up playergame rows")
-
-if do_elochunk:
-    elorange_cols = list(ch_agg_df.columns.values)
-    msg("elorange cols are %s" % elorange_cols)
 
 msg('Preparing ELO df')
 elo_rows = [[x[0][0], x[0][1], x[1]] for x in elos.items()]
@@ -160,7 +161,7 @@ msg('Joining DFs')
 supplemental_dfs = [depthstats_df, elo_df, crunched_df]
 if do_movemodel:
     supplemental_dfs.extend([move_aggs, wmove_aggs])
-if do_elochunk:
+if DO_ERRORCHUNK:
     supplemental_dfs.append(ch_agg_df)
 mega_df = concat(supplemental_dfs, axis=1)
 if do_material:
@@ -168,7 +169,7 @@ if do_material:
 mega_df = mega_df.join(eloscored_df, how='outer')
 mega_df = mega_df.join(eloscored4_df, how='outer')
 mega_df = mega_df.join(eloscored10_df, how='outer')
-if do_gb:
+if DO_GB:
     mega_df = mega_df.join(gb_df, how='outer')
 
 yy_df = mega_df
@@ -202,7 +203,7 @@ yy_df['gamelength_clipped'] = yy_df['gamelength'].clip(20,200)
 
 # prepare opponent_df with selected info about opponent
 opponent_columns = ['meanerror', 'blunderrate', 'perfectrate', 'grit', 'meanecho', 'mate_created', 'mate_destroyed', 'q_error_one', 'q_error_two', 'stdeverror', 'elo', 'any_grit', 'noblunders', 'nmerror', 'mean_depths_agreeing_ratio', 'mean_deepest_agree_ratio', 'pct_sanemoves']
-if do_elochunk:
+if DO_ERRORCHUNK:
     opponent_columns.extend(elorange_cols)
 opponent_df = yy_df[opponent_columns]
 opponent_df = opponent_df.reset_index()

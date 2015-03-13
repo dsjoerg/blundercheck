@@ -7,15 +7,19 @@ from pandas import DataFrame, read_pickle, get_dummies, cut
 import statsmodels.formula.api as sm
 from sklearn.externals import joblib
 from sklearn.linear_model import LinearRegression, Ridge, RidgeCV, LassoCV
-
 from djeval import *
+
+
+DO_GB = bool(os.environ['DO_GB'])
+DO_GOLEM = bool(os.environ['DO_GOLEM'])
+DO_ERRORCHUNK = bool(os.environ['DO_ERRORCHUNK'])
+CHAIN_VALIDATE = bool(os.environ['CHAIN_VALIDATE'])
 
 def shell():
     vars = globals()
     vars.update(locals())
     shell = code.InteractiveConsole(vars)
     shell.interact()
-
 
 def fix_colname(cn):
     return cn.translate(None, ' ()[],')
@@ -60,9 +64,25 @@ use_only_25k = True
 if use_only_25k:
     train = train[train['gamenum'] < 25001]
 
-chain_validating = False
-if chain_validating:
+if CHAIN_VALIDATE:
     train = train[train['gamenum'] % 3 == 0]
+
+golem_cols = [
+'final_elo',
+'final_ply',
+'final_num_games',
+'final_elo_stdev',
+'elopath_min',
+'elopath_max',
+'final_elo_elo4',
+'final_ply_elo4',
+'final_num_games_elo4',
+'final_elo_stdev_elo4',
+'final_elo_elo10',
+'final_ply_elo10',
+'final_num_games_elo10',
+'final_elo_stdev_elo10',
+]    
 
 rhs_cols = [
 'side',
@@ -85,21 +105,7 @@ rhs_cols = [
 'opponent_mean_depths_agreeing_ratio',
 'opponent_mean_deepest_agree_ratio',
 'pct_sanemoves',
-'final_elo',
-'final_ply',
-'final_num_games',
-'final_elo_stdev',
-'elopath_min',
-'elopath_max',
 'pos_fft_1',
-'final_elo_elo4',
-'final_ply_elo4',
-'final_num_games_elo4',
-'final_elo_stdev_elo4',
-'final_elo_elo10',
-'final_ply_elo10',
-'final_num_games_elo10',
-'final_elo_stdev_elo10',
 'moveelo_weighted',
 ]
 
@@ -108,8 +114,13 @@ rhs_cols.extend(new_depth_cols)
 rhs_cols.extend(stdev_cols)
 rhs_cols.extend(material_features)
 
-if False:
+if DO_GOLEM:
+    rhs_cols.extend(golem_cols)
+
+if DO_GB:
     formula_rhs = formula_rhs + " + " + " + ".join(gb_cols)
+
+if DO_ERRORCHUNK:
     formula_rhs = formula_rhs + " + " + " + ".join(elorange_cols)
 
 # hey lets just use the elorange columns and see how they do

@@ -14,7 +14,10 @@ wget -O /data/data.pgn.eloscored4 https://s3.amazonaws.com/bc-runoutputs/data100
 wget -O /data/data.pgn.eloscored10 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.10
 
 # data used for enhancing entry
+# TODO instead of downloading this, could use your extract_elos.py
 wget -O /data/data25k.pgn.elos https://s3.amazonaws.com/bc-games/data25k.pgn.elos
+# TODO instead of downloading this, could run polyglot in elo-book -exact-match mode
+# HOWEVER YOU HAVE TO POST-FILTER IT, BECAUSE elo_book.cpp has changed and spits out all events, not just those >25k
 wget -O /data/certain_elos https://s3.amazonaws.com/bc-games/certain_elos
 
 ######## NOT CURRENTLY USED STUFF ########
@@ -29,7 +32,7 @@ wget -O /data/certain_elos https://s3.amazonaws.com/bc-games/certain_elos
 make_eheaders.py /data/data.pgn > /data/eheaders.p
 make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 extract_movescores_from_gz.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
-#extract_gb_csv.py /data/$CLUSTER_INPUT_FILE > /data/gb.csv
+extract_gb_csv.py /data/$CLUSTER_INPUT_FILE > /data/gb.csv
 cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 fit_movemodel.py /data/movedata.p /data/movemodel.p
 show_movemodel.py /data/movemodel.p
@@ -37,8 +40,13 @@ use_movemodel.py /data/movedata.p /data/movemodel.p
 compute_moveaggs.py /data/movedata.p
 make_depth_aggregates_csv.py < /data/moves.csv > /data/depthstats.csv
 make_material_aggregates.py /data/moves.csv > /data/material.csv
-#fit_errorchunk_models.py 2 3 1000 15 100 /data/errorchunks/
-#compute_chunklikes.py /data/errorchunks/
+
+if [ $DO_ERRORCHUNK -eq 1 ]
+   then
+       fit_errorchunk_models.py $NUM_ELO_GROUPS $NUM_ERRORCHUNKS $NUM_ESTIMATORS 15 100 /data/errorchunks/
+       compute_chunklikes.py /data/errorchunks/
+fi
+
 crunch_movescores.py /data/crunched.csv $NUMGAMES
 prepare_pgmodel.py /data/crunched.csv /data/gb.csv /data/yy_df.p
 show_pgdata.py /data/yy_df.p

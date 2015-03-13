@@ -20,6 +20,11 @@ wget -O /data/data25k.pgn.elos https://s3.amazonaws.com/bc-games/data25k.pgn.elo
 # HOWEVER YOU HAVE TO POST-FILTER IT, BECAUSE elo_book.cpp has changed and spits out all events, not just those >25k
 wget -O /data/certain_elos https://s3.amazonaws.com/bc-games/certain_elos
 
+# guid-bratko runs
+wget -O /data/gb1-25.gz https://s3.amazonaws.com/bc-runoutputs/20150308.25k.gz
+wget -O /data/gb25-50.gz https://s3.amazonaws.com/bc-runoutputs/20150313-k2550.gz
+
+
 ######## NOT CURRENTLY USED STUFF ########
 # an old run that had good depth (and caching?)
 #wget -O - https://s3.amazonaws.com/bc-runoutputs/20150203.json.zl > /data/20150203.json.zl
@@ -29,10 +34,11 @@ wget -O /data/certain_elos https://s3.amazonaws.com/bc-games/certain_elos
 ##########################################
 
 
+extract_gb_csv.py /data/gb25-50.gz > /data/gb.csv
+extract_gb_csv_noslice.py /data/gb1-25.gz > /data/gb.csv
 make_eheaders.py /data/data.pgn > /data/eheaders.p
 make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 extract_movescores_from_gz.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv
-extract_gb_csv.py /data/$CLUSTER_INPUT_FILE > /data/gb.csv
 cat /data/moves.csv | prepare_movemodel.py /data/movedata.p
 fit_movemodel.py /data/movedata.p /data/movemodel.p
 show_movemodel.py /data/movemodel.p

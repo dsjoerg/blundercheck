@@ -70,6 +70,8 @@ if use_only_25k:
 #train = train.loc[:25000]
 
 features = list(yy_df.columns.values)
+print 'Available columns are: %s' % features
+
 categorical_features = ['opening_feature']
 dummies = get_dummies(yy_df[categorical_features])
 elorange_cols = [x for x in list(yy_df.columns.values) if x.startswith('elochunk_')]
@@ -86,16 +88,17 @@ if not DO_ERRORCHUNK:
     excluded_features.extend(elorange_cols)
 
 if not DO_GB:
-    excluded_features.extend(
+    gb_cols = [colname for colname in features if colname.startswith('gb_')]
+    excluded_features.extend(gb_cols)
 
+print 'Excluded columns are: %s' % excluded_features
 for f in excluded_features:
     if f in features:
         features.remove(f)
     else:
         print 'Tried to remove %s but it wasnt there' % f
 
-print 'Features are: %s' % features
-
+print 'Included features are: %s' % features
 rfr = RandomForestRegressor(n_estimators=n_estimators, n_jobs=n_jobs, min_samples_leaf=msl, min_samples_split=mss, verbose=1)
 
 do_sklearn_cv = False

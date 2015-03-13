@@ -59,7 +59,9 @@ for line in big_fd:
     if gamenum in gamenums_seen:
         continue
     gamenums_seen.add(gamenum)
-
+    if (gamenum % 1000) == 0:
+        sys.stderr.write("Processing game #%i\n" % gamenum)
+    
 #    if (gamenum, 1) not in elos:
 #        continue
     movegains = compute_movegains(game['massaged_position_scores'][TIMESLICE])

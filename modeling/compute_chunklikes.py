@@ -50,20 +50,20 @@ for modelnum in range(0,num_models):
 msg('reading movedata')
 moves_df = read_pickle('/data/movedata.p')
 moves_df['clipped_movergain'] = moves_df['movergain'].clip(-1e9,0)
-train_df = moves_df[moves_df['elo'].notnull()]
+fit_df = moves_df[moves_df['bestmove_piece'] != False]
 
 testing = False
 if testing:
     games_to_load = 10
     games = np.random.choice(np.arange(1,25001), games_to_load, replace=False)
-    train_df = train_df[train_df['gamenum'].isin(games)]
+    fit_df = fit_df[fit_df['gamenum'].isin(games)]
 
 diagnose = False
 if diagnose:
-    train_df = sample_df(train_df, 30)
+    fit_df = sample_df(fit_df, 30)
 
 like_colnames = []
-X = train_df[features]
+X = fit_df[features]
 
 # given a single row of sequential conditional likelihoods,
 # return the likelihood for the actual move that was made
@@ -91,14 +91,14 @@ for elo_name in list(elo_names):
         preds_series.name = cb
         allchunks.append(preds_series)
         
-    allchunks.append(train_df['movergain'])
+    allchunks.append(fit_df['movergain'])
     allchunks_df = concat(allchunks, axis=1)
-    train_df[elo_name] = allchunks_df.apply(gain_likelihood, axis=1)
+    fit_df[elo_name] = allchunks_df.apply(gain_likelihood, axis=1)
 
 if diagnose:
     cols_to_show = list(elo_names)
     cols_to_show.extend(['gamenum','side','halfply','elo','movergain'])
-    print train_df[cols_to_show].transpose()
+    print fit_df[cols_to_show].transpose()
 
 # group by player-game, and combine all the likelihoods into a single
 # likelihood for that ELO
@@ -108,7 +108,7 @@ def exp_sum_log(foo):
 
 # for each player-game, for each ELO range, compute product of likelihoods for all moves 
 # in that game.  
-chunkgroups = train_df.groupby(['gamenum', 'side', 'elo'])
+chunkgroups = fit_df.groupby(['gamenum', 'side', 'elo'])
 ch_aggs = []
 # exp(sum(log(likelihoods))) is just a cute way to do
 # product(likelihoods) which is *maybe* more numerically friendly

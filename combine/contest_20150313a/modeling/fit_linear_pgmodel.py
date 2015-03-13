@@ -82,6 +82,12 @@ golem_cols = [
 'final_ply_elo10',
 'final_num_games_elo10',
 'final_elo_stdev_elo10',
+'final_elo_elo24',
+'final_ply_elo24',
+'final_num_games_elo24',
+'final_elo_stdev_elo24',
+'final_elo_min_elo24',
+'final_elo_max_elo24',
 ]    
 
 rhs_cols = [

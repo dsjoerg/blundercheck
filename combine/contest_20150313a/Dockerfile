@@ -64,7 +64,7 @@ ENV PATH $BLUNDERCHECK_DIR/data_prep:$PATH
 ENV PATH $BLUNDERCHECK_DIR/modeling:$PATH
 
 # BRING IN THE CODE
-RUN echo 'fri0123456789012345'
+RUN echo 'fri01234567890123456'
 ADD data_prep/*.py $BLUNDERCHECK_DIR/data_prep/
 ADD modeling/*.py $BLUNDERCHECK_DIR/modeling/
 ADD data_prep/*.sh $BLUNDERCHECK_DIR/data_prep/

@@ -130,6 +130,27 @@ eloscored10_cols[1:] = [x + '_elo10' for x in eloscored10_cols[1:]]
 eloscored10_df = read_csv('/data/data.pgn.eloscored10', sep=',', engine='c', header=None, names=eloscored10_cols, index_col=False)
 eloscored10_df = eloscored10_df.set_index(['gamenum'])
 
+eloscored_24_cols = [
+    'gamenum',
+    'final_elo',
+    'final_ply',
+    'final_num_games',
+    'final_elo_stdev',
+    'elopath_min',
+    'elopath_max',
+    'final_elo_min',
+    'final_elo_max',
+    'penult_elo',
+    'penult_ply',
+    'penult_num_games',
+    'penult_elo_stdev',
+    'penult_elo_min',
+    'penult_elo_max',
+]
+eloscored_24_cols[1:] = [x + '_elo24' for x in eloscored_24_cols[1:]]
+eloscored_24_df = read_csv('/data/data.pgn.eloscored24.lastchance', sep=',', engine='c', header=None, names=eloscored_24_cols, index_col=False)
+eloscored_24_df = eloscored_24_df.set_index(['gamenum'])
+
 do_movemodel=True
 if do_movemodel:
     msg("Hi! Reading moveaggs")
@@ -167,6 +188,7 @@ mega_df = concat(supplemental_dfs, axis=1)
 if do_material:
     mega_df = mega_df.join(material_df, how='outer')
 mega_df = mega_df.join(eloscored_df, how='outer')
+mega_df = mega_df.join(eloscored_24_df, how='outer')
 mega_df = mega_df.join(eloscored4_df, how='outer')
 mega_df = mega_df.join(eloscored10_df, how='outer')
 if DO_GB:
@@ -199,7 +221,7 @@ yy_df['final_equity'] = yy_df['my_final_equity'].abs().clip(0,300)
 yy_df['early_lead'] = yy_df['early_lead'].clip(0,100)
 yy_df['mean_depth_clipped'] = yy_df['mean_depth'].clip(0,25)
 yy_df['gamelength_clipped'] = yy_df['gamelength'].clip(20,200)
-
+yy_df['elopath_mine'] = ((((yy_df['final_ply_elo24'] % 2) * 2) - 1) == yy_df.reset_index()['side'])
 
 # prepare opponent_df with selected info about opponent
 opponent_columns = ['meanerror', 'blunderrate', 'perfectrate', 'grit', 'meanecho', 'mate_created', 'mate_destroyed', 'q_error_one', 'q_error_two', 'stdeverror', 'elo', 'any_grit', 'noblunders', 'nmerror', 'mean_depths_agreeing_ratio', 'mean_deepest_agree_ratio', 'pct_sanemoves']

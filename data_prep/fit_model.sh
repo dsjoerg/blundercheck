@@ -35,7 +35,7 @@ wget -O /data/gb25-50.gz https://s3.amazonaws.com/bc-runoutputs/20150313-k2550.g
 
 
 extract_gb_csv.py /data/gb25-50.gz > /data/gb.csv
-extract_gb_csv_noslice.py /data/gb1-25.gz > /data/gb.csv
+extract_gb_csv_noslice.py /data/gb1-25.gz >> /data/gb.csv
 make_eheaders.py /data/data.pgn > /data/eheaders.p
 make_moves_csv.py /data/$CLUSTER_INPUT_FILE > /data/moves.csv
 extract_movescores_from_gz.py /data/$CLUSTER_INPUT_FILE > /data/movescores.csv

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 RESULTDIR=$(date +%Y%m%d%H%M%S)-$HOSTNAME
 mkdir /data/results-$RESULTDIR

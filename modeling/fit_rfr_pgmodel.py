@@ -20,6 +20,11 @@ DO_GOLEM = bool(int(os.environ['DO_GOLEM']))
 DO_ERRORCHUNK = bool(int(os.environ['DO_ERRORCHUNK']))
 CHAIN_VALIDATE = bool(int(os.environ['CHAIN_VALIDATE']))
 
+if 'INCLUDE_OLS_IN_RFR' in os.environ:
+    INCLUDE_OLS_IN_RFR = bool(int(os.environ['INCLUDE_OLS_IN_RFR']))
+else:
+    INCLUDE_OLS_IN_RFR = True
+
 n_estimators = int(os.environ['PG_RFR_N_ESTIMATORS'])
 n_cv_groups = 3
 n_jobs = -1
@@ -97,10 +102,13 @@ material_features = ['material_break_0', 'material_break_1', 'material_break_2',
 
 excluded_features = ['elo', 'opponent_elo', 'elo_advantage', 'elo_avg', 'winner_elo_advantage', 'ols_error', 'gamenum', 'rfr_prediction', 'rfr_error', 'index', 'level_0']
 excluded_features.extend(categorical_features)
-#excluded_features.append('ols_prediction')
+
 #excluded_features.extend(dummies)
 #excluded_features.extend(material_features)
 
+if not INCLUDE_OLS_IN_RFR:
+    excluded_features.append('ols_prediction')
+    
 if not DO_ERRORCHUNK:
     excluded_features.extend(elorange_cols)
 

@@ -10,10 +10,10 @@ from sklearn.linear_model import LinearRegression, Ridge, RidgeCV, LassoCV
 from djeval import *
 
 
-DO_GB = bool(os.environ['DO_GB'])
-DO_GOLEM = bool(os.environ['DO_GOLEM'])
-DO_ERRORCHUNK = bool(os.environ['DO_ERRORCHUNK'])
-CHAIN_VALIDATE = bool(os.environ['CHAIN_VALIDATE'])
+DO_GB = bool(int(os.environ['DO_GB']))
+DO_GOLEM = bool(int(os.environ['DO_GOLEM']))
+DO_ERRORCHUNK = bool(int(os.environ['DO_ERRORCHUNK']))
+CHAIN_VALIDATE = bool(int(os.environ['CHAIN_VALIDATE']))
 
 def shell():
     vars = globals()

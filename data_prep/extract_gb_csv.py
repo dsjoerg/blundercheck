@@ -12,7 +12,7 @@ def shell():
 
 NUM_GB_DEPTHS = 18
 TIMESLICE = int(os.environ['TIMESLICE'])
-GUIDBRATKO = bool(os.environ['GUIDBRATKO'])
+GUIDBRATKO = bool(int(os.environ['GUIDBRATKO']))
 
 # one extra for the sum, 3 less for the leading zeros
 num_gb_cols = NUM_GB_DEPTHS + 1 - 3

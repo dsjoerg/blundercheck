@@ -15,10 +15,10 @@ import pygraphviz as pgv
 from StringIO import StringIO
 from djeval import *
 
-DO_GB = bool(os.environ['DO_GB'])
-DO_GOLEM = bool(os.environ['DO_GOLEM'])
-DO_ERRORCHUNK = bool(os.environ['DO_ERRORCHUNK'])
-CHAIN_VALIDATE = bool(os.environ['CHAIN_VALIDATE'])
+DO_GB = bool(int(os.environ['DO_GB']))
+DO_GOLEM = bool(int(os.environ['DO_GOLEM']))
+DO_ERRORCHUNK = bool(int(os.environ['DO_ERRORCHUNK']))
+CHAIN_VALIDATE = bool(int(os.environ['CHAIN_VALIDATE']))
 
 n_estimators = int(os.environ['PG_RFR_N_ESTIMATORS'])
 n_cv_groups = 3

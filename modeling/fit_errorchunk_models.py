@@ -17,7 +17,7 @@ NUM_ESTIMATORS = int(sys.argv[3])
 LOW_BOUND = float(sys.argv[4])
 HIGH_BOUND = float(sys.argv[5])
 
-CHAIN_VALIDATE = bool(os.environ['CHAIN_VALIDATE'])
+CHAIN_VALIDATE = bool(int(os.environ['CHAIN_VALIDATE']))
 
 n_cv_groups = 2
 

@@ -4,7 +4,7 @@ import sys, json, gzip, csv, os
 import cPickle as pickle
 
 TIMESLICE = int(os.environ['TIMESLICE'])
-GUIDBRATKO = bool(os.environ['GUIDBRATKO'])
+GUIDBRATKO = bool(int(os.environ['GUIDBRATKO']))
 
 
 def compute_movegains(positionscores):

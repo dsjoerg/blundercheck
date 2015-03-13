@@ -104,7 +104,7 @@ for elo_name, elo_df in train_df.groupby(train_df['elo_groups']):
         # msg('CV scores: %s = %f' % (cvs, np.mean(cvs)))
 
         msg('FITTING')
-        if chain_validating:
+        if CHAIN_VALIDATE:
             fit_df = subset_df[subset_df['gamenum'] % 3 == 0]
             fit_X = fit_df[features]
             fit_y = (fit_df['clipped_movergain'] >= cb)

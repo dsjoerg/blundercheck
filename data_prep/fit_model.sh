@@ -12,6 +12,7 @@ wget -O - https://s3.amazonaws.com/bc-runoutputs/$CLUSTER_INPUT_FILE > /data/$CL
 wget -O /data/data.pgn.eloscored21 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.21
 wget -O /data/data.pgn.eloscored4 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.4
 wget -O /data/data.pgn.eloscored10 https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.10
+wget -O /data/data.pgn.eloscored24.lastchance https://s3.amazonaws.com/bc-runoutputs/data100k.pgn.golemelos.lastchance.24
 
 # data used for enhancing entry
 # TODO instead of downloading this, could use your extract_elos.py

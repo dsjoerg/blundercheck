@@ -5,6 +5,11 @@ import cPickle as pickle
 
 TIMESLICE = int(os.environ['TIMESLICE'])
 GUIDBRATKO = bool(int(os.environ['GUIDBRATKO']))
+USE_MPS = bool(int(os.environ['USE_MPS']))
+if USE_MPS:
+    poskey = 'massaged_position_scores'
+else:
+    poskey = 'position_scores'
 
 
 def compute_movegains(positionscores):
@@ -64,7 +69,7 @@ for line in big_fd:
     
 #    if (gamenum, 1) not in elos:
 #        continue
-    movegains = compute_movegains(game['massaged_position_scores'][TIMESLICE])
+    movegains = compute_movegains(game[poskey][TIMESLICE])
     for movenum in range(0, len(movegains)):
         move_info = movegains[movenum]
         move_info.extend(game['move_features'][TIMESLICE][movenum])

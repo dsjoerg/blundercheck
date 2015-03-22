@@ -3,11 +3,13 @@
 from pandas  import *
 from numpy  import *
 from djeval import *
-import csv, code
+import csv, code, os
 import cPickle as pickle
 from sklearn.externals import joblib
 
 GAMELIMIT=int(sys.argv[2])
+ERROR_CLIP = float(os.environ['ERROR_CLIP'])
+
 
 # Takes ~60 seconds on 100k games
 
@@ -161,7 +163,7 @@ for row in rows.values():
     movenum = movenum + 1
 
   for side in [-1, 1]:
-    clippederror = clip(movescores[side], -150, 0)
+    clippederror = clip(movescores[side], -1. * ERROR_CLIP, 0)
     if len(clippederror) == 0:
         clippederror = array([-15])
         moverecho[side] = array([0.1])

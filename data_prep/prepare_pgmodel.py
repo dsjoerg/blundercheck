@@ -13,7 +13,8 @@ DO_GB = bool(int(os.environ['DO_GB']))
 DO_GOLEM = bool(int(os.environ['DO_GOLEM']))
 DO_ERRORCHUNK = bool(int(os.environ['DO_ERRORCHUNK']))
 CHAIN_VALIDATE = bool(int(os.environ['CHAIN_VALIDATE']))
-
+LOW_NMERROR_CLIP = float(os.environ['LOW_NMERROR_CLIP'])
+HIGH_NMERROR_CLIP = float(os.environ['HIGH_NMERROR_CLIP'])
 
 def shell():
     vars = globals()
@@ -212,7 +213,7 @@ yy_df['opening_feature'] = [opening_feature(openings[x]) for x in yy_df.index.ge
 yy_df['opening_count'] = [ocount[openings[x]] for x in yy_df.index.get_level_values('gamenum')]
 yy_df['any_grit'] = (yy_df['grit'] > 0)
 yy_df['major_grit'] = (yy_df['grit'] > 5)
-yy_df['nmerror'] = log((-1 * yy_df['meanerror']).clip(1,60)).clip(1,4) - 2.53
+yy_df['nmerror'] = log((-1 * yy_df['meanerror']).clip(1,999999)).clip(LOW_NMERROR_CLIP, HIGH_NMERROR_CLIP) - 2.53
 yy_df['premature_quit'] = (yy_df['gameoutcome'] == -1) & (yy_df['my_final_equity'] > -100)
 yy_df['drawn_game'] = (yy_df['gameoutcome'] == 0)
 yy_df['ended_by_checkmate'] = yy_df['won_by_checkmate'] | yy_df['lost_by_checkmate']

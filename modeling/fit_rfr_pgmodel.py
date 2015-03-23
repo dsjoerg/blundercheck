@@ -255,11 +255,13 @@ print DataFrame([rfr.feature_importances_, features]).transpose().sort([0], asce
 
 print "There are %i trees." % len(rfr.estimators_)
 
-dot_data = StringIO()
-tree.export_graphviz(rfr.estimators_[0].tree_, out_file=dot_data, feature_names=features)
+export_trees=False
+if export_trees:
+    dot_data = StringIO()
+    tree.export_graphviz(rfr.estimators_[0].tree_, out_file=dot_data, feature_names=features)
 
-B=pgv.AGraph(dot_data.getvalue())
-B.layout('dot')
-B.draw('/data/rfr.png') # draw png
+    B=pgv.AGraph(dot_data.getvalue())
+    B.layout('dot')
+    B.draw('/data/rfr.png') # draw png
 
-print "Wrote first tree to /data/rfr.png"
+    print "Wrote first tree to /data/rfr.png"

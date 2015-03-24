@@ -30,8 +30,9 @@ System components:
   Master](http://www.openingmaster.com/).  We modified Fabien
   Letouzey's polyglot program in conjunction with the library:
   https://github.com/dsjoerg/polyglot_elo.
-  * We added a "filter-games" mode to polyglot_elo to filter out the
-   Kaggle games from OM GOLEM.  See 
+  * We added a
+   ("filter-games")[https://github.com/dsjoerg/polyglot_elo/blob/master/src/filter_games.cpp]
+   mode to polyglot_elo to filter out the Kaggle games from OM GOLEM.
   * We added an
    ("elo-book")[https://github.com/dsjoerg/polyglot_elo/blob/master/src/elo_book.cpp]
    mode to polyglot_elo to compute stats about the Kaggle games, using

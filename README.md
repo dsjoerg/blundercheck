@@ -9,16 +9,16 @@ System components:
   what features it computes, look at djeval/__init__.py, starting from
   the function do_it_backwards().  The results of that were ultimately
   gathered into a big JSON file called 20150312.gz.
-** Tweaks in pystockfish to return more stats from Stockfish
+  * Tweaks in pystockfish to return more stats from Stockfish
    evaluations: https://github.com/dsjoerg/pystockfish/commits/master
-** Minor tweaks in Stockfish to dump stats on material value and game
+  * Minor tweaks in Stockfish to dump stats on material value and game
    phase: https://github.com/dsjoerg/Stockfish/commits/blundercheck
-** We computed the Guid-Bratko complexity measure as described
+  * We computed the Guid-Bratko complexity measure as described
    [here](http://magix.fri.uni-lj.si/~matej/doc/Computer_Analysis_of_World_Chess_Champions.pdf)
-** We computed several features from the output of stockfish, such as
+  * We computed several features from the output of stockfish, such as
    the number of times the best move changed, and the deepest depth at
    which Stockfish agreed with the player's move.
-** In the end I ran Stockfish with an embarrassingly large 16 seconds
+  * In the end I ran Stockfish with an embarrassingly large 16 seconds
    per move (rather than a fixed depth).  However, the extra time made
    surprsingly little difference.  Holding all else equal, doubling
    from 2s to 4s per move improved my score by 0.3 points.  Doubling
@@ -30,9 +30,9 @@ System components:
   Master](http://www.openingmaster.com/).  We modified Fabien
   Letouzey's polyglot program in conjunction with the library:
   https://github.com/dsjoerg/polyglot_elo.
-** We added a "filter-games" mode to polyglot_elo to filter out the
+  * We added a "filter-games" mode to polyglot_elo to filter out the
    Kaggle games from OM GOLEM.  See 
-** We added an
+  * We added an
    ("elo-book")[https://github.com/dsjoerg/polyglot_elo/blob/master/src/elo_book.cpp]
    mode to polyglot_elo to compute stats about the Kaggle games, using
    the filtered OM GOLEM library.  Inspired by the ELO stats available
@@ -45,7 +45,7 @@ System components:
    stopping when fewer than 10 games match.  The average/min/max/stdev
    of the matching games are features, as well as some other ELO-based
    stats gathered during the walk to 24 ply.
-** To get an immediate feel for how this works, simply go to the
+  * To get an immediate feel for how this works, simply go to the
    [Chess Tempo Game
    Database](http://chesstempo.com/game-database.html) and click on
    the various moves, making note of the Av/Perf/Max Rating as you go.
